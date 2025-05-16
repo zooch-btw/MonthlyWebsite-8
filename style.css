@@ -1,0 +1,15 @@
+body {
+    background: linear-gradient(to left, #000000, #ff0000);
+    color: #1aeb9b;
+    min-height: 100vh;
+    margin-top: 140px;
+    padding-top: 140px;
+    text-align: center;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
