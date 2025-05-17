@@ -1,15 +1,547 @@
-body {
-    background: linear-gradient(to left, #000000, #ff0000);
-    color: #1aeb9b;
-    min-height: 100vh;
-    margin-top: 140px;
-    padding-top: 140px;
+/* Marvel Universe Home Page Styles - Centered, ES6 Colors, No Rotations */
+
+/* ============================================================
+   1) Fonts
+   ============================================================ */
+
+/* Import Google Fonts: Bebas Neue for nav/brand, Nunito for body, Comic Neue for headline */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap");
+
+/* ============================================================
+   2) Global / Base Typography
+   ============================================================ */
+
+/* Base styles for HTML and body, centered content */
+html, body {
+    /* Set full height for viewport */
+    height: 100%;
+    /* Remove default margins */
+    margin: 0;
+    /* Use Nunito font for body text */
+    font-family: "Nunito", sans-serif;
+    /* Fallback color: starWhite */
+    color: #f0f8ff;
+    /* Fallback background: nebulaDark */
+    background-color: #0d1b2a;
+    /* Smooth scrolling for anchor links */
+    scroll-behavior: smooth;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Center content horizontally */
     text-align: center;
 }
 
-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+/* Style headings and nav with comic-book aesthetic */
+h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
+    /* Use Bebas Neue for bold, uppercase text */
+    font-family: "Bebas Neue", sans-serif;
+    /* Add letter spacing for readability */
+    letter-spacing: 1.5px;
+    /* Convert text to uppercase */
+    text-transform: uppercase;
+    /* Add red stroke for Marvel effect */
+    -webkit-text-stroke: 0.5px #ff2a44; /* Fallback: heroRed */
+    /* Add subtle red glow */
+    text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
+    /* Center text */
     text-align: center;
 }
+
+/* ============================================================
+   3) Navbar
+   ============================================================ */
+
+/* Style navbar with cosmic gradient background */
+.navbar {
+    /* Fallback background: nebulaDark */
+    background: linear-gradient(180deg, #0d1b2a 0%, rgba(13, 27, 42, 0.9) 100%) !important;
+    /* Add padding for spacing */
+    padding: 0.75rem 1.5rem;
+    /* Transparent border with glowing effect */
+    border-bottom: 3px solid transparent;
+    /* Fallback: infinityGold */
+    border-image: linear-gradient(90deg, transparent, #ffd700, transparent) 1;
+    /* Animate border glow */
+    animation: glowBorder 3s ease-in-out infinite;
+    /* Ensure navbar stays above other content */
+    z-index: 1000;
+    /* Center navbar content */
+    display: flex;
+    justify-content: center;
+}
+
+/* Define pulsing border animation */
+@keyframes glowBorder {
+    /* Start and end with gold border */
+    0%, 100% { border-image-source: linear-gradient(90deg, transparent, #ffd700, transparent); } /* Fallback: infinityGold */
+    /* Transition to blue border */
+    50% { border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent); } /* Fallback: cosmicBlue */
+}
+
+/* Style navbar brand and links */
+.navbar-brand, .navbar-nav .nav-link {
+    /* Fallback color: starWhite */
+    color: #f0f8ff !important;
+    /* Set font size for prominence */
+    font-size: 1.6rem;
+    /* Smooth transitions for hover effects */
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    /* Position for hover effects */
+    position: relative;
+    /* Center text */
+    text-align: center;
+}
+
+/* Style active link */
+.navbar-nav .nav-link.active {
+    /* Fallback color: heroRed */
+    color: #ff2a44 !important;
+    /* Remove underline */
+    text-decoration: none;
+    /* Add red glow */
+    text-shadow: 0 0 10px #ff2a44; /* Fallback: heroRed */
+}
+
+/* Hover and focus effects for nav links */
+.navbar-brand:hover, .navbar-nav .nav-link:hover, .navbar-nav .nav-link:focus {
+    /* Fallback color: infinityGold */
+    color: #ffd700 !important;
+    /* Add gold glow */
+    text-shadow: 0 0 15px #ffd700; /* Fallback: infinityGold */
+}
+
+/* Style navbar logo with static glow */
+.navbar-logo {
+    /* Set width for logo */
+    width: 44px;
+    /* Maintain aspect ratio */
+    height: auto;
+    /* Add blue glow effect */
+    filter: drop-shadow(0 0 8px #1e90ff) brightness(1.2); /* Fallback: cosmicBlue */
+    /* Center logo */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Center navbar collapse content */
+.navbar-collapse {
+    /* Use flexbox for centering */
+    display: flex;
+    /* Center horizontally */
+    justify-content: center;
+}
+
+/* Center navbar nav list */
+.navbar-nav {
+    /* Use flexbox for centering */
+    display: flex;
+    /* Center horizontally */
+    justify-content: center;
+    /* Ensure full width */
+    width: 100%;
+}
+
+/* ============================================================
+   4) Hero Section
+   ============================================================ */
+
+/* Style full-screen hero section with cosmic background */
+.hero-cosmic {
+    /* Full width */
+    width: 100%;
+    /* Full viewport height */
+    height: 100vh;
+    /* Cosmic background image, centered and scaled */
+    background: url("https://images.unsplash.com/photo-1538370965046-79c0d6907af2") center / cover no-repeat;
+    /* Position for layering */
+    position: relative;
+    /* Hide overflow for clean edges */
+    overflow: hidden;
+    /* Add shimmer animation */
+    animation: cosmicShimmer 15s ease-in-out infinite;
+}
+
+/* Define background shimmer animation */
+@keyframes cosmicShimmer {
+    /* Normal brightness at start/end */
+    0%, 100% { filter: brightness(1); }
+    /* Increase brightness and contrast at midpoint */
+    50% { filter: brightness(1.2) contrast(1.1); }
+}
+
+/* Style hero content with aurora glow */
+.hero-content {
+    /* Fallback: cosmicBlue, nebulaDark */
+    background: radial-gradient(circle, rgba(30, 144, 255, 0.3) 0%, rgba(10, 15, 28, 0.7) 70%);
+    /* Add padding for content */
+    padding: 3.5rem 2.5rem;
+    /* Rounded corners */
+    border-radius: 2rem;
+    /* Limit maximum width */
+    max-width: 900px;
+    /* Responsive width */
+    width: 95%;
+    /* Position for layering */
+    position: relative;
+    /* Fallback: infinityGold */
+    border: 2px solid #ffd700;
+    /* Fallback: cosmicBlue */
+    box-shadow: 0 0 20px #1e90ff;
+    /* Center text */
+    text-align: center;
+}
+
+/* Style headline with dynamic glow */
+#VictoryTxt, #LossTxt {
+    /* Use Comic Neue for comic-book style */
+    font-family: "Comic Neue", sans-serif;
+    /* Fallback: heroRed, cosmicBlue */
+    text-shadow: 0 0 12px #ff2a44, 0 0 24px #1e90ff;
+}
+
+/* Morning/afternoon glow animation */
+#VictoryTxt {
+    /* Green glow for victory */
+    animation: victoryGlow 1.5s ease-in-out infinite alternate;
+}
+
+/* Evening/night glow animation */
+#LossTxt {
+    /* Red glow for loss */
+    animation: lossGlow 1.5s ease-in-out infinite alternate;
+}
+
+/* Define victory glow animation */
+@keyframes victoryGlow {
+    /* Start with green shadow */
+    0% {
+        text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #28a745;
+    }
+    /* End with brighter green */
+    100% {
+        text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00;
+    }
+}
+
+/* Define loss glow animation */
+@keyframes lossGlow {
+    /* Start with red shadow */
+    0% {
+        text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333, 0 0 40px #ff3333;
+    }
+    /* End with brighter red */
+    100% {
+        text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000;
+    }
+}
+
+/* Style hero button with radial glow */
+.btn-marvel-red {
+    /* Fallback: heroRed, cosmicBlue */
+    background: radial-gradient(circle, #ff2a44 50%, #1e90ff 100%);
+    /* Fallback: infinityGold */
+    border: 2px solid #ffd700;
+    /* Use Bebas Neue for button text */
+    font-family: "Bebas Neue", sans-serif;
+    /* Set font size */
+    font-size: 1.3rem;
+    /* Add padding */
+    padding: 0.8rem 2.5rem;
+    /* Smooth transitions for hover */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    /* Position for ripple effect */
+    position: relative;
+    /* Hide overflow for ripple */
+    overflow: hidden;
+    /* Center button */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Button hover effect */
+.btn-marvel-red:hover {
+    /* Fallback: infinityGold, cosmicBlue */
+    background: radial-gradient(circle, #ffd700 50%, #1e90ff 100%);
+    /* Scale up on hover */
+    transform: scale(1.1);
+    /* Add gold glow */
+    box-shadow: 0 0 20px #ffd700; /* Fallback: infinityGold */
+}
+
+/* Button ripple effect */
+.btn-marvel-red::before {
+    /* Empty content for pseudo-element */
+    content: '';
+    /* Position at center */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Start with zero size */
+    width: 0;
+    height: 0;
+    /* Gold ripple effect */
+    background: rgba(255, 215, 0, 0.5);
+    /* Circular shape */
+    border-radius: 50%;
+    /* Center transform */
+    transform: translate(-50%, -50%);
+    /* Smooth size transition */
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+/* Expand ripple on hover */
+.btn-marvel-red:hover::before {
+    /* Expand to large size */
+    width: 200px;
+    height: 200px;
+}
+
+/* ============================================================
+   5) Cosmic Particle Background
+   ============================================================ */
+
+/* Particle container for cosmic effect */
+#particle-bg {
+    /* Fixed position to cover viewport */
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* Full width and height */
+    width: 100%;
+    height: 100%;
+    /* Behind all content */
+    z-index: -1;
+    /* Disable pointer events */
+    pointer-events: none;
+}
+
+/* Large star particles */
+#particle-bg::before, #particle-bg::after {
+    /* Empty content for pseudo-elements */
+    content: '';
+    /* Absolute positioning */
+    position: absolute;
+    /* Small star size */
+    width: 4px;
+    height: 4px;
+    /* Fallback: starWhite */
+    background: #f0f8ff;
+    /* Circular shape */
+    border-radius: 50%;
+    /* Drift animation */
+    animation: starDrift 10s linear infinite;
+}
+
+/* Position first star */
+#particle-bg::before {
+    top: 10%;
+    left: 20%;
+    /* Delay animation */
+    animation-delay: -2s;
+}
+
+/* Position second star */
+#particle-bg::after {
+    top: 70%;
+    left: 85%;
+    /* Delay animation */
+    animation-delay: -5s;
+}
+
+/* Smaller nebula particles */
+#particle-bg > span {
+    /* Absolute positioning */
+    position: absolute;
+    /* Fallback: cosmicBlue */
+    background: radial-gradient(circle, #1e90ff 0%, transparent 70%);
+    /* Circular shape */
+    border-radius: 50%;
+    /* Drift animation */
+    animation: nebulaDrift 20s linear infinite;
+}
+
+/* Style first nebula particle */
+#particle-bg > span:nth-child(1) {
+    width: 6px;
+    height: 6px;
+    top: 15%;
+    left: 5%;
+    animation-delay: -1s;
+}
+
+/* Style second nebula particle */
+#particle-bg > span:nth-child(2) {
+    width: 8px;
+    height: 8px;
+    top: 55%;
+    left: 95%;
+    animation-delay: -3s;
+}
+
+/* Style third nebula particle */
+#particle-bg > span:nth-child(3) {
+    width: 5px;
+    height: 5px;
+    top: 90%;
+    left: 30%;
+    animation-delay: -7s;
+}
+
+/* Define star drift animation */
+@keyframes starDrift {
+    /* Start position */
+    0% { transform: translate(0, 0); opacity: 1; }
+    /* Fade at midpoint */
+    50% { opacity: 0.5; }
+    /* End position, fully faded */
+    100% { transform: translate(150px, -150px); opacity: 0; }
+}
+
+/* Define nebula drift animation */
+@keyframes nebulaDrift {
+    /* Start position and scale */
+    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    /* Midpoint with scale and fade */
+    50% { opacity: 0.3; transform: translate(100px, -100px) scale(1.2); }
+    /* End position, fully faded */
+    100% { transform: translate(200px, -200px) scale(1); opacity: 0; }
+}
+
+/* Comet trail for second nebula particle */
+#particle-bg > span:nth-child(2)::after {
+    /* Empty content */
+    content: '';
+    /* Absolute positioning */
+    position: absolute;
+    /* Trail size */
+    width: 20px;
+    height: 2px;
+    /* Fallback: infinityGold */
+    background: linear-gradient(90deg, transparent, #ffd700);
+    /* Trail animation */
+    animation: cometTrail 20s linear infinite;
+}
+
+/* Define comet trail animation */
+@keyframes cometTrail {
+    /* Start position */
+    0% { transform: translateX(0); opacity: 0.7; }
+    /* Fade at midpoint */
+    50% { opacity: 0.3; }
+    /* End position, fully faded */
+    100% { transform: translateX(-50px); opacity: 0; }
+}
+
+/* ============================================================
+   6) Time-Based Backgrounds
+   ============================================================ */
+
+/* Morning background: red-gold gradient */
+body.morning {
+    /* Fallback: heroRed, infinityGold */
+    background: linear-gradient(135deg, #ff2a44 0%, #ffd700 100%);
+}
+
+/* Afternoon background: blue-cyan gradient */
+body.afternoon {
+    /* Fallback: cosmicBlue */
+    background: linear-gradient(135deg, #1e90ff 0%, #00e6e6 100%);
+}
+
+/* Evening background: purple-dark gradient */
+body.evening {
+    /* Fallback: vibrantPurple */
+    background: linear-gradient(135deg, #6a0dad 0%, #2a1b3d 100%);
+}
+
+/* Night background: dark nebula gradient */
+body.night {
+    /* Fallback: nebulaDark */
+    background: linear-gradient(135deg, #0d1b2a 0%, #0a0a23 100%);
+}
+
+/* ============================================================
+   7) Responsive Design
+   ============================================================ */
+
+/* Styles for tablet and below */
+@media (max-width: 768px) {
+    /* Adjust hero content padding */
+    .hero-content {
+        padding: 2rem 1.5rem;
+        border-width: 1px;
+    }
+
+    /* Reduce headline size */
+    .display-3 {
+        font-size: 2.2rem;
+        /* Fallback: heroRed */
+        -webkit-text-stroke: 0.3px #ff2a44;
+    }
+
+    /* Reduce tagline size */
+    .lead {
+        font-size: 0.9rem;
+    }
+
+    /* Adjust button padding and size */
+    .btn-marvel-red {
+        padding: 0.6rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* Speed up particle animations */
+    #particle-bg > span {
+        animation-duration: 15s;
+    }
+}
+
+/* Styles for mobile */
+@media (max-width: 576px) {
+    /* Further adjust hero content */
+    .hero-content {
+        padding: 1.5rem 1rem;
+        border-radius: 1rem;
+    }
+
+    /* Further reduce headline size */
+    .display-3 {
+        font-size: 1.8rem;
+    }
+
+    /* Further adjust button */
+    .btn-marvel-red {
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Reduce nav link size */
+    .navbar-brand, .navbar-nav .nav-link {
+        font-size: 1.3rem;
+    }
+
+    /* Reduce logo size */
+    .navbar-logo {
+        width: 36px;
+    }
+
+    /* Reduce star particle size */
+    #particle-bg::before, #particle-bg::after {
+        width: 3px;
+        height: 3px;
+    }
+}
+
+/* ============================================================
+   8) Utility Classes
+   ============================================================ */
+
+/* Text color utilities */
+.text-hero-red { color: #ff2a44 !important; } /* Fallback: heroRed */
+.text-cosmic-blue { color: #1e90ff !important; } /* Fallback: cosmicBlue */
+.text-infinity-gold { color: #ffd700 !important; } /* Fallback: infinityGold */
+
+/* Background color utilities */
+.bg-hero-red { background: #ff2a44 !important; } /* Fallback: heroRed */
+.bg-cosmic-blue { background: #1e90ff !important; } /* Fallback: cosmicBlue */
+.bg-nebula-dark { background: #0d1b2a !important; } /* Fallback: nebulaDark */

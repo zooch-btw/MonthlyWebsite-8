@@ -1,42 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Landing Page</title>
-    <!-- Required meta tags -->
+    <!-- Character encoding for proper text rendering -->
     <meta charset="utf-8" />
+    <!-- Responsive viewport settings -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Page title -->
+    <title>Marvel Universe | Welcome</title>
 
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Bebas Neue for bold headers, Nunito for clean text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet" />
+
+    <!-- Bootstrap CSS for layout utilities -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-    <header>
-        <!-- place navbar here -->
-    </header>
-    <main>
-        <div class="container text-center">
-            <h1>Welcome to the Main Universe</h1>
-            <h1>Meet your favorite Marvel Heroes and Villains!</h1>
-        </div>
-        <a href="home.html">Go Home</a>
-    </main>
-    <footer>
-        <!-- place footer here -->
-    </footer>
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
+    <!-- Cosmic particle background -->
+    <div id="particle-bg"></div>
+    <!-- Main content wrapper for centered layout -->
+    <div id="landing-wrapper" class="d-flex flex-column justify-content-center align-items-center min-vh-100">
+        <!-- Marvel logo -->
+        <img id="landing-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Marvel_Logo.svg/1200px-Marvel_Logo.svg.png" alt="Marvel Logo" class="mb-4 logo-anim" />
+        <!-- Dynamic greeting with glow effect -->
+        <h1 id="greeting" class="greeting-anim"></h1>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-        crossorigin="anonymous"></script>
-    <script src="players.js"></script>
+    <!-- Bootstrap JS and Popper for potential future components -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        // Time-based greetings with corresponding CSS classes
+        const greetings = [
+            { start: 5, end: 11, text: "Good morning, Hero!", cls: "morning", glow: "VictoryTxt" },
+            { start: 11, end: 17, text: "Good afternoon, Avenger!", cls: "afternoon", glow: "VictoryTxt" },
+            { start: 17, end: 22, text: "Good evening, Guardian!", cls: "evening", glow: "LossTxt" },
+            { start: 22, end: 24, text: "Good night, Defender!", cls: "night", glow: "LossTxt" },
+            { start: 0, end: 5, text: "Good night, Defender!", cls: "night", glow: "LossTxt" }
+        ];
+
+        // Initialize page on load
+        window.addEventListener("DOMContentLoaded", () => {
+            const hr = new Date().getHours();
+            // Find matching greeting based on current hour
+            const g = greetings.find(({ start, end }) => hr >= start && hr < end);
+
+            // Apply background class to body
+            document.body.classList.add(g.cls);
+            // Set greeting text and glow effect
+            const greetingEl = document.getElementById("greeting");
+            greetingEl.textContent = g.text;
+            greetingEl.id = g.glow;
+
+            // Redirect to home page after 5 seconds
+            setTimeout(() => window.location.replace("home.html"), 5000);
+        });
+    </script>
+        <script src="players.js"></script>
     <script src="roster.js"></script>
 </body>
-
 </html>
