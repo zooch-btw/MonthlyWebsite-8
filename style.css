@@ -12,7 +12,8 @@
    ============================================================ */
 
 /* Base styles for HTML and body, centered content */
-html, body {
+html,
+body {
     /* Set full height for viewport */
     height: 100%;
     /* Remove default margins */
@@ -32,7 +33,11 @@ html, body {
 }
 
 /* Style headings and nav with comic-book aesthetic */
-h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
+h1,
+h2,
+h3,
+.navbar-brand,
+.navbar-nav .nav-link {
     /* Use Bebas Neue for bold, uppercase text */
     font-family: "Bebas Neue", sans-serif;
     /* Add letter spacing for readability */
@@ -40,7 +45,8 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
     /* Convert text to uppercase */
     text-transform: uppercase;
     /* Add red stroke for Marvel effect */
-    -webkit-text-stroke: 0.5px #ff2a44; /* Fallback: heroRed */
+    -webkit-text-stroke: 0.5px #ff2a44;
+    /* Fallback: heroRed */
     /* Add subtle red glow */
     text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
     /* Center text */
@@ -72,14 +78,25 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define pulsing border animation */
 @keyframes glowBorder {
+
     /* Start and end with gold border */
-    0%, 100% { border-image-source: linear-gradient(90deg, transparent, #ffd700, transparent); } /* Fallback: infinityGold */
+    0%,
+    100% {
+        border-image-source: linear-gradient(90deg, transparent, #ffd700, transparent);
+    }
+
+    /* Fallback: infinityGold */
     /* Transition to blue border */
-    50% { border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent); } /* Fallback: cosmicBlue */
+    50% {
+        border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent);
+    }
+
+    /* Fallback: cosmicBlue */
 }
 
 /* Style navbar brand and links */
-.navbar-brand, .navbar-nav .nav-link {
+.navbar-brand,
+.navbar-nav .nav-link {
     /* Fallback color: starWhite */
     color: #f0f8ff !important;
     /* Set font size for prominence */
@@ -99,15 +116,19 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
     /* Remove underline */
     text-decoration: none;
     /* Add red glow */
-    text-shadow: 0 0 10px #ff2a44; /* Fallback: heroRed */
+    text-shadow: 0 0 10px #ff2a44;
+    /* Fallback: heroRed */
 }
 
 /* Hover and focus effects for nav links */
-.navbar-brand:hover, .navbar-nav .nav-link:hover, .navbar-nav .nav-link:focus {
+.navbar-brand:hover,
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
     /* Fallback color: infinityGold */
     color: #ffd700 !important;
     /* Add gold glow */
-    text-shadow: 0 0 15px #ffd700; /* Fallback: infinityGold */
+    text-shadow: 0 0 15px #ffd700;
+    /* Fallback: infinityGold */
 }
 
 /* Style navbar logo with static glow */
@@ -117,7 +138,8 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
     /* Maintain aspect ratio */
     height: auto;
     /* Add blue glow effect */
-    filter: drop-shadow(0 0 8px #1e90ff) brightness(1.2); /* Fallback: cosmicBlue */
+    filter: drop-shadow(0 0 8px #1e90ff) brightness(1.2);
+    /* Fallback: cosmicBlue */
     /* Center logo */
     display: block;
     margin: 0 auto;
@@ -163,10 +185,17 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define background shimmer animation */
 @keyframes cosmicShimmer {
+
     /* Normal brightness at start/end */
-    0%, 100% { filter: brightness(1); }
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
     /* Increase brightness and contrast at midpoint */
-    50% { filter: brightness(1.2) contrast(1.1); }
+    50% {
+        filter: brightness(1.2) contrast(1.1);
+    }
 }
 
 /* Style hero content with aurora glow */
@@ -192,7 +221,8 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Style headline with dynamic glow */
-#VictoryTxt, #LossTxt {
+#VictoryTxt,
+#LossTxt {
     /* Use Comic Neue for comic-book style */
     font-family: "Comic Neue", sans-serif;
     /* Fallback: heroRed, cosmicBlue */
@@ -213,10 +243,12 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define victory glow animation */
 @keyframes victoryGlow {
+
     /* Start with green shadow */
     0% {
         text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #28a745;
     }
+
     /* End with brighter green */
     100% {
         text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00;
@@ -225,10 +257,12 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define loss glow animation */
 @keyframes lossGlow {
+
     /* Start with red shadow */
     0% {
         text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333, 0 0 40px #ff3333;
     }
+
     /* End with brighter red */
     100% {
         text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000;
@@ -265,7 +299,8 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
     /* Scale up on hover */
     transform: scale(1.1);
     /* Add gold glow */
-    box-shadow: 0 0 20px #ffd700; /* Fallback: infinityGold */
+    box-shadow: 0 0 20px #ffd700;
+    /* Fallback: infinityGold */
 }
 
 /* Button ripple effect */
@@ -316,7 +351,8 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Large star particles */
-#particle-bg::before, #particle-bg::after {
+#particle-bg::before,
+#particle-bg::after {
     /* Empty content for pseudo-elements */
     content: '';
     /* Absolute positioning */
@@ -349,7 +385,7 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Smaller nebula particles */
-#particle-bg > span {
+#particle-bg>span {
     /* Absolute positioning */
     position: absolute;
     /* Fallback: cosmicBlue */
@@ -361,7 +397,7 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Style first nebula particle */
-#particle-bg > span:nth-child(1) {
+#particle-bg>span:nth-child(1) {
     width: 6px;
     height: 6px;
     top: 15%;
@@ -370,7 +406,7 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Style second nebula particle */
-#particle-bg > span:nth-child(2) {
+#particle-bg>span:nth-child(2) {
     width: 8px;
     height: 8px;
     top: 55%;
@@ -379,7 +415,7 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 }
 
 /* Style third nebula particle */
-#particle-bg > span:nth-child(3) {
+#particle-bg>span:nth-child(3) {
     width: 5px;
     height: 5px;
     top: 90%;
@@ -389,26 +425,49 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define star drift animation */
 @keyframes starDrift {
+
     /* Start position */
-    0% { transform: translate(0, 0); opacity: 1; }
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+
     /* Fade at midpoint */
-    50% { opacity: 0.5; }
+    50% {
+        opacity: 0.5;
+    }
+
     /* End position, fully faded */
-    100% { transform: translate(150px, -150px); opacity: 0; }
+    100% {
+        transform: translate(150px, -150px);
+        opacity: 0;
+    }
 }
 
 /* Define nebula drift animation */
 @keyframes nebulaDrift {
+
     /* Start position and scale */
-    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+
     /* Midpoint with scale and fade */
-    50% { opacity: 0.3; transform: translate(100px, -100px) scale(1.2); }
+    50% {
+        opacity: 0.3;
+        transform: translate(100px, -100px) scale(1.2);
+    }
+
     /* End position, fully faded */
-    100% { transform: translate(200px, -200px) scale(1); opacity: 0; }
+    100% {
+        transform: translate(200px, -200px) scale(1);
+        opacity: 0;
+    }
 }
 
 /* Comet trail for second nebula particle */
-#particle-bg > span:nth-child(2)::after {
+#particle-bg>span:nth-child(2)::after {
     /* Empty content */
     content: '';
     /* Absolute positioning */
@@ -424,12 +483,23 @@ h1, h2, h3, .navbar-brand, .navbar-nav .nav-link {
 
 /* Define comet trail animation */
 @keyframes cometTrail {
+
     /* Start position */
-    0% { transform: translateX(0); opacity: 0.7; }
+    0% {
+        transform: translateX(0);
+        opacity: 0.7;
+    }
+
     /* Fade at midpoint */
-    50% { opacity: 0.3; }
+    50% {
+        opacity: 0.3;
+    }
+
     /* End position, fully faded */
-    100% { transform: translateX(-50px); opacity: 0; }
+    100% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
 }
 
 /* ============================================================
@@ -466,6 +536,7 @@ body.night {
 
 /* Styles for tablet and below */
 @media (max-width: 768px) {
+
     /* Adjust hero content padding */
     .hero-content {
         padding: 2rem 1.5rem;
@@ -491,13 +562,14 @@ body.night {
     }
 
     /* Speed up particle animations */
-    #particle-bg > span {
+    #particle-bg>span {
         animation-duration: 15s;
     }
 }
 
 /* Styles for mobile */
 @media (max-width: 576px) {
+
     /* Further adjust hero content */
     .hero-content {
         padding: 1.5rem 1rem;
@@ -516,7 +588,8 @@ body.night {
     }
 
     /* Reduce nav link size */
-    .navbar-brand, .navbar-nav .nav-link {
+    .navbar-brand,
+    .navbar-nav .nav-link {
         font-size: 1.3rem;
     }
 
@@ -526,7 +599,8 @@ body.night {
     }
 
     /* Reduce star particle size */
-    #particle-bg::before, #particle-bg::after {
+    #particle-bg::before,
+    #particle-bg::after {
         width: 3px;
         height: 3px;
     }
@@ -537,11 +611,122 @@ body.night {
    ============================================================ */
 
 /* Text color utilities */
-.text-hero-red { color: #ff2a44 !important; } /* Fallback: heroRed */
-.text-cosmic-blue { color: #1e90ff !important; } /* Fallback: cosmicBlue */
-.text-infinity-gold { color: #ffd700 !important; } /* Fallback: infinityGold */
+.text-hero-red {
+    color: #ff2a44 !important;
+}
+
+/* Fallback: heroRed */
+.text-cosmic-blue {
+    color: #1e90ff !important;
+}
+
+/* Fallback: cosmicBlue */
+.text-infinity-gold {
+    color: #ffd700 !important;
+}
+
+/* Fallback: infinityGold */
 
 /* Background color utilities */
-.bg-hero-red { background: #ff2a44 !important; } /* Fallback: heroRed */
-.bg-cosmic-blue { background: #1e90ff !important; } /* Fallback: cosmicBlue */
-.bg-nebula-dark { background: #0d1b2a !important; } /* Fallback: nebulaDark */
+.bg-hero-red {
+    background: #ff2a44 !important;
+}
+
+/* Fallback: heroRed */
+.bg-cosmic-blue {
+    background: #1e90ff !important;
+}
+
+/* Fallback: cosmicBlue */
+.bg-nebula-dark {
+    background: #0d1b2a !important;
+}
+
+/* Fallback: nebulaDark */
+
+body {
+    transition: background 0.5s;
+    font-family: 'Nunito', sans-serif;
+}
+
+.navbar-logo {
+    max-height: 40px;
+}
+
+.hero-card {
+    transition: transform 0.2s;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-card:hover {
+    transform: scale(1.05);
+}
+
+.hero-card .card-img-top {
+    object-fit: cover;
+    height: 150px;
+    border-bottom: 2px solid #ffd700;
+}
+
+.hero-card .card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hero-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-wrap: balance;
+    margin-bottom: 0.5rem;
+}
+
+.hero-card .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.badge-role {
+    font-size: 0.85rem;
+    padding: 0.5em 1em;
+    margin-bottom: 0.75rem;
+    border-radius: 12px;
+}
+
+.placeholder-card {
+    background: rgba(13, 27, 42, 0.9);
+    color: #f0f8ff;
+    text-align: center;
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+}
+
+#VictoryTxt {
+    color: #00ff00;
+    text-shadow: 0 0 12px rgba(0, 255, 0, 0.7);
+}
+
+#LossTxt {
+    color: #ff2a44;
+    text-shadow: 0 0 12px rgba(255, 42, 68, 0.7);
+}
+
+@media (max-width: 768px) {
+    .hero-card .card-title {
+        font-size: 1.1rem;
+    }
+
+    .hero-card .card-text {
+        font-size: 0.85rem;
+    }
+
+    .badge-role {
+        font-size: 0.75rem;
+    }
+}

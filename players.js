@@ -1,4 +1,4 @@
-const characters = [
+window.players = [
     {
         firstName: 'Iron',
         lastName: 'Man',
@@ -210,13 +210,6 @@ const characters = [
         photo: 'https://www.marvel.com/characters/rhino/rhino'
     },
     {
-        firstName: 'Vulture',
-        lastName: '',
-        realName: 'Adrian Toomes',
-        weapon: 'Winged Flight and Enhanced Strength',
-        photo: 'https://www.marvel.com/characters/vulture/vulture'
-    },
-    {
         firstName: 'Sand',
         lastName: 'Man',
         realName: 'Flint Marko',
@@ -245,13 +238,6 @@ const characters = [
         photo: 'https://www.marvel.com/characters/kraven-the-hunter/kraven-the-hunter'
     },
     {
-        firstName: 'Mysterio',
-        lastName: '',
-        realName: 'Quentin Beck',
-        weapon: 'Illusions and Special Effects',
-        photo: 'https://www.marvel.com/characters/mysterio/mysterio'
-    },
-    {
         firstName: 'Shocker',
         lastName: '',
         realName: 'Herman Schultz',
@@ -271,11 +257,16 @@ const characters = [
         realName: 'Adrian Toomes',
         weapon: 'Winged Flight and Enhanced Strength',
         photo: 'https://www.marvel.com/characters/vulture/vulture'
-    }, {
+    },
+    {
         firstName: 'Sand',
         lastName: 'Man',
         realName: 'Flint Marko',
         weapon: 'Sand Manipulation',
         photo: 'https://www.marvel.com/characters/sandman-flint-marko'
     }
-]     
+];
+// Fallback for image loading issues
+window.players.forEach(player => {
+    player.photo = player.photo || 'https://via.placeholder.com/150?text=No+Image';
+});
