@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             col.innerHTML = `
                 <div class="card h-100 shadow-sm hero-card">
-                    <img src="${sanitizeHTML(photo)}" class="card-img-top" alt="${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}">
+                    <img src="${sanitizeHTML(photo)}" class="card-img" alt="${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}">
                     <div class="card-body text-center">
                         <h5 class="card-title" id="${titleId}">${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}</h5>
                         <div class="badge badge-role">Real Name: ${sanitizeHTML(p.realName)}</div>

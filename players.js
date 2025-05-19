@@ -4,267 +4,261 @@ window.players = [
         lastName: 'Man',
         realName: 'Tony Stark',
         weapon: 'Iron Man Armor',
-        photo: 'https://www.marvel.com/characters/iron-man/iron-man'
+        photo: 'imgs/iron man.png'
     },
     {
         firstName: 'Captain',
         lastName: 'America',
         realName: 'Steve Rogers',
         weapon: 'Vibranium Shield',
-        photo: 'https://www.marvel.com/characters/captain-america/captain-america'
+        photo: 'imgs/capam.png'
     },
     {
         firstName: 'Thor',
         lastName: 'Odinson',
         realName: 'Thor Odinson',
         weapon: 'Mjolnir',
-        photo: 'https://www.marvel.com/characters/thor/thor'
+        photo: 'imgs/thor.png'
     },
     {
         firstName: 'Black',
         lastName: 'Widow',
         realName: 'Natasha Romanoff',
         weapon: 'Electroshock Batons',
-        photo: 'https://www.marvel.com/characters/black-widow/black-widow'
+        photo: 'imgs/widow.png'
     },
     {
         firstName: 'Hawkeye',
         lastName: '',
         realName: 'Clint Barton',
         weapon: 'Bow and Trick Arrows',
-        photo: 'https://www.marvel.com/characters/hawkeye/hawkeye'
+        photo: 'imgs/hawkeye.png'
     },
     {
         firstName: 'Spider',
         lastName: 'Man',
         realName: 'Peter Parker',
         weapon: 'Web-shooters',
-        photo: 'https://www.marvel.com/characters/spider-man/spider-man'
+        photo: 'imgs/spiderman.png'
     },
     {
         firstName: 'Doctor',
         lastName: 'Strange',
         realName: 'Stephen Strange',
         weapon: 'Mystic Arts / Eye of Agamotto',
-        photo: 'https://www.marvel.com/characters/doctor-strange/doctor-strange'
+        photo: 'imgs/strange.png'
     },
     {
         firstName: 'Black',
         lastName: 'Panther',
         realName: 'T’Challa',
         weapon: 'Vibranium Suit and Claws',
-        photo: 'https://www.marvel.com/characters/black-panther/black-panther'
+        photo: 'imgs/panther.png'
     },
     {
         firstName: 'Scarlet',
         lastName: 'Witch',
         realName: 'Wanda Maximoff',
         weapon: 'Chaos Magic',
-        photo: 'https://www.marvel.com/characters/scarlet-witch/scarlet-witch'
+        photo: 'imgs/witch.png'
     },
     {
         firstName: 'Ant',
         lastName: 'Man',
         realName: 'Scott Lang',
         weapon: 'Pym Particles Suit',
-        photo: 'https://www.marvel.com/characters/ant-man/ant-man'
+        photo: 'imgs/antman.png'
     },
     {
         firstName: 'Wolverine',
         lastName: '',
-        realName: 'James Howlett',
+        realName: 'James Howlett/Logan',
         weapon: 'Adamantium Claws and Healing Factor',
-        photo: 'https://www.marvel.com/characters/wolverine/wolverine'
+        photo: 'imgs/bub.png'
     },
     {
         firstName: 'Storm',
         lastName: '',
         realName: 'Ororo Munroe',
         weapon: 'Weather Manipulation',
-        photo: 'https://www.marvel.com/characters/storm/storm'
+        photo: 'imgs/storm.png'
     },
     {
         firstName: 'Cyclops',
         lastName: '',
         realName: 'Scott Summers',
         weapon: 'Optic Blasts',
-        photo: 'https://www.marvel.com/characters/cyclops/cyclops'
+        photo: 'imgs/scott.png'
     },
     {
-        firstName: 'Jean',
-        lastName: 'Grey',
-        realName: 'Jean Grey',
+        firstName: 'Phoenix',
+        lastName: '',
+        realName: 'Jean Grey Summers',
         weapon: 'Telepathy and Telekinesis',
-        photo: 'https://www.marvel.com/characters/jean-grey/jean-grey'
+        photo: 'imgs/jean.png'
     },
     {
         firstName: 'Beast',
         lastName: '',
         realName: 'Henry McCoy',
         weapon: 'Enhanced Strength and Agility',
-        photo: 'https://www.marvel.com/characters/beast/beast'
+        photo: 'imgs/beast.png'
     },
     {
         firstName: 'Gambit',
         lastName: '',
         realName: 'Remy LeBeau',
         weapon: 'Charged Playing Cards',
-        photo: 'https://www.marvel.com/characters/gambit/gambit'
+        photo: 'imgs/gambit.png'
     },
     {
         firstName: 'Rogue',
         lastName: '',
         realName: 'Anna Marie',
         weapon: 'Power Absorption',
-        photo: 'https://www.marvel.com/characters/rogue/rogue'
+        photo: 'imgs/rogue.png'
     },
     {
         firstName: 'Deadpool',
         lastName: '',
         realName: 'Wade Wilson',
         weapon: 'Regenerative Healing Factor and Katanas',
-        photo: 'https://www.marvel.com/characters/deadpool/deadpool'
+        photo: 'imgs/wade.png'
     },
     {
         firstName: 'Venom',
         lastName: '',
         realName: 'Eddie Brock',
         weapon: 'Symbiote Powers',
-        photo: 'https://www.marvel.com/characters/venom/venom'
+        photo: 'imgs/venom.png'
     },
     {
         firstName: 'Magneto',
         lastName: '',
         realName: 'Max Eisenhardt',
         weapon: 'Magnetic Fields',
-        photo: 'https://www.marvel.com/characters/magneto/magneto'
+        photo: 'imgs/max.png'
     },
     {
         firstName: 'Doctor',
         lastName: 'Doom',
         realName: 'Victor Von Doom',
         weapon: 'Power Armor and Sorcery',
-        photo: 'https://www.marvel.com/characters/doctor-doom/doctor-doom'
+        photo: 'imgs/doom.png'
     },
     {
         firstName: 'Thanos',
         lastName: '',
         realName: 'Thanos',
         weapon: 'Infinity Gauntlet',
-        photo: 'https://www.marvel.com/characters/thanos/thanos'
+        photo: 'imgs/thanos.png'
     },
     {
         firstName: 'Loki',
         lastName: '',
         realName: 'Loki Laufeyson',
         weapon: 'Sorcery and Illusions',
-        photo: 'https://www.marvel.com/characters/loki/loki'
+        photo: 'imgs/loki.png'
     },
     {
         firstName: 'Ultron',
         lastName: '',
         realName: 'Ultron',
         weapon: 'Artificial Intelligence and Energy Blasts',
-        photo: 'https://www.marvel.com/characters/ultron/ultron'
+        photo: 'imgs/ultron.png'
     },
     {
         firstName: 'Red',
         lastName: 'Skull',
         realName: 'Johann Schmidt',
         weapon: 'Cosmic Cube',
-        photo: 'https://www.marvel.com/characters/red-skull/red-skull'
+        photo: 'imgs/'
     },
     {
         firstName: 'Green',
         lastName: 'Goblin',
         realName: 'Norman Osborn',
         weapon: 'Pumpkin Bombs and Goblin Glider',
-        photo: 'https://www.marvel.com/characters/green-goblin/green-goblin'
+        photo: 'imgs/'
     },
     {
         firstName: 'Kingpin',
         lastName: '',
         realName: 'Wilson Fisk',
         weapon: 'Superhuman Strength and Criminal Empire',
-        photo: 'https://www.marvel.com/characters/kingpin/kingpin'
+        photo: 'imgs/'
     },
     {
         firstName: 'Black',
         lastName: 'Cat',
         realName: 'Felicia Hardy',
         weapon: 'Enhanced Agility and Luck Manipulation',
-        photo: 'https://www.marvel.com/characters/black-cat/black-cat'
+        photo: 'imgs/'
     },
     {
         firstName: 'Mysterio',
         lastName: '',
         realName: 'Quentin Beck',
         weapon: 'Illusions and Special Effects',
-        photo: 'https://www.marvel.com/characters/mysterio/mysterio'
+        photo: 'imgs/'
     },
     {
         firstName: 'Rhino',
         lastName: '',
         realName: 'Aleksei Sytsevich',
         weapon: 'Superhuman Strength and Durability',
-        photo: 'https://www.marvel.com/characters/rhino/rhino'
+        photo: 'imgs/'
     },
     {
         firstName: 'Sand',
         lastName: 'Man',
         realName: 'Flint Marko',
         weapon: 'Sand Manipulation',
-        photo: 'https://www.marvel.com/characters/sandman/sandman'
+        photo: 'imgs/'
     },
     {
         firstName: 'Electro',
         lastName: '',
         realName: 'Max Dillon',
         weapon: 'Electricity Manipulation',
-        photo: 'https://www.marvel.com/characters/electro/electro'
+        photo: 'imgs/'
     },
     {
         firstName: 'Doctor',
         lastName: 'Octopus',
         realName: 'Otto Octavius',
         weapon: 'Mechanical Arms',
-        photo: 'https://www.marvel.com/characters/doctor-octopus/doctor-octopus'
+        photo: 'imgs/'
     },
     {
         firstName: 'Kraven',
         lastName: 'the',
         realName: 'Sergei Kravinoff',
         weapon: 'Enhanced Strength and Tracking',
-        photo: 'https://www.marvel.com/characters/kraven-the-hunter/kraven-the-hunter'
+        photo: 'imgs/'
     },
     {
         firstName: 'Shocker',
         lastName: '',
         realName: 'Herman Schultz',
         weapon: 'Vibro-smash Gauntlets',
-        photo: 'https://www.marvel.com/characters/shocker/shocker'
+        photo: 'imgs/'
     },
     {
         firstName: 'Scorpion',
         lastName: '',
         realName: 'Mac Gargan',
         weapon: 'Mechanical Tail and Enhanced Strength',
-        photo: 'https://www.marvel.com/characters/scorpion/scorpion'
+        photo: 'imgs/'
     },
     {
         firstName: 'Vulture',
         lastName: '',
         realName: 'Adrian Toomes',
         weapon: 'Winged Flight and Enhanced Strength',
-        photo: 'https://www.marvel.com/characters/vulture/vulture'
-    },
-    {
-        firstName: 'Sand',
-        lastName: 'Man',
-        realName: 'Flint Marko',
-        weapon: 'Sand Manipulation',
-        photo: 'https://www.marvel.com/characters/sandman-flint-marko'
+        photo: 'imgs/'
     }
+
 ];
 // Fallback for image loading issues
 window.players.forEach(player => {

@@ -730,3 +730,8 @@ body {
         font-size: 0.75rem;
     }
 }
+
+.card-img {
+    margin: auto;
+    padding: auto;
+}
