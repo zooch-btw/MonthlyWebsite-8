@@ -30,6 +30,8 @@ body {
     overflow-x: hidden;
     /* Center content horizontally */
     text-align: center;
+    /* Smooth background transitions */
+    transition: background 0.5s;
 }
 
 /* Style headings and nav with comic-book aesthetic */
@@ -78,20 +80,15 @@ h3,
 
 /* Define pulsing border animation */
 @keyframes glowBorder {
-
     /* Start and end with gold border */
     0%,
     100% {
         border-image-source: linear-gradient(90deg, transparent, #ffd700, transparent);
     }
-
-    /* Fallback: infinityGold */
     /* Transition to blue border */
     50% {
         border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent);
     }
-
-    /* Fallback: cosmicBlue */
 }
 
 /* Style navbar brand and links */
@@ -117,7 +114,6 @@ h3,
     text-decoration: none;
     /* Add red glow */
     text-shadow: 0 0 10px #ff2a44;
-    /* Fallback: heroRed */
 }
 
 /* Hover and focus effects for nav links */
@@ -128,18 +124,16 @@ h3,
     color: #ffd700 !important;
     /* Add gold glow */
     text-shadow: 0 0 15px #ffd700;
-    /* Fallback: infinityGold */
 }
 
 /* Style navbar logo with static glow */
 .navbar-logo {
-    /* Set width for logo */
-    width: 44px;
+    /* Set max height for logo */
+    max-height: 40px;
     /* Maintain aspect ratio */
     height: auto;
     /* Add blue glow effect */
     filter: drop-shadow(0 0 8px #1e90ff) brightness(1.2);
-    /* Fallback: cosmicBlue */
     /* Center logo */
     display: block;
     margin: 0 auto;
@@ -185,13 +179,11 @@ h3,
 
 /* Define background shimmer animation */
 @keyframes cosmicShimmer {
-
     /* Normal brightness at start/end */
     0%,
     100% {
         filter: brightness(1);
     }
-
     /* Increase brightness and contrast at midpoint */
     50% {
         filter: brightness(1.2) contrast(1.1);
@@ -232,23 +224,25 @@ h3,
 /* Morning/afternoon glow animation */
 #VictoryTxt {
     /* Green glow for victory */
+    color: #00ff00;
+    text-shadow: 0 0 12px rgba(0, 255, 0, 0.7);
     animation: victoryGlow 1.5s ease-in-out infinite alternate;
 }
 
 /* Evening/night glow animation */
 #LossTxt {
     /* Red glow for loss */
+    color: #ff2a44;
+    text-shadow: 0 0 12px rgba(255, 42, 68, 0.7);
     animation: lossGlow 1.5s ease-in-out infinite alternate;
 }
 
 /* Define victory glow animation */
 @keyframes victoryGlow {
-
     /* Start with green shadow */
     0% {
         text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #28a745;
     }
-
     /* End with brighter green */
     100% {
         text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00;
@@ -257,12 +251,10 @@ h3,
 
 /* Define loss glow animation */
 @keyframes lossGlow {
-
     /* Start with red shadow */
     0% {
         text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333, 0 0 40px #ff3333;
     }
-
     /* End with brighter red */
     100% {
         text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000;
@@ -300,7 +292,6 @@ h3,
     transform: scale(1.1);
     /* Add gold glow */
     box-shadow: 0 0 20px #ffd700;
-    /* Fallback: infinityGold */
 }
 
 /* Button ripple effect */
@@ -425,18 +416,15 @@ h3,
 
 /* Define star drift animation */
 @keyframes starDrift {
-
     /* Start position */
     0% {
         transform: translate(0, 0);
         opacity: 1;
     }
-
     /* Fade at midpoint */
     50% {
         opacity: 0.5;
     }
-
     /* End position, fully faded */
     100% {
         transform: translate(150px, -150px);
@@ -446,19 +434,16 @@ h3,
 
 /* Define nebula drift animation */
 @keyframes nebulaDrift {
-
     /* Start position and scale */
     0% {
         transform: translate(0, 0) scale(1);
         opacity: 0.8;
     }
-
     /* Midpoint with scale and fade */
     50% {
         opacity: 0.3;
         transform: translate(100px, -100px) scale(1.2);
     }
-
     /* End position, fully faded */
     100% {
         transform: translate(200px, -200px) scale(1);
@@ -483,18 +468,15 @@ h3,
 
 /* Define comet trail animation */
 @keyframes cometTrail {
-
     /* Start position */
     0% {
         transform: translateX(0);
         opacity: 0.7;
     }
-
     /* Fade at midpoint */
     50% {
         opacity: 0.3;
     }
-
     /* End position, fully faded */
     100% {
         transform: translateX(-50px);
@@ -531,12 +513,97 @@ body.night {
 }
 
 /* ============================================================
-   7) Responsive Design
+   7) Card and Image Styles
+   ============================================================ */
+
+/* Container for card images with fixed aspect ratio */
+.card-img-container {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 1:1 square aspect ratio */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0d1b2a; /* Nebula dark background for gaps */
+}
+
+/* Image styling to fill container */
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fill container, may crop edges */
+    object-position: center;
+    max-width: 100%;
+    max-height: 100%;
+    border-bottom: 2px solid #ffd700; /* Gold border for visual separation */
+}
+
+/* Style hero card with consistent layout */
+.hero-card {
+    transition: transform 0.2s;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(211, 24, 24, 0.9); /* Fallback: heroRed */
+    border: 2px solid #ffd700; /* Fallback: infinityGold */
+    box-shadow: 0 0 15px #1e90ff; /* Fallback: cosmicBlue */
+}
+
+/* Hover effect for hero card */
+.hero-card:hover {
+    transform: scale(1.05);
+}
+
+/* Style card body for content alignment */
+.hero-card .card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Style card title */
+.hero-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-wrap: balance;
+    margin-bottom: 0.5rem;
+}
+
+/* Style card text */
+.hero-card .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Style role badge */
+.badge-role {
+    font-size: 0.85rem;
+    padding: 0.5em 1em;
+    margin-bottom: 0.75rem;
+    border-radius: 12px;
+    color: #f0f8ff; /* Fallback: starWhite */
+    background-color: rgba(48, 148, 255, 0.8); /* Fallback: cosmicBlue */
+}
+
+/* Style placeholder card for errors */
+.placeholder-card {
+    background: rgba(13, 27, 42, 0.9); /* Fallback: nebulaDark */
+    color: #f0f8ff; /* Fallback: starWhite */
+    text-align: center;
+    border: 2px solid #ffd700; /* Fallback: infinityGold */
+    border-radius: 8px;
+}
+
+/* ============================================================
+   8) Responsive Design
    ============================================================ */
 
 /* Styles for tablet and below */
 @media (max-width: 768px) {
-
     /* Adjust hero content padding */
     .hero-content {
         padding: 2rem 1.5rem;
@@ -565,11 +632,23 @@ body.night {
     #particle-bg>span {
         animation-duration: 15s;
     }
+
+    /* Adjust card title and text for smaller screens */
+    .hero-card .card-title {
+        font-size: 1.1rem;
+    }
+
+    .hero-card .card-text {
+        font-size: 0.85rem;
+    }
+
+    .badge-role {
+        font-size: 0.75rem;
+    }
 }
 
 /* Styles for mobile */
 @media (max-width: 576px) {
-
     /* Further adjust hero content */
     .hero-content {
         padding: 1.5rem 1rem;
@@ -595,7 +674,7 @@ body.night {
 
     /* Reduce logo size */
     .navbar-logo {
-        width: 36px;
+        max-height: 36px;
     }
 
     /* Reduce star particle size */
@@ -604,134 +683,39 @@ body.night {
         width: 3px;
         height: 3px;
     }
+
+    /* Adjust card image container for mobile */
+    .card-img-container {
+        aspect-ratio: 4 / 3; /* Slightly rectangular for mobile */
+    }
 }
 
 /* ============================================================
-   8) Utility Classes
+   9) Utility Classes
    ============================================================ */
 
 /* Text color utilities */
 .text-hero-red {
-    color: #ff2a44 !important;
+    color: #ff2a44 !important; /* Fallback: heroRed */
 }
 
-/* Fallback: heroRed */
 .text-cosmic-blue {
-    color: #1e90ff !important;
+    color: #1e90ff !important; /* Fallback: cosmicBlue */
 }
 
-/* Fallback: cosmicBlue */
 .text-infinity-gold {
-    color: #ffd700 !important;
+    color: #ffd700 !important; /* Fallback: infinityGold */
 }
-
-/* Fallback: infinityGold */
 
 /* Background color utilities */
 .bg-hero-red {
-    background: #ff2a44 !important;
+    background: #ff2a44 !important; /* Fallback: heroRed */
 }
 
-/* Fallback: heroRed */
 .bg-cosmic-blue {
-    background: #1e90ff !important;
+    background: #1e90ff !important; /* Fallback: cosmicBlue */
 }
 
-/* Fallback: cosmicBlue */
 .bg-nebula-dark {
-    background: #0d1b2a !important;
-}
-
-/* Fallback: nebulaDark */
-
-body {
-    transition: background 0.5s;
-    font-family: 'Nunito', sans-serif;
-}
-
-.navbar-logo {
-    max-height: 40px;
-}
-
-.hero-card {
-    transition: transform 0.2s;
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-}
-
-.hero-card:hover {
-    transform: scale(1.05);
-}
-
-.hero-card .card-img-top {
-    object-fit: cover;
-    height: 150px;
-    border-bottom: 2px solid #ffd700;
-}
-
-.hero-card .card-body {
-    padding: 1.25rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.hero-card .card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    text-wrap: balance;
-    margin-bottom: 0.5rem;
-}
-
-.hero-card .card-text {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    word-break: break-word;
-    hyphens: auto;
-}
-
-.badge-role {
-    font-size: 0.85rem;
-    padding: 0.5em 1em;
-    margin-bottom: 0.75rem;
-    border-radius: 12px;
-}
-
-.placeholder-card {
-    background: rgba(13, 27, 42, 0.9);
-    color: #f0f8ff;
-    text-align: center;
-    border: 2px solid #ffd700;
-    border-radius: 8px;
-}
-
-#VictoryTxt {
-    color: #00ff00;
-    text-shadow: 0 0 12px rgba(0, 255, 0, 0.7);
-}
-
-#LossTxt {
-    color: #ff2a44;
-    text-shadow: 0 0 12px rgba(255, 42, 68, 0.7);
-}
-
-@media (max-width: 768px) {
-    .hero-card .card-title {
-        font-size: 1.1rem;
-    }
-
-    .hero-card .card-text {
-        font-size: 0.85rem;
-    }
-
-    .badge-role {
-        font-size: 0.75rem;
-    }
-}
-
-.card-img {
-    margin: auto;
-    padding: auto;
+    background: #0d1b2a !important; /* Fallback: nebulaDark */
 }
