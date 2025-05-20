@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Static dataset of Marvel milestones
     const milestones = [
-        { year: '1939', title: 'The Beginning', description: 'Marvel started as Timely Comics, introducing characters like the Human Torch and Namor the Sub-Mariner.', image: 'https://via.placeholder.com/300x200?text=1939' },
-        { year: '1961', title: 'The Fantastic Four', description: 'Stan Lee and Jack Kirby launched the Fantastic Four, ushering in the Marvel Age of Comics.', image: 'https://via.placeholder.com/300x200?text=1961' },
-        { year: '2008', title: 'The MCU Begins', description: 'The release of Iron Man marked the start of the Marvel Cinematic Universe, a global phenomenon.', image: 'https://via.placeholder.com/300x200?text=2008' }
+        { year: '1939', title: 'The Beginning', description: 'Marvel started as Timely Comics, introducing characters like the Human Torch and Namor the Sub-Mariner.', image: 'marvel.png' },
+        { year: '1961', title: 'The Fantastic Four', description: 'Stan Lee and Jack Kirby launched the Fantastic Four, ushering in the Marvel Age of Comics.', image: 'marvel.png' },
+        { year: '2008', title: 'The MCU Begins', description: 'The release of Iron Man marked the start of the Marvel Cinematic Universe, a global phenomenon.', image: 'marvel.png' }
     ];
 
     // Function to load milestone data (simplified since data is static)
