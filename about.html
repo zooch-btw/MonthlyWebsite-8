@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Set character encoding to UTF-8 -->
+    <meta charset="utf-8">
+    <!-- Ensure responsive viewport scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Page title reflecting the new about section -->
+    <title>Marvel Universe | About Marvel</title>
+    <!-- Bootstrap CSS for responsive design -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Custom fonts for Marvel theme -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS for glow effects -->
+    <link rel="stylesheet" href="glow.css">
+    <!-- Custom CSS for general styling -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Favicon placeholder -->
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=Marvel">
+</head>
+
+<body>
+    <!-- Navbar with Marvel branding -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Marvel Universe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
+                aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMarvel">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="roster.html">Roster</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="about.html">About</a>
+                    </li>
+                </ul>
+                <img src="https://via.placeholder.com/100?text=Marvel" alt="Marvel Logo"
+                    class="navbar-logo d-none d-lg-block">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content container -->
+    <main class="container py-4 text-center">
+        <!-- Page header with Marvel-themed styling -->
+        <h1 class="mb-4">About Marvel</h1>
+
+        <!-- Introduction to Marvel section -->
+        <section class="mb-5">
+            <h2 class="mb-3">Our Legacy</h2>
+            <p class="lead">
+                Marvel Entertainment, LLC, a powerhouse in the world of entertainment, has been captivating audiences
+                since 1939. Originally founded as Timely Comics, Marvel evolved into a cultural phenomenon, creating
+                iconic characters and stories that resonate across generations.
+            </p>
+        </section>
+
+        <!-- History timeline section -->
+        <section class="mb-5">
+            <h2 class="mb-3">A Journey Through Time</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <!-- Milestone 1: Founding -->
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="https://via.placeholder.com/300x200?text=1939" class="card-img-top"
+                            alt="1939 Founding">
+                        <div class="card-body">
+                            <h5 class="card-title" id="VictoryTxt">1939: The Beginning</h5>
+                            <p class="card-text">
+                                Marvel started as Timely Comics, introducing characters like the Human Torch and Namor
+                                the Sub-Mariner.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Milestone 2: Silver Age -->
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="https://via.placeholder.com/300x200?text=1961" class="card-img-top"
+                            alt="1961 Silver Age">
+                        <div class="card-body">
+                            <h5 class="card-title" id="VictoryTxt">1961: The Fantastic Four</h5>
+                            <p class="card-text">
+                                Stan Lee and Jack Kirby launched the Fantastic Four, ushering in the Marvel Age of
+                                Comics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Milestone 3: MCU Launch -->
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="https://via.placeholder.com/300x200?text=2008" class="card-img-top"
+                            alt="2008 MCU Launch">
+                        <div class="card-body">
+                            <h5 class="card-title" id="VictoryTxt">2008: The MCU Begins</h5>
+                            <p class="card-text">
+                                The release of Iron Man marked the start of the Marvel Cinematic Universe, a global
+                                phenomenon.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact and Vision section -->
+        <section>
+            <h2 class="mb-3">Our Impact and Vision</h2>
+            <p class="lead">
+                Marvel has inspired millions through comics, films, TV shows, and more, fostering a sense of heroism,
+                diversity, and imagination. Our vision is to continue expanding the Marvel Universe, bringing new
+                stories
+                and experiences to fans worldwide.
+            </p>
+        </section>
+    </main>
+
+    <!-- Bootstrap JS bundle for interactivity -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- Custom script for about page -->
+    <script src="about.js"></script>
+</body>
+
+</html>
