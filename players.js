@@ -189,7 +189,7 @@ window.players = [
         lastName: '',
         realName: 'Ultron',
         weapon: 'Artificial Intelligence and Energy Blasts',
-        photo: 'imgs/ultron.png',
+        photo: 'imgs/ai.png',
         skill: 'Network Hijacking: Controls digital systems.'
     },
     {
@@ -197,7 +197,7 @@ window.players = [
         lastName: 'Skull',
         realName: 'Johann Schmidt',
         weapon: 'Cosmic Cube',
-        photo: 'imgs/',
+        photo: 'imgs/skull.png',
         skill: 'Strategic Manipulation: Orchestrates complex schemes.'
     },
     {
@@ -205,7 +205,7 @@ window.players = [
         lastName: 'Goblin',
         realName: 'Norman Osborn',
         weapon: 'Pumpkin Bombs and Goblin Glider',
-        photo: 'imgs/',
+        photo: 'imgs/osborn.png',
         skill: 'Insanity Inducing Gas: Disorients foes with chemicals.'
     },
     {
@@ -213,7 +213,7 @@ window.players = [
         lastName: '',
         realName: 'Wilson Fisk',
         weapon: 'Superhuman Strength and Criminal Empire',
-        photo: 'imgs/',
+        photo: 'imgs/fisk.png',
         skill: 'Criminal Overlord: Controls underworld networks.'
     },
     {
@@ -221,7 +221,7 @@ window.players = [
         lastName: 'Cat',
         realName: 'Felicia Hardy',
         weapon: 'Enhanced Agility and Luck Manipulation',
-        photo: 'imgs/',
+        photo: 'imgs/cat.png',
         skill: 'Probability Shift: Alters luck in her favor.'
     },
     {
@@ -229,7 +229,7 @@ window.players = [
         lastName: '',
         realName: 'Quentin Beck',
         weapon: 'Illusions and Special Effects',
-        photo: 'imgs/',
+        photo: 'imgs/illusion.png',
         skill: 'Holographic Deception: Creates lifelike illusions.'
     },
     {
@@ -237,7 +237,7 @@ window.players = [
         lastName: '',
         realName: 'Aleksei Sytsevich',
         weapon: 'Superhuman Strength and Durability',
-        photo: 'imgs/',
+        photo: 'imgs/rhino.png',
         skill: 'Unstoppable Charge: Crushes obstacles in a rampage.'
     },
     {
@@ -245,7 +245,7 @@ window.players = [
         lastName: 'Man',
         realName: 'Flint Marko',
         weapon: 'Sand Manipulation',
-        photo: 'imgs/',
+        photo: 'imgs/sand.png',
         skill: 'Sand Reformation: Rebuilds body from sand particles.'
     },
     {
@@ -253,7 +253,7 @@ window.players = [
         lastName: '',
         realName: 'Max Dillon',
         weapon: 'Electricity Manipulation',
-        photo: 'imgs/',
+        photo: 'imgs/dillon.png',
         skill: 'Power Surge: Overloads electrical systems.'
     },
     {
@@ -261,7 +261,7 @@ window.players = [
         lastName: 'Octopus',
         realName: 'Otto Octavius',
         weapon: 'Mechanical Arms',
-        photo: 'imgs/',
+        photo: 'imgs/ock.png',
         skill: 'Multitasking Mastery: Controls arms independently.'
     },
     {
@@ -269,7 +269,7 @@ window.players = [
         lastName: 'the Hunter',
         realName: 'Sergei Kravinoff',
         weapon: 'Enhanced Strength and Tracking',
-        photo: 'imgs/',
+        photo: 'imgs/hunt.png',
         skill: 'Predator Instinct: Tracks prey across any terrain.'
     },
     {
@@ -277,7 +277,7 @@ window.players = [
         lastName: '',
         realName: 'Herman Schultz',
         weapon: 'Vibro-smash Gauntlets',
-        photo: 'imgs/',
+        photo: 'imgs/shock.png',
         skill: 'Shockwave Burst: Emits area-wide vibrations.'
     },
     {
@@ -285,7 +285,7 @@ window.players = [
         lastName: '',
         realName: 'Mac Gargan',
         weapon: 'Mechanical Tail and Enhanced Strength',
-        photo: 'imgs/',
+        photo: 'imgs/sting.png',
         skill: 'Venomous Sting: Paralyzes with tail strike.'
     },
     {
@@ -293,7 +293,7 @@ window.players = [
         lastName: '',
         realName: 'Adrian Toomes',
         weapon: 'Winged Flight and Enhanced Strength',
-        photo: 'imgs/',
+        photo: 'imgs/prey.png',
         skill: 'Aerial Assault: Dive-bombs with precision.'
     }
 ];

@@ -757,3 +757,9 @@ body.night {
     background: #0d1b2a !important;
     /* Fallback: nebulaDark */
 }
+
+#cds1,
+#cds2,
+#cds3 {
+    background-color: black;
+}
