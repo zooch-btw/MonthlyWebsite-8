@@ -80,11 +80,13 @@ h3,
 
 /* Define pulsing border animation */
 @keyframes glowBorder {
+
     /* Start and end with gold border */
     0%,
     100% {
         border-image-source: linear-gradient(90deg, transparent, #ffd700, transparent);
     }
+
     /* Transition to blue border */
     50% {
         border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent);
@@ -179,11 +181,13 @@ h3,
 
 /* Define background shimmer animation */
 @keyframes cosmicShimmer {
+
     /* Normal brightness at start/end */
     0%,
     100% {
         filter: brightness(1);
     }
+
     /* Increase brightness and contrast at midpoint */
     50% {
         filter: brightness(1.2) contrast(1.1);
@@ -239,10 +243,12 @@ h3,
 
 /* Define victory glow animation */
 @keyframes victoryGlow {
+
     /* Start with green shadow */
     0% {
         text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #28a745;
     }
+
     /* End with brighter green */
     100% {
         text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00;
@@ -251,10 +257,12 @@ h3,
 
 /* Define loss glow animation */
 @keyframes lossGlow {
+
     /* Start with red shadow */
     0% {
         text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333, 0 0 30px #ff3333, 0 0 40px #ff3333;
     }
+
     /* End with brighter red */
     100% {
         text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000;
@@ -416,15 +424,18 @@ h3,
 
 /* Define star drift animation */
 @keyframes starDrift {
+
     /* Start position */
     0% {
         transform: translate(0, 0);
         opacity: 1;
     }
+
     /* Fade at midpoint */
     50% {
         opacity: 0.5;
     }
+
     /* End position, fully faded */
     100% {
         transform: translate(150px, -150px);
@@ -434,16 +445,19 @@ h3,
 
 /* Define nebula drift animation */
 @keyframes nebulaDrift {
+
     /* Start position and scale */
     0% {
         transform: translate(0, 0) scale(1);
         opacity: 0.8;
     }
+
     /* Midpoint with scale and fade */
     50% {
         opacity: 0.3;
         transform: translate(100px, -100px) scale(1.2);
     }
+
     /* End position, fully faded */
     100% {
         transform: translate(200px, -200px) scale(1);
@@ -468,15 +482,18 @@ h3,
 
 /* Define comet trail animation */
 @keyframes cometTrail {
+
     /* Start position */
     0% {
         transform: translateX(0);
         opacity: 0.7;
     }
+
     /* Fade at midpoint */
     50% {
         opacity: 0.3;
     }
+
     /* End position, fully faded */
     100% {
         transform: translateX(-50px);
@@ -519,23 +536,27 @@ body.night {
 /* Container for card images with fixed aspect ratio */
 .card-img-container {
     width: 100%;
-    aspect-ratio: 1 / 1; /* 1:1 square aspect ratio */
+    aspect-ratio: 1 / 1;
+    /* 1:1 square aspect ratio */
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0d1b2a; /* Nebula dark background for gaps */
+    background-color: #0d1b2a;
+    /* Nebula dark background for gaps */
 }
 
 /* Image styling to fill container */
 .hero-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Fill container, may crop edges */
+    object-fit: cover;
+    /* Fill container, may crop edges */
     object-position: center;
     max-width: 100%;
     max-height: 100%;
-    border-bottom: 2px solid #ffd700; /* Gold border for visual separation */
+    border-bottom: 2px solid #ffd700;
+    /* Gold border for visual separation */
 }
 
 /* Style hero card with consistent layout */
@@ -544,9 +565,12 @@ body.night {
     min-height: 400px;
     display: flex;
     flex-direction: column;
-    background: rgba(211, 24, 24, 0.9); /* Fallback: heroRed */
-    border: 2px solid #ffd700; /* Fallback: infinityGold */
-    box-shadow: 0 0 15px #1e90ff; /* Fallback: cosmicBlue */
+    background: rgba(211, 24, 24, 0.9);
+    /* Fallback: heroRed */
+    border: 2px solid #ffd700;
+    /* Fallback: infinityGold */
+    box-shadow: 0 0 15px #1e90ff;
+    /* Fallback: cosmicBlue */
 }
 
 /* Hover effect for hero card */
@@ -585,16 +609,21 @@ body.night {
     padding: 0.5em 1em;
     margin-bottom: 0.75rem;
     border-radius: 12px;
-    color: #f0f8ff; /* Fallback: starWhite */
-    background-color: rgba(48, 148, 255, 0.8); /* Fallback: cosmicBlue */
+    color: #f0f8ff;
+    /* Fallback: starWhite */
+    background-color: rgba(48, 148, 255, 0.8);
+    /* Fallback: cosmicBlue */
 }
 
 /* Style placeholder card for errors */
 .placeholder-card {
-    background: rgba(13, 27, 42, 0.9); /* Fallback: nebulaDark */
-    color: #f0f8ff; /* Fallback: starWhite */
+    background: rgba(13, 27, 42, 0.9);
+    /* Fallback: nebulaDark */
+    color: #f0f8ff;
+    /* Fallback: starWhite */
     text-align: center;
-    border: 2px solid #ffd700; /* Fallback: infinityGold */
+    border: 2px solid #ffd700;
+    /* Fallback: infinityGold */
     border-radius: 8px;
 }
 
@@ -604,6 +633,7 @@ body.night {
 
 /* Styles for tablet and below */
 @media (max-width: 768px) {
+
     /* Adjust hero content padding */
     .hero-content {
         padding: 2rem 1.5rem;
@@ -649,6 +679,7 @@ body.night {
 
 /* Styles for mobile */
 @media (max-width: 576px) {
+
     /* Further adjust hero content */
     .hero-content {
         padding: 1.5rem 1rem;
@@ -686,7 +717,8 @@ body.night {
 
     /* Adjust card image container for mobile */
     .card-img-container {
-        aspect-ratio: 4 / 3; /* Slightly rectangular for mobile */
+        aspect-ratio: 4 / 3;
+        /* Slightly rectangular for mobile */
     }
 }
 
@@ -696,26 +728,32 @@ body.night {
 
 /* Text color utilities */
 .text-hero-red {
-    color: #ff2a44 !important; /* Fallback: heroRed */
+    color: #ff2a44 !important;
+    /* Fallback: heroRed */
 }
 
 .text-cosmic-blue {
-    color: #1e90ff !important; /* Fallback: cosmicBlue */
+    color: #1e90ff !important;
+    /* Fallback: cosmicBlue */
 }
 
 .text-infinity-gold {
-    color: #ffd700 !important; /* Fallback: infinityGold */
+    color: #ffd700 !important;
+    /* Fallback: infinityGold */
 }
 
 /* Background color utilities */
 .bg-hero-red {
-    background: #ff2a44 !important; /* Fallback: heroRed */
+    background: #ff2a44 !important;
+    /* Fallback: heroRed */
 }
 
 .bg-cosmic-blue {
-    background: #1e90ff !important; /* Fallback: cosmicBlue */
+    background: #1e90ff !important;
+    /* Fallback: cosmicBlue */
 }
 
 .bg-nebula-dark {
-    background: #0d1b2a !important; /* Fallback: nebulaDark */
+    background: #0d1b2a !important;
+    /* Fallback: nebulaDark */
 }
