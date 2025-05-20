@@ -119,32 +119,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     };
 
+    const playSound = (type) => {
+        const sound = document.getElementById(`${type}Sound`);
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(() => console.warn(`${type} sound failed to play`));
+        }
+    };
+
     const toggleHeroSelection = (hero, btn) => {
-        const selectedHeroes = JSON.parse(sessionStorage.getItem('selectedHeroes') || '[]');
+        const playerSelect = document.getElementById('playerSelect');
+        const player = playerSelect.value;
+        const selectedHeroes = JSON.parse(sessionStorage.getItem(`${player}Heroes`) || '[]');
         const index = selectedHeroes.findIndex(h => h.id === hero.id);
         if (index >= 0) {
             selectedHeroes.splice(index, 1);
             btn.classList.remove('selected', 'btn-marvel-red');
             btn.classList.add('btn-outline-light');
             btn.textContent = 'Select';
+            playSound('select');
         } else {
             if (selectedHeroes.length >= 3) {
                 const modal = new bootstrap.Modal(document.getElementById('maxHeroesModal'));
                 modal.show();
+                playSound('moreInfo');
                 return;
             }
             selectedHeroes.push({ id: hero.id, firstName: hero.firstName, realName: hero.realName, weapon: hero.weapon, photo: hero.photo, skill: hero.skill });
             btn.classList.remove('btn-outline-light');
             btn.classList.add('selected', 'btn-marvel-red');
             btn.textContent = 'Deselect';
+            playSound('select');
         }
-        sessionStorage.setItem('selectedHeroes', JSON.stringify(selectedHeroes));
+        sessionStorage.setItem(`${player}Heroes`, JSON.stringify(selectedHeroes));
         styleCards();
         updateSelectButtons();
     };
 
     const updateSelectButtons = () => {
-        const selectedHeroes = JSON.parse(sessionStorage.getItem('selectedHeroes') || '[]');
+        const playerSelect = document.getElementById('playerSelect');
+        const player = playerSelect.value;
+        const selectedHeroes = JSON.parse(sessionStorage.getItem(`${player}Heroes`) || '[]');
         const buttons = document.querySelectorAll('.select-btn');
         buttons.forEach(btn => {
             const heroId = btn.dataset.heroId;
@@ -209,28 +224,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h5 class="card-title" id="${titleId}">${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}</h5>
                         <div class="badge badge-role">Real Name: ${sanitizeHTML(p.realName)}</div>
                         <p class="card-text">Weapon: ${sanitizeHTML(p.weapon)}</p>
-                        <button type="button" class="btn btn-sm btn-outline-light mt-2" data-bs-toggle="modal" data-bs-target="#${modalId}">More Info</button>
+                        <button type="button" class="btn btn-sm btn-outline-light mt-2 more-info-btn" data-bs-toggle="modal" data-bs-target="#${modalId}">More Info</button>
                         <button class="btn btn-sm btn-outline-light select-btn mt-2" data-hero-id="${p.id}">Select</button>
                     </div>
                 </div>
                 <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-describedby="${modalId}Desc" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="background: rgba(13, 27, 42, 0.98); border: 2px solid ${colors.infinityGold}; font-family: 'Arial', 'Helvetica', sans-serif;">
-                            <div class="modal-header" style="display: flex; justify-content: center; align-items: center; border-bottom: 1px solid ${colors.infinityGold}; padding: 20px;">
-                                <h5 class="modal-title" id="${modalId}Label" style="color: ${colors.starWhite}; font-size: 1.75rem; font-weight: bold; text-align: center; flex: 1; margin: 0; line-height: 1.4;">
-                                    ${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px; filter: brightness(1.5);"></button>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="${modalId}Label">${sanitizeHTML(p.firstName)} ${sanitizeHTML(p.lastName || '')}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body text-center" id="${modalId}Desc" style="color: ${colors.starWhite}; padding: 30px; font-size: 1.25rem; line-height: 1.6;">
+                            <div class="modal-body text-center">
                                 <h5 id="${titleId}" style="font-weight: bold; margin-bottom: 15px; color: ${colors.infinityGold};">
                                     ${p.skill && typeof p.skill === 'string' ? sanitizeHTML(p.skill) : 'No skill available'}
                                 </h5>
                             </div>
-                            <div class="modal-footer" style="justify-content: center; border-top: 1px solid ${colors.infinityGold}; padding: 20px;">
-                                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" style="padding: 10px 20px; font-size: 1rem; border-color: ${colors.infinityGold}; color: ${colors.starWhite}; transition: background-color 0.3s, color 0.3s;">
-                                    Close
-                                </button>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -267,6 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const selectBtn = col.querySelector('.select-btn');
             selectBtn.addEventListener('click', () => toggleHeroSelection(p, selectBtn));
+
+            const moreInfoBtn = col.querySelector('.more-info-btn');
+            moreInfoBtn.addEventListener('click', () => playSound('moreInfo'));
         });
 
         const cards = document.querySelectorAll('.hero-card');
@@ -321,10 +335,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializeApp = (players) => {
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
+        const playerSelect = document.getElementById('playerSelect');
         const grid = document.getElementById('rosterGrid');
 
-        if (!grid || !searchInput || !sortSelect) {
-            console.error('Missing DOM elements:', { grid, searchInput, sortSelect });
+        if (!grid || !searchInput || !sortSelect || !playerSelect) {
+            console.error('Missing DOM elements:', { grid, searchInput, sortSelect, playerSelect });
             if (grid) {
                 grid.innerHTML = `
                     <div class="col-12">
@@ -347,8 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const debouncedFilters = debounce(() => applyFilters(players, searchInput, sortSelect, hr), 300);
         searchInput.addEventListener('input', debouncedFilters);
         sortSelect.addEventListener('change', debouncedFilters);
+        playerSelect.addEventListener('change', updateSelectButtons);
 
         applyFilters(players, searchInput, sortSelect, hr);
+        updateSelectButtons();
     };
 
     loadPlayers();
