@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Marvel Universe | Roster</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="glow.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
@@ -15,28 +19,35 @@
             border: 2px solid #ffd700;
             color: #f0f8ff;
         }
-        .modal-header, .modal-footer {
+
+        .modal-header,
+        .modal-footer {
             border-color: #ffd700;
         }
+
         .btn-close-white {
             filter: brightness(1.5);
         }
+
         .btn-marvel-red {
             background-color: #ff2a44;
             border-color: #ff2a44;
         }
+
         .btn-marvel-red:hover {
             background-color: #e0233d;
             border-color: #e0233d;
         }
     </style>
 </head>
+
 <body>
     <div id="particle-bg"><span></span><span></span><span></span></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-marvel-dark shadow">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">Marvel Universe</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel" aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
+                aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMarvel">
@@ -54,7 +65,8 @@
         <h1 class="display-4 fw-bold mb-4">Hero Roster</h1>
         <div class="row mb-4 g-3 justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
-                <input type="search" id="searchInput" class="form-control shadow-sm" placeholder="Search heroes by name…" aria-label="Search heroes">
+                <input type="search" id="searchInput" class="form-control shadow-sm"
+                    placeholder="Search heroes by name…" aria-label="Search heroes">
             </div>
             <div class="col-12 col-md-4 col-lg-3">
                 <select id="sortSelect" class="form-select shadow-sm" aria-label="Sort options">
@@ -78,12 +90,16 @@
         </div>
         <div id="rosterGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center"></div>
     </main>
+    <footer class="p-3 m-3">
+        Created by Salvatore DiPalma &copy; 2025
+    </footer>
     <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="noHeroesModalLabel">No Heroes Selected</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Please select at least one hero for Player 1 (and Player 2 for multiplayer).</p>
@@ -100,7 +116,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="maxHeroesModalLabel">Maximum Heroes Selected</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>You can select up to 3 heroes per player. Deselect a hero to choose another.</p>
@@ -113,7 +130,9 @@
     </div>
     <audio id="selectSound" src="https://example.com/select.mp3"></audio>
     <audio id="moreInfoSound" src="https://example.com/moreinfo.mp3"></audio>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
     <script src="players.js"></script>
     <script src="roster.js"></script>
     <script>
@@ -130,4 +149,5 @@
         }
     </script>
 </body>
+
 </html>

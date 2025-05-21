@@ -1,275 +1,784 @@
+<!-- HTML document for Marvel Cosmic Arena game -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
+    <!-- Meta tags for character encoding and responsive viewport -->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Marvel Universe | Battle Arena</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="glow.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Page title -->
+    <title>Marvel Universe | Cosmic Arena</title>
+    <!-- Bootstrap CSS for styling and layout -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Custom fonts for visual theme -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Internal styles for game visuals -->
+    <link rel="stylesheet" href="glow.css" />
+    <link rel="stylesheet" href="style.css" />
     <style>
+        /* CSS custom properties for consistent theming */
         :root {
-            --hero-red: #ff2a44;
-            --cosmic-blue: #1e90ff;
-            --vibrant-purple: #6a0dad;
-            --infinity-gold: #ffd700;
-            --nebula-dark: #0d1b2a;
-            --star-white: #f0f8ff;
+            --cosmic-blue: #1a2b5f;
+            --vibrant-red: #e63946;
+            --glowing-gold: #f4d35e;
+            --nebula-dark: #0a0f2b;
+            --star-white: #f1faee;
+            --tech-gray: #457b9d;
+            --pulse-purple: #7209b7;
         }
-        .container-fluid { padding: 1rem; }
-        .row.g-3 { gap: 1rem; }
-        .card { max-width: 250px; margin: auto; transition: transform 0.2s; }
-        .card:hover { transform: scale(1.05); }
-        .card-img-top { max-height: 150px; object-fit: cover; }
-        .card-body { padding: 0.75rem; }
-        .card-title { font-size: 1.25rem; }
-        .card-text { font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .progress { height: 10px; margin-bottom: 0.5rem; }
-        .btn-sm { font-size: 0.8rem; padding: 0.25rem 0.5rem; }
-        .h4 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        #gameLogSidebar {
-            position: fixed;
-            top: 56px;
-            right: 0;
-            width: 250px;
-            height: calc(100vh - 56px);
-            background: rgba(13, 27, 42, 0.95);
-            border-left: 2px solid var(--infinity-gold);
-            padding: 1rem;
-            overflow-y: auto;
+
+        /* Body styling with gradient background and animation */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
             color: var(--star-white);
-            z-index: 1000;
+            overflow-x: hidden;
+            margin: 0;
+            position: relative;
+            animation: nebulaGlow 15s infinite alternate;
         }
-        #gameLogSidebar h2 { font-size: 1.25rem; }
-        #gameLogSidebar p { font-size: 0.85rem; }
-        .main-content { margin-right: 270px; }
-        .modal-content {
-            background: rgba(13, 27, 42, 0.9);
-            border: 2px solid var(--infinity-gold);
-            color: var(--star-white);
+
+        /* Background animation for glowing effect */
+        @keyframes nebulaGlow {
+            0% {
+                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            }
+
+            50% {
+                background: linear-gradient(135deg, #1d3557 0%, var(--cosmic-blue) 100%);
+            }
+
+            100% {
+                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            }
         }
-        .modal-header, .modal-body, .modal-footer {
-            border-color: var(--infinity-gold);
+
+        /* Container for main content */
+        .container-fluid {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        /* Styling for character cards with wave progress via border color */
+        .character-card {
+            width: clamp(120px, 15vw, 180px);
+            /* Scales between 120px and 180px based on viewport */
+            height: clamp(180px, 22.5vw, 270px);
+            /* Maintains aspect ratio */
+            margin: 0.5rem;
+            border: 4px solid var(--pulse-purple);
+            /* Default purple border */
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.5s;
+            position: relative;
+            cursor: pointer;
+            background: none;
+        }
+
+        /* Update card border based on wave progress (e.g., stronger purple as wave increases) */
+        .character-card.wave-progress-1 {
+            border-color: #a663cc;
+        }
+
+        /* Early wave */
+        .character-card.wave-progress-2 {
+            border-color: #8e55aa;
+        }
+
+        /* Mid wave */
+        .character-card.wave-progress-3 {
+            border-color: #7209b7;
+        }
+
+        /* Late wave */
+        /* Hover effect for cards */
+        .character-card:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 0 20px var(--glowing-gold);
+        }
+
+        /* Animation for damaged cards */
+        .character-card.damaged {
+            animation: shake 0.5s;
+        }
+
+        /* Styling for card images */
+        .character-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            filter: brightness(0.9);
+            transition: filter 0.3s;
+        }
+
+        /* Brighten image on card hover */
+        .character-card:hover .character-img {
+            filter: brightness(1.1);
+        }
+
+        /* Flexbox for card grids */
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Styling for section titles with responsive font size */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            text-transform: uppercase;
+            color: var(--glowing-gold);
+            text-shadow: 0 0 10px var(--glowing-gold);
+            margin-bottom: 1.5rem;
             text-align: center;
         }
-        .modal-title { color: var(--infinity-gold); }
-        .modal-body h6, .modal-body h5 { color: var(--infinity-gold); font-weight: bold; }
-        .modal-footer { justify-content: center; }
+
+        /* Game log sidebar styling with responsive width */
+        #gameLogSidebar {
+            position: fixed;
+            top: 70px;
+            /* Below navbar */
+            right: 0;
+            width: clamp(200px, 25vw, 300px);
+            /* Scales between 200px and 300px */
+            height: calc(100vh - 70px);
+            /* Full height minus navbar */
+            background: rgba(10, 15, 43, 0.95);
+            border-left: 3px solid var(--glowing-gold);
+            padding: 1.5rem;
+            overflow-y: auto;
+            color: var(--star-white);
+            z-index: 900;
+            /* Below navbar (z-index 1000) */
+            transition: transform 0.3s;
+        }
+
+        /* Hidden state for sidebar */
+        #gameLogSidebar.hidden {
+            transform: translateX(clamp(200px, 25vw, 300px));
+        }
+
+        /* Visible state for sidebar */
+        #gameLogSidebar.show {
+            transform: translateX(0);
+        }
+
+        /* Sidebar header styling with responsive font size */
+        #gameLogSidebar h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--glowing-gold);
+        }
+
+        /* Sidebar paragraph styling with responsive font size */
+        #gameLogSidebar p {
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+        }
+
+        /* Modal content styling */
+        .modal-content {
+            background: rgba(10, 15, 43, 0.95);
+            border: 3px solid var(--glowing-gold);
+            color: var(--star-white);
+            border-radius: 15px;
+        }
+
+        /* Modal header, body, footer styling */
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            border-color: var(--glowing-gold);
+            text-align: center;
+        }
+
+        /* Modal title styling with responsive font size */
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--glowing-gold);
+            text-shadow: 0 0 8px var(--glowing-gold);
+        }
+
+        /* Modal body text styling with responsive font size */
+        .modal-body h6,
+        .modal-body h5 {
+            color: var(--vibrant-red);
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        /* Center modal footer buttons */
+        .modal-footer {
+            justify-content: center;
+        }
+
+        /* Close button styling */
         .btn-close-white {
             filter: brightness(1.5);
         }
-        .btn-outline-light {
-            color: var(--star-white);
-            border-color: var(--star-white);
-        }
-        .btn-marvel-red {
-            background-color: var(--hero-red);
-            border-color: var(--hero-red);
-            color: var(--star-white);
-        }
-        .btn-marvel-red:hover {
-            background-color: #e0233d;
-            border-color: #e0233d;
-        }
-        .btn-marvel-info {
+
+        /* Cosmic button styling with responsive padding */
+        .btn-cosmic {
             background-color: var(--cosmic-blue);
-            border-color: var(--cosmic-blue);
+            border-color: var(--glowing-gold);
             color: var(--star-white);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
+            border-radius: 5px;
+            transition: all 0.3s;
         }
-        .btn-marvel-info:hover {
-            background-color: #187bcd;
-            border-color: #187bcd;
+
+        /* Cosmic button hover effect */
+        .btn-cosmic:hover {
+            background-color: var(--pulse-purple);
+            box-shadow: 0 0 15px var(--pulse-purple);
         }
-        .form-check-label { color: var(--star-white); }
-        .form-check-input:checked {
-            background-color: var(--cosmic-blue);
-            border-color: var(--cosmic-blue);
+
+        /* Action button styling with responsive padding */
+        .btn-action {
+            background-color: var(--vibrant-red);
+            border-color: var(--glowing-gold);
+            color: var(--star-white);
+            font-family: 'Montserrat', sans-serif;
+            padding: clamp(0.2rem, 0.8vw, 0.4rem) clamp(0.4rem, 1.5vw, 0.8rem);
+            border-radius: 5px;
+            margin: 0.2rem;
+            transition: all 0.3s;
         }
+
+        /* Action button hover effect */
+        .btn-action:hover {
+            background-color: var(--pulse-purple);
+            box-shadow: 0 0 10px var(--pulse-purple);
+        }
+
+        /* Info button styling with responsive padding */
+        .btn-info-custom {
+            background-color: var(--tech-gray);
+            border-color: var(--glowing-gold);
+            color: var(--star-white);
+            font-family: 'Montserrat', sans-serif;
+            padding: clamp(0.2rem, 0.8vw, 0.4rem) clamp(0.4rem, 1.5vw, 0.8rem);
+            border-radius: 5px;
+            margin: 0.2rem;
+        }
+
+        /* Info button hover effect */
+        .btn-info-custom:hover {
+            background-color: var(--pulse-purple);
+            box-shadow: 0 0 10px var(--pulse-purple);
+        }
+
+        /* Outline cosmic button styling */
+        .btn-outline-cosmic {
+            color: var(--star-white);
+            border-color: var(--glowing-gold);
+            transition: all 0.3s;
+        }
+
+        /* Outline cosmic button hover effect */
+        .btn-outline-cosmic:hover {
+            background-color: var(--glowing-gold);
+            color: var(--nebula-dark);
+        }
+
+        /* Header container for buttons and title */
         .header-container {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            margin-bottom: 2rem;
+            animation: pulseGlow 2s infinite;
         }
-        .tooltip-inner {
-            background-color: var(--nebula-dark);
+
+        /* Glowing animation for header */
+        @keyframes pulseGlow {
+            0% {
+                text-shadow: 0 0 5px var(--glowing-gold);
+            }
+
+            50% {
+                text-shadow: 0 0 15px var(--glowing-gold);
+            }
+
+            100% {
+                text-shadow: 0 0 5px var(--glowing-gold);
+            }
+        }
+
+        /* Progress HUD styling with responsive positioning */
+        #progressHUD {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 15, 43, 0.9);
+            border: 2px solid var(--glowing-gold);
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            z-index: 2000;
             color: var(--star-white);
-            border: 1px solid var(--infinity-gold);
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            gap: 1.5rem;
         }
-        .powerup-option {
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border: 1px solid var(--infinity-gold);
+
+        /* Cinematic overlay for victory/loss */
+        #cinematicOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            color: var(--glowing-gold);
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            text-shadow: 0 0 15px var(--glowing-gold);
+        }
+
+        /* Victory text styling */
+        .VictoryTxt {
+            color: var(--glowing-gold);
+            text-shadow: 0 0 12px var(--glowing-gold);
+        }
+
+        /* Loss text styling */
+        .LossTxt {
+            color: var(--vibrant-red);
+            text-shadow: 0 0 12px var(--vibrant-red);
+        }
+
+        /* Achievement list styling (hidden until modal) */
+        #achievementList {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+            display: none;
+            /* Hidden, shown in modal */
+        }
+
+        /* Achievement item styling with responsive padding */
+        #achievementList li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: clamp(0.5rem, 1.5vw, 0.75rem);
+            margin-bottom: 0.5rem;
             border-radius: 5px;
+            color: var(--star-white);
+            font-size: clamp(0.8rem, 2vw, 1rem);
         }
-        @media (max-width: 767.98px) {
-            #gameLogSidebar { width: 200px; }
-            .main-content { margin-right: 220px; }
-            .card { max-width: 200px; }
+
+        /* Navbar styling */
+        .navbar {
+            background: linear-gradient(180deg, var(--nebula-dark) 0%, rgba(10, 15, 43, 0.9) 100%);
+            border-bottom: 3px solid var(--glowing-gold);
+            padding: 0.5rem 1rem;
+            z-index: 1000;
+            /* Above sidebar */
+        }
+
+        /* Navbar brand and link styling with responsive font size */
+        .navbar-brand,
+        .nav-link {
+            color: var(--star-white) !important;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        /* Active nav link styling */
+        .nav-link.active {
+            color: var(--vibrant-red) !important;
+            text-shadow: 0 0 10px var(--vibrant-red);
+        }
+
+        /* Navbar logo styling with responsive size */
+        .navbar-logo {
+            max-width: clamp(60px, 10vw, 80px);
+            filter: drop-shadow(0 0 8px var(--pulse-purple));
+        }
+
+        /* Stats modal for hero details with responsive width */
+        .stats-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(200px, 25vw, 300px);
+            background: rgba(10, 15, 43, 0.95);
+            border: 2px solid var(--glowing-gold);
+            border-radius: 10px;
+            padding: 1rem;
+            color: var(--star-white);
+            z-index: 1500;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Show stats modal on card hover */
+        .character-card:hover .stats-modal {
+            display: block;
+        }
+
+        /* Fade-in animation for modals */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Shake animation for damaged cards */
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive adjustments for tablets (max-width: 768px) */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1.5rem;
+            }
+
+            #progressHUD {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn-cosmic {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Responsive adjustments for mobile (max-width: 576px) */
+        @media (max-width: 576px) {
+            .container-fluid {
+                padding: 1rem;
+            }
+
+            #gameLogSidebar {
+                width: 100%;
+                height: 50vh;
+                top: auto;
+                bottom: 0;
+                border-left: none;
+                border-top: 3px solid var(--glowing-gold);
+            }
+
+            #gameLogSidebar.hidden {
+                transform: translateY(50vh);
+            }
+
+            #gameLogSidebar.show {
+                transform: translateY(0);
+            }
+
+            .navbar-brand,
+            .nav-link {
+                font-size: 0.8rem;
+            }
+
+            .stats-modal {
+                width: 80%;
+                font-size: 0.8rem;
+            }
+
+            #progressHUD {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div id="particle-bg"><span></span><span></span><span></span></div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-marvel-dark shadow" style="background: linear-gradient(180deg, var(--nebula-dark) 0%, rgba(13, 27, 42, 0.9) 100%); border-bottom: 2px solid var(--infinity-gold);">
+    <!-- Progress HUD for game stats -->
+    <div id="progressHUD" aria-live="polite">
+        <span>Wave: <span id="waveDisplay">1</span></span>
+        <span>Score: <span id="scoreDisplay">0</span></span>
+        <span>Heroes: <span id="heroesDisplay">0/0</span></span>
+    </div>
+    <!-- Cinematic overlay for victory/loss messages -->
+    <div id="cinematicOverlay"></div>
+    <!-- Navbar for navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html" style="color: var(--star-white);">Marvel Universe</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel" aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="index.html">Marvel Cosmic Arena</a>
+            <!-- Navbar toggle for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
+                aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="navbarMarvel">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="home.html" style="color: var(--star-white);">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="roster.html" style="color: var(--star-white);">Roster</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html" style="color: var(--star-white);">About Marvel</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#" onclick="checkGameAccess()" style="color: var(--hero-red); text-shadow: 0 0 10px var(--hero-red);">Game</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="roster.html">Roster</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Marvel</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#"
+                            onclick="document.dispatchEvent(new Event('startGame'))">Game</a></li>
                 </ul>
-                <img src="marvel.png" alt="Marvel Logo" class="navbar-logo d-none d-lg-block" style="filter: drop-shadow(0 0 8px var(--cosmic-blue)); max-width: 100px;">
+                <!-- Navbar logo -->
+                <img src="https://via.placeholder.com/80?text=Marvel+Logo" alt="Marvel Logo"
+                    class="navbar-logo d-none d-lg-block">
             </div>
         </div>
     </nav>
+    <!-- Main game container -->
     <div class="container-fluid">
         <div class="row">
-            <main class="main-content col">
+            <main class="col">
+                <!-- Header with control buttons and title -->
                 <div class="header-container">
-                    <button type="button" class="btn btn-marvel-red" data-bs-toggle="modal" data-bs-target="#instructionsModal">Instructions</button>
-                    <button type="button" class="btn btn-marvel-red" id="restartGameBtn">Restart Game</button>
-                    <h1 class="display-4 fw-bold mb-3 text-center">Marvel Battle Arena</h1>
+                    <!-- Toggle sidebar button -->
+                    <button type="button" class="btn btn-cosmic toggle-sidebar" aria-label="Toggle game log sidebar">☰
+                        Log</button>
+                    <!-- Music toggle button -->
+                    <button type="button" class="btn btn-cosmic" id="musicToggle"
+                        aria-label="Toggle background music">Music: Off</button>
+                    <!-- Theme toggle (disabled) -->
+                    <button type="button" class="btn btn-cosmic" id="themeToggle" aria-label="Toggle theme">Theme:
+                        Cosmic</button>
+                    <!-- Settings modal button -->
+                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal" data-bs-target="#settingsModal"
+                        aria-label="Open settings">Settings</button>
+                    <!-- Achievements modal button -->
+                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
+                        data-bs-target="#achievementsModal" aria-label="View achievements">Achievements</button>
+                    <!-- Instructions modal button -->
+                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
+                        data-bs-target="#instructionsModal" aria-label="View game instructions">Instructions</button>
+                    <!-- Restart game button -->
+                    <button type="button" class="btn btn-cosmic" id="restartGameBtn"
+                        aria-label="Restart game">Restart</button>
+                    <!-- Main title -->
+                    <h1 class="section-title">Marvel Cosmic Arena</h1>
                 </div>
-                <div class="row g-3">
+                <!-- Game grids -->
+                <div class="row">
+                    <!-- Player heroes grid -->
                     <div class="col-12 col-lg-6">
-                        <h2 class="h4 mb-2">Player 1 Heroes</h2>
-                        <div id="player1HeroesGrid" class="row row-cols-1 row-cols-md-2 g-2"></div>
+                        <h2 class="section-title VictoryTxt">Heroes</h2>
+                        <div id="player1HeroesGrid" class="card-grid"></div>
                     </div>
+                    <!-- Opponent grid -->
                     <div class="col-12 col-lg-6">
-                        <h2 class="h4 mb-2" id="opponentTitle">Enemies</h2>
-                        <div id="opponentGrid" class="row row-cols-1 row-cols-md-2 g-2"></div>
+                        <h2 class="section-title LossTxt" id="opponentTitle">Enemies</h2>
+                        <div id="opponentGrid" class="card-grid"></div>
+                    </div>
+                </div>
+                <!-- Achievements list (hidden, shown in modal) -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h2 class="section-title VictoryTxt">Achievements</h2>
+                        <ul id="achievementList" aria-live="polite"></ul>
                     </div>
                 </div>
             </main>
-            <aside id="gameLogSidebar">
-                <h2 class="mb-2">Game Log</h2>
-                <div id="gameLog" class="text-white"></div>
+            <!-- Game log sidebar -->
+            <aside id="gameLogSidebar" class="hidden" aria-live="polite">
+                <h2 class="mb-3">Battle Log</h2>
+                <div id="gameLog"></div>
             </aside>
         </div>
     </div>
-    <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-describedby="instructionsModalDesc" aria-hidden="true">
+        <footer class="p-3 m-3">
+        Created by Salvatore DiPalma &copy; 2025
+    </footer>
+    <!-- Instructions modal -->
+    <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel"
+        aria-describedby="instructionsModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="instructionsModalLabel">Game Instructions</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <p>Welcome to Marvel Battle Arena! Select your heroes and battle enemies or another player in turn-based combat.</p>
+                <div class="modal-body">
+                    <p>Assemble your heroes in Marvel Cosmic Arena and face epic battles!</p>
                     <h6>Controls:</h6>
-                    <ul>
+                    <ul class="text-start">
                         <li><strong>Attack Button:</strong> Deal damage to a random enemy.</li>
-                        <li><strong>Special Button:</strong> Use a hero's unique special ability (e.g., stun, heal, multi-target).</li>
-                        <li><strong>Special Info Button:</strong> View a character's special ability details.</li>
+                        <li><strong>Special Button:</strong> Use powerful abilities (mana/cooldowns apply).</li>
+                        <li><strong>Info Button:</strong> View ability details.</li>
+                        <li><strong>Keyboard:</strong> 'A' for attack, 'S' for special.</li>
                     </ul>
                     <h6>Game Modes:</h6>
-                    <ul>
-                        <li><strong>Final Boss Mode:</strong> Defeat three waves of enemies, culminating in a battle against Thanos (single or multiplayer).</li>
-                        <li><strong>Infinite Mode:</strong> Survive endless waves of enemies with increasing difficulty (single or multiplayer).</li>
-                        <li><strong>Multiplayer Mode:</strong> Compete in a best-of-three match against another player's heroes (multiplayer only).</li>
+                    <ul class="text-start">
+                        <li><strong>Final Boss Mode:</strong> Defeat Thanos in three waves.</li>
+                        <li><strong>Infinite Mode:</strong> Survive endless waves.</li>
+                        <li><strong>Multiplayer Mode:</strong> Best-of-three match.</li>
                     </ul>
                     <h6>Powerups:</h6>
-                    <p>After each wave (except in Multiplayer Mode), choose one of three powerups to boost your heroes.</p>
-                    <ul>
-                        <li><strong>Health Boost:</strong> Restores 20 health to all heroes (max 100).</li>
-                        <li><strong>Attack Boost:</strong> Increases attack by 5 for all heroes.</li>
-                        <li><strong>Shield:</strong> Grants a one-turn shield to all heroes, blocking one attack.</li>
-                    </ul>
-                    <h6>Objective:</h6>
-                    <p>Reduce all enemy health to zero to win a wave. In multiplayer mode, win three waves to claim victory. In cooperative modes, work together to defeat enemies!</p>
+                    <p>Choose powerups after waves to boost heroes.</p>
+                    <h6>Scoring:</h6>
+                    <p>Earn points for defeating enemies, using specials, and clearing waves.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modeSelectionModal" tabindex="-1" aria-labelledby="modeSelectionModalLabel" aria-describedby="modeSelectionModalDesc" aria-hidden="true">
+    <!-- Mode selection modal (unused due to auto-start) -->
+    <div class="modal fade" id="modeSelectionModal" tabindex="-1" aria-labelledby="modeSelectionModalLabel"
+        aria-describedby="modeSelectionModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modeSelectionModalLabel">Select Game Mode</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <h6>Number of Players</h6>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="playerMode" id="singlePlayer" value="single" checked>
+                        <input class="form-check-input" type="radio" name="playerMode" id="singlePlayer" value="single"
+                            checked aria-label="Single Player">
                         <label class="form-check-label" for="singlePlayer">Single Player</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="playerMode" id="multiPlayer" value="multi">
+                        <input class="form-check-input" type="radio" name="playerMode" id="multiPlayer" value="multi"
+                            aria-label="Multiplayer">
                         <label class="form-check-label" for="multiPlayer">Multiplayer</label>
                     </div>
                     <h6 class="mt-3">Game Mode</h6>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="finalBossMode" value="finalBoss" checked>
+                        <input class="form-check-input" type="radio" name="gameMode" id="finalBossMode"
+                            value="finalBoss" checked aria-label="Final Boss Mode">
                         <label class="form-check-label" for="finalBossMode">Final Boss Mode</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="infiniteMode" value="infinite">
+                        <input class="form-check-input" type="radio" name="gameMode" id="infiniteMode" value="infinite"
+                            aria-label="Infinite Mode">
                         <label class="form-check-label" for="infiniteMode">Infinite Mode</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="multiplayerMode" value="multiplayer" disabled>
+                        <input class="form-check-input" type="radio" name="gameMode" id="multiplayerMode"
+                            value="multiplayer" disabled aria-label="Multiplayer Mode">
                         <label class="form-check-label" for="multiplayerMode">Multiplayer Mode</label>
+                    </div>
+                    <h6 class="mt-3">Difficulty</h6>
+                    <select id="difficultySelect" class="form-select" aria-label="Select difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="tutorialCheckbox"
+                            aria-label="Enable tutorial">
+                        <label class="form-check-label" for="tutorialCheckbox">Enable Tutorial</label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-marvel-red" id="startGameBtn">Start Game</button>
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-cosmic" id="startGameBtn" aria-label="Start game">Start
+                        Game</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel" aria-describedby="noHeroesModalDesc" aria-hidden="true">
+    <!-- No heroes selected modal -->
+    <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel"
+        aria-describedby="noHeroesModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="noHeroesModalLabel">No Heroes Selected</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Please select at least one hero for Player 1 (and Player 2 for multiplayer).</p>
+                    <p id="noHeroesMessage">Please select at least one hero for Player 1 (and Player 2 for multiplayer).
+                    </p>
                 </div>
                 <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-marvel-red text-white">Select Heroes</a>
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select heroes">Select Heroes</a>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-describedby="gameOverModalDesc" aria-hidden="true">
+    <!-- Game over modal -->
+    <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel"
+        aria-describedby="gameOverModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="gameOverModalLabel">Game Over</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <p id="gameOverMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-marvel-red text-white">Select New Heroes</a>
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select new heroes">Select New Heroes</a>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="specialInfoModal" tabindex="-1" aria-labelledby="specialInfoModalLabel" aria-describedby="specialInfoModalDesc" aria-hidden="true">
+    <!-- Special ability info modal -->
+    <div class="modal fade" id="specialInfoModal" tabindex="-1" aria-labelledby="specialInfoModalLabel"
+        aria-describedby="specialInfoModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="specialInfoModalLabel">Special Ability</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <h6 id="specialName"></h6>
@@ -277,77 +786,188 @@
                     <p id="specialUsage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="invalidModeModal" tabindex="-1" aria-labelledby="invalidModeModalLabel" aria-describedby="invalidModeModalDesc" aria-hidden="true">
+    <!-- Invalid mode selection modal -->
+    <div class="modal fade" id="invalidModeModal" tabindex="-1" aria-labelledby="invalidModeModalLabel"
+        aria-describedby="invalidModeModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="invalidModeModalLabel">Invalid Mode Selection</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Multiplayer game mode requires multiplayer player mode. Please select multiplayer player mode or choose a different game mode.</p>
+                    <p>Multiplayer game mode requires multiplayer player mode.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="roundCompleteModal" tabindex="-1" aria-labelledby="roundCompleteModalLabel" aria-describedby="roundCompleteModalDesc" aria-hidden="true">
+    <!-- Round complete modal -->
+    <div class="modal fade" id="roundCompleteModal" tabindex="-1" aria-labelledby="roundCompleteModalLabel"
+        aria-describedby="roundCompleteModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="roundCompleteModalLabel">Round Complete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <p id="roundCompleteMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-marvel-red" id="nextRoundBtn">Next Round</button>
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-cosmic" id="nextRoundBtn" aria-label="Next round">Next
+                        Round</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="powerupSelectionModal" tabindex="-1" aria-labelledby="powerupSelectionModalLabel" aria-describedby="powerupSelectionModalDesc" aria-hidden="true">
+    <!-- Powerup selection modal -->
+    <div class="modal fade" id="powerupSelectionModal" tabindex="-1" aria-labelledby="powerupSelectionModalLabel"
+        aria-describedby="powerupSelectionModalDesc">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="powerupSelectionModalLabel">Choose a Powerup</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Select one powerup to boost your heroes for the next wave.</p>
+                    <p>Select one powerup to boost your heroes.</p>
                     <div id="powerupOptions"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Skip</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Skip powerup">Skip</button>
                 </div>
             </div>
         </div>
     </div>
-    <audio id="attackSound" src="attack.mp3"></audio>
-    <audio id="specialSound" src="special.mp3"></audio>
-    <audio id="selectSound" src="select.mp3"></audio>
-    <audio id="moreInfoSound" src="moreInfo.mp3"></audio>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="game.js"></script>
+    <!-- Tutorial modal -->
+    <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel"
+        aria-describedby="tutorialModalDesc">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorialModalLabel">Tutorial</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center" id="tutorialContent">
+                    <p>Welcome to Marvel Cosmic Arena! Let's learn how to play.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cosmic next-tutorial-btn"
+                        aria-label="Next tutorial step">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Settings modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel"
+        aria-describedby="settingsModalDesc">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Game Settings</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h6>Sound Volume</h6>
+                    <input type="range" id="soundVolume" min="0" max="100" value="50" class="form-range"
+                        aria-label="Adjust sound volume">
+                    <h6 class="mt-3">Hero Skins</h6>
+                    <select id="skinSelect" class="form-select" aria-label="Select hero skin">
+                        <option value="classic">Classic</option>
+                        <option value="cosmic">Cosmic</option>
+                    </select>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="vibrationCheckbox" checked
+                            aria-label="Enable vibration">
+                        <label class="form-check-label" for="vibrationCheckbox">Enable Vibration (Mobile)</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cosmic" id="saveSettingsBtn"
+                        aria-label="Save settings">Save</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Achievements modal -->
+    <div class="modal fade" id="achievementsModal" tabindex="-1" aria-labelledby="achievementsModalLabel"
+        aria-describedby="achievementsModalDesc">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="achievementsModalLabel">Achievements</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <ul id="achievementList" aria-live="polite"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Audio elements for sound effects and music -->
+    <audio id="attackSound" preload="auto" src="https://cdn.freesound.org/previews/171/171104_2432228-lq.mp3"></audio>
+    <audio id="specialSound" preload="auto" src="https://cdn.freesound.org/previews/344/344690_5762272-lq.mp3"></audio>
+    <audio id="selectSound" preload="auto" src="https://cdn.freesound.org/previews/270/270306_4761266-lq.mp3"></audio>
+    <audio id="moreInfoSound" preload="auto" src="https://cdn.freesound.org/previews/242/242804_3159293-lq.mp3"></audio>
+    <audio id="backgroundMusic" preload="auto" src="https://cdn.freesound.org/previews/511/511484_9156144-lq.mp3"
+        loop></audio>
+    <!-- Bootstrap JS for modals and components -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <!-- Inline JavaScript for initialization -->
     <script>
-        function checkGameAccess() {
-            const player1Heroes = JSON.parse(sessionStorage.getItem('player1Heroes') || '[]');
-            if (player1Heroes.length === 0) {
-                const modal = new bootstrap.Modal(document.getElementById('noHeroesModal'));
-                modal.show();
+        // Initialize music toggle state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const music = document.getElementById('backgroundMusic');
+            const musicToggle = document.getElementById('musicToggle');
+            const isMusicOn = localStorage.getItem('musicState') === 'on';
+            if (isMusicOn) {
+                music.play().catch(e => console.warn('Music failed to play:', e));
+                musicToggle.textContent = 'Music: On';
             } else {
-                window.location.href = 'game.html';
+                music.pause();
+                musicToggle.textContent = 'Music: Off';
             }
-        }
+        });
+
+        // Toggle game log sidebar visibility
+        document.querySelector('.toggle-sidebar')?.addEventListener('click', () => {
+            const sidebar = document.getElementById('gameLogSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('show');
+            }
+        });
     </script>
+    <!-- Game logic script -->
+    <script src="game.js"></script>
+    <script src="players.js"></script>
 </body>
+
 </html>
