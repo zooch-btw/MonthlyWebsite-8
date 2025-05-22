@@ -18,8 +18,6 @@
     <!-- Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
     <!-- Internal styles for game visuals -->
-    <link rel="stylesheet" href="glow.css" />
-    <link rel="stylesheet" href="style.css" />
     <style>
         /* CSS custom properties for consistent theming */
         :root {
@@ -68,12 +66,9 @@
         /* Styling for character cards with wave progress via border color */
         .character-card {
             width: clamp(120px, 15vw, 180px);
-            /* Scales between 120px and 180px based on viewport */
             height: clamp(180px, 22.5vw, 270px);
-            /* Maintains aspect ratio */
             margin: 0.5rem;
             border: 4px solid var(--pulse-purple);
-            /* Default purple border */
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s, border-color 0.5s;
@@ -82,22 +77,19 @@
             background: none;
         }
 
-        /* Update card border based on wave progress (e.g., stronger purple as wave increases) */
+        /* Update card border based on wave progress */
         .character-card.wave-progress-1 {
             border-color: #a663cc;
         }
 
-        /* Early wave */
         .character-card.wave-progress-2 {
             border-color: #8e55aa;
         }
 
-        /* Mid wave */
         .character-card.wave-progress-3 {
             border-color: #7209b7;
         }
 
-        /* Late wave */
         /* Hover effect for cards */
         .character-card:hover {
             transform: scale(1.1) rotate(2deg);
@@ -147,19 +139,15 @@
         #gameLogSidebar {
             position: fixed;
             top: 70px;
-            /* Below navbar */
             right: 0;
             width: clamp(200px, 25vw, 300px);
-            /* Scales between 200px and 300px */
             height: calc(100vh - 70px);
-            /* Full height minus navbar */
             background: rgba(10, 15, 43, 0.95);
             border-left: 3px solid var(--glowing-gold);
             padding: 1.5rem;
             overflow-y: auto;
             color: var(--star-white);
             z-index: 900;
-            /* Below navbar (z-index 1000) */
             transition: transform 0.3s;
         }
 
@@ -372,7 +360,6 @@
             padding: 0;
             margin-top: 1rem;
             display: none;
-            /* Hidden, shown in modal */
         }
 
         /* Achievement item styling with responsive padding */
@@ -391,7 +378,6 @@
             border-bottom: 3px solid var(--glowing-gold);
             padding: 0.5rem 1rem;
             z-index: 1000;
-            /* Above sidebar */
         }
 
         /* Navbar brand and link styling with responsive font size */
@@ -473,7 +459,7 @@
             }
         }
 
-        /* Responsive adjustments for tablets (max-width: 768px) */
+        /* Responsive adjustments for tablets */
         @media (max-width: 768px) {
             .container-fluid {
                 padding: 1.5rem;
@@ -496,7 +482,7 @@
             }
         }
 
-        /* Responsive adjustments for mobile (max-width: 576px) */
+        /* Responsive adjustments for mobile */
         @media (max-width: 576px) {
             .container-fluid {
                 padding: 1rem;
@@ -538,25 +524,25 @@
 </head>
 
 <body>
-    <!-- Progress HUD for game stats -->
+    <!-- Progress HUD for displaying wave, score, and hero count -->
     <div id="progressHUD" aria-live="polite">
         <span>Wave: <span id="waveDisplay">1</span></span>
         <span>Score: <span id="scoreDisplay">0</span></span>
         <span>Heroes: <span id="heroesDisplay">0/0</span></span>
     </div>
-    <!-- Cinematic overlay for victory/loss messages -->
+    <!-- Cinematic overlay for victory or loss messages -->
     <div id="cinematicOverlay"></div>
     <!-- Navbar for navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow">
         <div class="container-fluid">
-            <!-- Navbar brand -->
+            <!-- Navbar brand with game title -->
             <a class="navbar-brand" href="index.html">Marvel Cosmic Arena</a>
-            <!-- Navbar toggle for mobile -->
+            <!-- Navbar toggle button for mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
                 aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <!-- Navbar links -->
+            <!-- Navbar links for navigation -->
             <div class="collapse navbar-collapse" id="navbarMarvel">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
@@ -565,7 +551,7 @@
                     <li class="nav-item"><a class="nav-link active" href="#"
                             onclick="document.dispatchEvent(new Event('startGame'))">Game</a></li>
                 </ul>
-                <!-- Navbar logo -->
+                <!-- Navbar logo image -->
                 <img src="https://via.placeholder.com/80?text=Marvel+Logo" alt="Marvel Logo"
                     class="navbar-logo d-none d-lg-block">
             </div>
@@ -575,40 +561,45 @@
     <div class="container-fluid">
         <div class="row">
             <main class="col">
-                <!-- Header with control buttons and title -->
+                <!-- Header with control buttons and game title -->
                 <div class="header-container">
-                    <!-- Toggle sidebar button -->
+                    <!-- Button to toggle game log sidebar -->
                     <button type="button" class="btn btn-cosmic toggle-sidebar" aria-label="Toggle game log sidebar">☰
                         Log</button>
-                    <!-- Music toggle button -->
+                    <!-- Button to toggle background music -->
                     <button type="button" class="btn btn-cosmic" id="musicToggle"
                         aria-label="Toggle background music">Music: Off</button>
-                    <!-- Theme toggle (disabled) -->
+                    <!-- Theme toggle button (disabled) -->
                     <button type="button" class="btn btn-cosmic" id="themeToggle" aria-label="Toggle theme">Theme:
                         Cosmic</button>
-                    <!-- Settings modal button -->
+                    <!-- Button to open settings modal -->
                     <button type="button" class="btn btn-cosmic" data-bs-toggle="modal" data-bs-target="#settingsModal"
                         aria-label="Open settings">Settings</button>
-                    <!-- Achievements modal button -->
+                    <!-- Button to open achievements modal -->
                     <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
                         data-bs-target="#achievementsModal" aria-label="View achievements">Achievements</button>
-                    <!-- Instructions modal button -->
+                    <!-- Button to open instructions modal -->
                     <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
                         data-bs-target="#instructionsModal" aria-label="View game instructions">Instructions</button>
-                    <!-- Restart game button -->
+                    <!-- Button to restart the game -->
                     <button type="button" class="btn btn-cosmic" id="restartGameBtn"
                         aria-label="Restart game">Restart</button>
-                    <!-- Main title -->
+                    <!-- Main game title -->
                     <h1 class="section-title">Marvel Cosmic Arena</h1>
                 </div>
-                <!-- Game grids -->
+                <!-- Game grids for heroes and enemies -->
                 <div class="row">
-                    <!-- Player heroes grid -->
+                    <!-- Player 1 heroes grid -->
                     <div class="col-12 col-lg-6">
-                        <h2 class="section-title VictoryTxt">Heroes</h2>
+                        <h2 class="section-title VictoryTxt">Player 1 Heroes</h2>
                         <div id="player1HeroesGrid" class="card-grid"></div>
                     </div>
-                    <!-- Opponent grid -->
+                    <!-- Player 2 heroes grid (for Multiplayer mode) -->
+                    <div class="col-12 col-lg-6" id="player2HeroesSection" style="display: none;">
+                        <h2 class="section-title VictoryTxt">Player 2 Heroes</h2>
+                        <div id="player2HeroesGrid" class="card-grid"></div>
+                    </div>
+                    <!-- Opponent (enemies) grid -->
                     <div class="col-12 col-lg-6">
                         <h2 class="section-title LossTxt" id="opponentTitle">Enemies</h2>
                         <div id="opponentGrid" class="card-grid"></div>
@@ -622,17 +613,18 @@
                     </div>
                 </div>
             </main>
-            <!-- Game log sidebar -->
+            <!-- Game log sidebar for battle events -->
             <aside id="gameLogSidebar" class="hidden" aria-live="polite">
                 <h2 class="mb-3">Battle Log</h2>
                 <div id="gameLog"></div>
             </aside>
         </div>
     </div>
-        <footer class="p-3 m-3">
-        Created by Salvatore DiPalma &copy; 2025
+    <!-- Footer with creator credit -->
+    <footer class="p-3 m-3 text-center">
+        Created by Salvatore DiPalma © 2025
     </footer>
-    <!-- Instructions modal -->
+    <!-- Instructions modal with game controls and rules -->
     <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel"
         aria-describedby="instructionsModalDesc">
         <div class="modal-dialog modal-dialog-centered">
@@ -668,7 +660,30 @@
             </div>
         </div>
     </div>
-    <!-- Mode selection modal (unused due to auto-start) -->
+    <!-- Hero selection modal for player1 and player2 -->
+    <div class="modal fade" id="heroSelectionModal" tabindex="-1" aria-labelledby="heroSelectionModalLabel"
+        aria-describedby="heroSelectionModalDesc">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="heroSelectionModalLabel">Select Heroes</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="selectionPlayer">Player 1: Select up to 5 Heroes</h6>
+                    <div id="heroSelectionGrid" class="card-grid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cosmic" id="confirmHeroesBtn"
+                        aria-label="Confirm heroes">Confirm</button>
+                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mode selection modal -->
     <div class="modal fade" id="modeSelectionModal" tabindex="-1" aria-labelledby="modeSelectionModalLabel"
         aria-describedby="modeSelectionModalDesc">
         <div class="modal-dialog modal-dialog-centered">
@@ -703,7 +718,7 @@
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="gameMode" id="multiplayerMode"
-                            value="multiplayer" disabled aria-label="Multiplayer Mode">
+                            value="multiplayer" aria-label="Multiplayer Mode">
                         <label class="form-check-label" for="multiplayerMode">Multiplayer Mode</label>
                     </div>
                     <h6 class="mt-3">Difficulty</h6>
@@ -727,7 +742,7 @@
             </div>
         </div>
     </div>
-    <!-- No heroes selected modal -->
+    <!-- Modal for no heroes selected -->
     <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel"
         aria-describedby="noHeroesModalDesc">
         <div class="modal-dialog modal-dialog-centered">
@@ -742,7 +757,8 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select heroes">Select Heroes</a>
+                    <button type="button" class="btn btn-cosmic" id="selectHeroesBtn" aria-label="Select heroes">Select
+                        Heroes</button>
                     <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
                         aria-label="Close">Close</button>
                 </div>
@@ -763,7 +779,8 @@
                     <p id="gameOverMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select new heroes">Select New Heroes</a>
+                    <button type="button" class="btn btn-cosmic" id="selectNewHeroesBtn"
+                        aria-label="Select new heroes">Select New Heroes</button>
                     <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
                         aria-label="Close">Close</button>
                 </div>
@@ -929,7 +946,7 @@
             </div>
         </div>
     </div>
-    <!-- Audio elements for sound effects and music -->
+    <!-- Audio elements for sound effects and background music -->
     <audio id="attackSound" preload="auto" src="https://cdn.freesound.org/previews/171/171104_2432228-lq.mp3"></audio>
     <audio id="specialSound" preload="auto" src="https://cdn.freesound.org/previews/344/344690_5762272-lq.mp3"></audio>
     <audio id="selectSound" preload="auto" src="https://cdn.freesound.org/previews/270/270306_4761266-lq.mp3"></audio>
@@ -940,7 +957,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-    <!-- Inline JavaScript for initialization -->
+    <!-- Inline JavaScript for music toggle and sidebar -->
     <script>
         // Initialize music toggle state on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -967,6 +984,7 @@
     </script>
     <!-- Game logic script -->
     <script src="game.js"></script>
+    <!-- Player data script -->
     <script src="players.js"></script>
 </body>
 
