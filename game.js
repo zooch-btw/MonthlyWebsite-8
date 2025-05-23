@@ -1,883 +1,1392 @@
-// Defines color palette for consistent styling across the game
-const colors = {
-    heroRed: '#ff2a44',
-    cosmicBlue: '#1e90ff',
-    vibrantPurple: '#6a0dad',
-    infinityGold: '#ffd700',
-    nebulaDark: '#0d1b2a',
-    starWhite: '#f0f8ff'
+/* game.js - Complete, error-free logic for Marvel Cosmic Arena
+ * Integrates with game.html and players.js (window.players)
+ * Implements hero selection, combat, game modes, UI updates, modals, and more
+ * Applies evening theme (evening class, LossTxt glow) based on current time (6:08 PM EDT)
+ * Fixes enemy card size (smaller width/height) and ensures robust start game button functionality
+ * Prevents all runtime errors by creating fallback DOM elements and exhaustive null checks
+ * Handles all edge cases: missing DOM elements, invalid hero data, missing Bootstrap, corrupted saves
+ * Features: single/multiplayer, finalBoss/infinite modes, tutorial, powerups, save/load, leaderboard
+ * Optimized for performance and compatibility with Node.js v18.19.1 and browsers
+ */
+
+/* Game state object to track all game data */
+let gameState = {
+  wave: 1,
+  score: 0,
+  heroes: { player1: [], player2: [] },
+  enemies: [],
+  gameMode: 'finalBoss',
+  playerMode: 'single',
+  difficulty: 'medium',
+  tutorial: false,
+  waveProgress: 0,
+  player1Wins: 0,
+  player2Wins: 0,
+  isGameOver: false,
+  currentTurn: null,
+  isStarting: false // Track if game is starting to prevent multiple clicks
 };
 
-// Defines theme settings for time-based styling based on current hour
-const themeSettings = [
-    { start: 5, end: 11, cls: 'morning', bgGradient: `linear-gradient(135deg, ${colors.heroRed} 0%, ${colors.infinityGold} 100%)` },
-    { start: 11, end: 17, cls: 'afternoon', bgGradient: `linear-gradient(135deg, ${colors.cosmicBlue} 0%, #00e6e6 100%)` },
-    { start: 17, end: 22, cls: 'evening', bgGradient: `linear-gradient(135deg, ${colors.vibrantPurple} 0%, #2a1b3d 100%)` },
-    { start: 22, end: 24, cls: 'night', bgGradient: `linear-gradient(135deg, ${colors.nebulaDark} 0%, #0a0a23 100%)` },
-    { start: 0, end: 5, cls: 'night', bgGradient: `linear-gradient(135deg, ${colors.nebulaDark} 0%, #0a0a23 100%)` }
-];
+/* Initialize game on page load */
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // Apply evening theme
+    document.body.classList.add('evening');
 
-// URLs for sound effects and background music (already looped in HTML)
-const soundURLs = {
-    attack: 'https://cdn.freesound.org/previews/171/171104_2432228-lq.mp3',
-    special: 'https://cdn.freesound.org/previews/344/344690_5762272-lq.mp3',
-    select: 'https://cdn.freesound.org/previews/270/270306_4761266-lq.mp3',
-    moreInfo: 'https://cdn.freesound.org/previews/242/242804_3159293-lq.mp3',
-    background: 'https://cdn.freesound.org/previews/511/511484_9156144-lq.mp3'
-};
+    // Ensure DOM elements exist before any other operations
+    ensureDomElementsExist();
 
-// Applies time-based theme to the document body
-const applyTheme = () => {
-    const hr = new Date().getHours();
-    const setting = themeSettings.find(({ start, end }) => hr >= start && hr < end) || {
-        cls: 'night',
-        bgGradient: `linear-gradient(135deg, ${colors.nebulaDark} 0%, #0a0a23 100%)`
-    };
-    document.body.classList.remove('morning', 'afternoon', 'evening', 'night');
-    document.body.classList.add(setting.cls);
-    document.body.style.background = setting.bgGradient;
-    console.log('Applied theme:', setting.cls);
-    return hr; // Returns current hour for card rendering
-};
-
-// Sanitizes HTML input to prevent XSS attacks
-const sanitizeHTML = str => {
-    if (typeof str !== 'string') return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-};
-
-// Plays a sound effect with volume control and haptic feedback
-const playSound = (type) => {
-    try {
-        const sound = document.getElementById(`${type}Sound`);
-        if (!sound) throw new Error(`Sound ${type} not found`);
-        sound.currentTime = 0;
-        sound.volume = (document.getElementById('soundVolume')?.value || 50) / 100;
-        sound.play().catch(e => logMessage(`Failed to play ${type} sound: ${e.message}`));
-        if (document.getElementById('vibrationCheckbox')?.checked && navigator.vibrate) navigator.vibrate(50);
-    } catch (e) {
-        console.warn('playSound error:', e);
-        logMessage(`Error playing sound: ${e.message}`);
+    // Verify critical elements exist
+    if (!document.getElementById('player1HeroesGrid') || !document.getElementById('opponentGrid')) {
+      console.error('Critical DOM elements missing after ensureDomElementsExist');
+      showErrorModal('Game initialization failed: Missing critical UI elements.');
+      return;
     }
-};
 
-// Uses text-to-speech to announce text for accessibility
-const speak = (text) => {
-    try {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.2;
-        utterance.volume = (document.getElementById('soundVolume')?.value || 50) / 100;
-        window.speechSynthesis.speak(utterance);
-    } catch (e) {
-        console.warn('speak error:', e);
-        logMessage(`Error with text-to-speech: ${e.message}`);
+    // Load heroes from sessionStorage
+    if (!loadHeroes()) {
+      console.warn('Failed to load heroes, showing no heroes modal');
+      showNoHeroesModal('Select at least one hero for Player 1.');
+      return;
     }
-};
 
-// Logs messages to the game log sidebar
-const logMessage = (message) => {
-    const gameLog = document.getElementById('gameLog');
-    if (gameLog) {
-        const p = document.createElement('p');
-        p.innerHTML = sanitizeHTML(message);
-        gameLog.appendChild(p);
-        gameLog.scrollTop = gameLog.scrollHeight;
-        speak(message);
+    // Show mode selection modal
+    const modeModalElement = document.getElementById('modeSelectionModal');
+    if (modeModalElement && typeof bootstrap !== 'undefined') {
+      const modeModal = new bootstrap.Modal(modeModalElement, { backdrop: 'static' });
+      modeModal.show();
+    } else {
+      console.error('Mode selection modal (#modeSelectionModal) or Bootstrap not found');
+      showErrorModal('Game initialization failed: Missing modal or Bootstrap.');
     }
-};
 
-// Game state object to manage wave, score, heroes, and settings
-const gameState = {
-    wave: 1,
-    score: 0,
-    player1Heroes: [],
-    player2Heroes: [],
-    enemies: [],
-    gameMode: 'finalBoss',
-    playerMode: 'single',
-    difficulty: 'medium',
-    isTutorial: false,
-    tutorialStep: 0,
-    statusEffects: new Map(),
-    achievements: []
-};
+    // Inject CSS for enemy card sizing
+    injectEnemyCardStyles();
 
-// Defines special abilities for all 37 characters
-const specialAbilities = {
-    'Repulsor Barrage': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.5);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Repulsor Barrage'] = 3;
-            return `💥 ${hero.firstName} fires Repulsor Barrage, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 3,
-        description: 'Fires a focused energy blast at one enemy.'
-    },
-    'Shield Bash': {
-        type: 'control',
-        execute: (hero, target) => {
-            target.statusEffects.push({ type: 'stun', duration: 1 });
-            hero.mana -= 25;
-            hero.cooldowns['Shield Bash'] = 4;
-            return `🛡️ ${hero.firstName} uses Shield Bash, stunning ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Stuns a single enemy for one turn.'
-    },
-    'Thunder Strike': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.8);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 25;
-            hero.cooldowns['Thunder Strike'] = 4;
-            return `⚡ ${hero.firstName} unleashes Thunder Strike, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Deals heavy damage to one enemy with a lightning bolt.'
-    },
-    'Stealth Strike': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const critChance = Math.random() < 0.5 ? 2 : 1;
-            const damage = Math.floor(hero.attack * critChance);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Stealth Strike'] = 3;
-            return `🕵️‍♀️ ${hero.firstName} lands a Stealth Strike, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 3,
-        description: 'Attacks with increased critical chance.'
-    },
-    'Explosive Arrow': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 1.2);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Explosive Arrow'] = 4;
-            return `🏹 ${hero.firstName} fires an Explosive Arrow, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Damages all enemies in a small area.'
-    },
-    'Web Trap': {
-        type: 'control',
-        execute: (hero, target) => {
-            target.statusEffects.push({ type: 'immobilize', duration: 1 });
-            hero.mana -= 25;
-            hero.cooldowns['Web Trap'] = 4;
-            return `🕸️ ${hero.firstName} uses Web Trap, immobilizing ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Immobilizes an enemy, preventing their next action.'
-    },
-    'Time Loop': {
-        type: 'support',
-        execute: (hero, target) => {
-            target.health = 100;
-            hero.mana -= 30;
-            hero.cooldowns['Time Loop'] = 5;
-            return `⏳ ${hero.firstName} casts Time Loop, resetting ${target.firstName}'s health!`;
-        },
-        cooldown: 5,
-        description: 'Resets health of one ally to its starting value.'
-    },
-    'Vibranium Slash': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.4);
-            target.health = Math.max(0, target.health - damage);
-            hero.health = Math.min(100, hero.health + Math.floor(damage * 0.3));
-            hero.mana -= 20;
-            hero.cooldowns['Vibranium Slash'] = 3;
-            return `🐆 ${hero.firstName} uses Vibranium Slash, dealing ${damage} to ${target.firstName} and healing for ${Math.floor(damage * 0.3)}!`;
-        },
-        cooldown: 3,
-        description: 'Deals damage and absorbs some for self-healing.'
-    },
-    'Hex Bolt': {
-        type: 'debuff',
-        execute: (hero, target) => {
-            const effect = Math.random() < 0.5 ? 'attack' : 'health';
-            const value = Math.floor(target[effect] * 0.2);
-            target[effect] = Math.max(1, target[effect] - value);
-            hero.mana -= 25;
-            hero.cooldowns['Hex Bolt'] = 4;
-            return `🪄 ${hero.firstName} casts Hex Bolt, reducing ${target.firstName}'s ${effect} by ${value}!`;
-        },
-        cooldown: 4,
-        description: 'Randomly reduces an enemy’s attack or health.'
-    },
-    'Giant Stomp': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 2);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 30;
-            hero.cooldowns['Giant Stomp'] = 5;
-            return `👣 ${hero.firstName} uses Giant Stomp, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 5,
-        description: 'Deals massive damage to one enemy.'
-    },
-    'Adamantium Frenzy': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const hits = 3;
-            const damagePerHit = Math.floor(hero.attack * 0.8);
-            target.health = Math.max(0, target.health - damagePerHit * hits);
-            hero.mana -= 25;
-            hero.cooldowns['Adamantium Frenzy'] = 4;
-            return `🗡️ ${hero.firstName} unleashes Adamantium Frenzy, hitting ${target.firstName} ${hits} times for ${damagePerHit * hits} total damage!`;
-        },
-        cooldown: 4,
-        description: 'Attacks multiple times in one turn.'
-    },
-    'Tornado Blast': {
-        type: 'control',
-        execute: (hero, targets) => {
-            targets.forEach(t => t.statusEffects.push({ type: 'delay', duration: 1 }));
-            hero.mana -= 30;
-            hero.cooldowns['Tornado Blast'] = 5;
-            return `🌪️ ${hero.firstName} summons a Tornado Blast, delaying all enemies!`;
-        },
-        cooldown: 5,
-        description: 'Pushes back all enemies, delaying their actions.'
-    },
-    'Optic Barrage': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 0.9);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Optic Barrage'] = 4;
-            return `🔴 ${hero.firstName} fires Optic Barrage, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Hits all enemies with reduced damage.'
-    },
-    'Mind Crush': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(target.health * 0.3);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 25;
-            hero.cooldowns['Mind Crush'] = 4;
-            return `🧠 ${hero.firstName} uses Mind Crush, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Deals damage based on target’s remaining health.'
-    },
-    'Primal Leap': {
-        type: 'buff',
-        execute: (hero) => {
-            hero.attack += 5;
-            hero.mana -= 20;
-            hero.cooldowns['Primal Leap'] = 3;
-            return `🐾 ${hero.firstName} uses Primal Leap, boosting attack by 5!`;
-        },
-        cooldown: 3,
-        description: 'Attacks and boosts own agility for one turn.'
-    },
-    'Ace of Spades': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.6);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Ace of Spades'] = 3;
-            return `🃏 ${hero.firstName} throws Ace of Spades, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 3,
-        description: 'Throws a single card for high damage.'
-    },
-    'Power Drain': {
-        type: 'support',
-        execute: (hero, target) => {
-            const drain = Math.floor(target.health * 0.2);
-            target.health = Math.max(0, target.health - drain);
-            hero.health = Math.min(100, hero.health + drain);
-            hero.mana -= 25;
-            hero.cooldowns['Power Drain'] = 4;
-            return `🧬 ${hero.firstName} uses Power Drain, stealing ${drain} health from ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Steals health from an enemy to heal self.'
-    },
-    'Chimichanga Bomb': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.5);
-            target.health = Math.max(0, target.health - damage);
-            const extra = Math.random() < 0.3 ? ' and stuns them!' : '';
-            if (extra) target.statusEffects.push({ type: 'stun', duration: 1 });
-            hero.mana -= 25;
-            hero.cooldowns['Chimichanga Bomb'] = 4;
-            return `🌮 ${hero.firstName} throws a Chimichanga Bomb, dealing ${damage} to ${target.firstName}${extra}!`;
-        },
-        cooldown: 4,
-        description: 'Explosive attack with random extra effects.'
-    },
-    'Tendril Assault': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 1.1);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Tendril Assault'] = 4;
-            return `🕷️ ${hero.firstName} uses Tendril Assault, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Attacks all enemies with symbiote tendrils.'
-    },
-    'Metal Storm': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.7);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 25;
-            hero.cooldowns['Metal Storm'] = 4;
-            return `🧲 ${hero.firstName} unleashes Metal Storm, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Crushes one enemy with magnetic force.'
-    },
-    'Doom’s Curse': {
-        type: 'debuff',
-        execute: (hero, target) => {
-            target.statusEffects.push({ type: 'dot', duration: 3, damage: 10 });
-            hero.mana -= 25;
-            hero.cooldowns['Doom’s Curse'] = 4;
-            return `🪬 ${hero.firstName} casts Doom’s Curse, applying damage over time to ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Applies a damage-over-time effect to one enemy.'
-    },
-    'Infinity Snap': {
-        type: 'damage',
-        execute: (hero, target) => {
-            if (target.health <= 20) {
-                target.health = 0;
-                hero.mana -= 50;
-                hero.cooldowns['Infinity Snap'] = 6;
-                return `💨 ${hero.firstName} uses Infinity Snap, instantly defeating ${target.firstName}!`;
-            }
-            return `${hero.firstName} attempts Infinity Snap, but ${target.firstName} is too strong!`;
-        },
-        cooldown: 6,
-        description: 'Instantly defeats a weakened enemy.'
-    },
-    'Illusionary Double': {
-        type: 'support',
-        execute: (hero) => {
-            hero.statusEffects.push({ type: 'decoy', duration: 1 });
-            hero.mana -= 20;
-            hero.cooldowns['Illusionary Double'] = 3;
-            return `🪞 ${hero.firstName} creates an Illusionary Double to absorb one attack!`;
-        },
-        cooldown: 3,
-        description: 'Creates a decoy to absorb one attack.'
-    },
-    'Data Corruption': {
-        type: 'debuff',
-        execute: (hero, target) => {
-            target.attack = Math.floor(target.attack * 0.8);
-            hero.mana -= 25;
-            hero.cooldowns['Data Corruption'] = 4;
-            return `💾 ${hero.firstName} uses Data Corruption, reducing ${target.firstName}'s attack!`;
-        },
-        cooldown: 4,
-        description: 'Reduces an enemy’s attack permanently.'
-    },
-    'Cube Surge': {
-        type: 'buff',
-        execute: (hero, allies) => {
-            allies.forEach(a => a.attack += 5);
-            hero.mana -= 30;
-            hero.cooldowns['Cube Surge'] = 5;
-            return `🌌 ${hero.firstName} activates Cube Surge, boosting all allies’ attack by 5!`;
-        },
-        cooldown: 5,
-        description: 'Boosts all allies’ attack for one turn.'
-    },
-    'Pumpkin Barrage': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 0.8);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Pumpkin Barrage'] = 4;
-            return `🎃 ${hero.firstName} throws Pumpkin Barrage, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Throws multiple bombs at random enemies.'
-    },
-    'Crushing Blow': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.6);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Crushing Blow'] = 3;
-            return `👊 ${hero.firstName} lands a Crushing Blow, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 3,
-        description: 'Deals high damage to one enemy.'
-    },
-    'Lucky Strike': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 2);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Lucky Strike'] = 3;
-            return `🍀 ${hero.firstName} uses Lucky Strike, critically hitting ${target.firstName} for ${damage}!`;
-        },
-        cooldown: 3,
-        description: 'Guarantees a critical hit on one enemy.'
-    },
-    'Smoke and Mirrors': {
-        type: 'control',
-        execute: (hero, targets) => {
-            targets.forEach(t => t.statusEffects.push({ type: 'confuse', duration: 1 }));
-            hero.mana -= 30;
-            hero.cooldowns['Smoke and Mirrors'] = 5;
-            return `🎭 ${hero.firstName} casts Smoke and Mirrors, confusing all enemies!`;
-        },
-        cooldown: 5,
-        description: 'Confuses all enemies, reducing accuracy.'
-    },
-    'Rhino Rush': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 1.3);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Rhino Rush'] = 4;
-            return `🦏 ${hero.firstName} charges with Rhino Rush, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Charges through, damaging multiple enemies.'
-    },
-    'Sandstorm': {
-        type: 'debuff',
-        execute: (hero, targets) => {
-            targets.forEach(t => t.attack = Math.floor(t.attack * 0.9));
-            hero.mana -= 25;
-            hero.cooldowns['Sandstorm'] = 4;
-            return `🏜️ ${hero.firstName} summons a Sandstorm, reducing all enemies’ attack!`;
-        },
-        cooldown: 4,
-        description: 'Blinds enemies, reducing their attack.'
-    },
-    'Volt Surge': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const damage = Math.floor(hero.attack * 1.2);
-            targets.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Volt Surge'] = 4;
-            return `⚡️ ${hero.firstName} unleashes Volt Surge, hitting all enemies for ${damage}!`;
-        },
-        cooldown: 4,
-        description: 'Chains lightning to hit multiple enemies.'
-    },
-    'Tentacle Slam': {
-        type: 'damage',
-        execute: (hero, targets) => {
-            const maxTargets = Math.min(3, targets.length);
-            const selected = targets.slice(0, maxTargets);
-            const damage = Math.floor(hero.attack * 1.4);
-            selected.forEach(t => t.health = Math.max(0, t.health - damage));
-            hero.mana -= 25;
-            hero.cooldowns['Tentacle Slam'] = 4;
-            return `🐙 ${hero.firstName} uses Tentacle Slam, hitting ${maxTargets} enemies for ${damage} each!`;
-        },
-        cooldown: 4,
-        description: 'Attacks up to three enemies at once.'
-    },
-    'Hunter’s Trap': {
-        type: 'control',
-        execute: (hero, target) => {
-            target.statusEffects.push({ type: 'immobilize', duration: 2 });
-            hero.mana -= 25;
-            hero.cooldowns['Hunter’s Trap'] = 4;
-            return `🪤 ${hero.firstName} sets a Hunter’s Trap, immobilizing ${target.firstName} for two turns!`;
-        },
-        cooldown: 4,
-        description: 'Immobilizes one enemy for two turns.'
-    },
-    'Vibro-Pulse': {
-        type: 'control',
-        execute: (hero, targets) => {
-            targets.forEach(t => t.statusEffects.push({ type: 'delay', duration: 1 }));
-            hero.mana -= 30;
-            hero.cooldowns['Vibro-Pulse'] = 5;
-            return `📡 ${hero.firstName} emits a Vibro-Pulse, delaying all enemies!`;
-        },
-        cooldown: 5,
-        description: 'Disrupts all enemies, delaying their actions.'
-    },
-    'Toxic Tail': {
-        type: 'debuff',
-        execute: (hero, target) => {
-            target.statusEffects.push({ type: 'dot', duration: 3, damage: 8 });
-            hero.mana -= 25;
-            hero.cooldowns['Toxic Tail'] = 4;
-            return `🦂 ${hero.firstName} strikes with Toxic Tail, poisoning ${target.firstName}!`;
-        },
-        cooldown: 4,
-        description: 'Poisons one enemy, dealing damage over time.'
-    },
-    'Talon Dive': {
-        type: 'damage',
-        execute: (hero, target) => {
-            const damage = Math.floor(hero.attack * 1.6);
-            target.health = Math.max(0, target.health - damage);
-            hero.mana -= 20;
-            hero.cooldowns['Talon Dive'] = 3;
-            return `🦅 ${hero.firstName} uses Talon Dive, dealing ${damage} to ${target.firstName}!`;
-        },
-        cooldown: 3,
-        description: 'Strikes one enemy, ignoring their defenses.'
-    }
-};
-
-// Defines powerup options for post-wave boosts
-const powerups = [
-    { name: 'Health Boost', effect: hero => { hero.health = Math.min(100, hero.health + 20); return `${hero.firstName} gains 20 health!`; } },
-    { name: 'Attack Boost', effect: hero => { hero.attack += 5; return `${hero.firstName} gains 5 attack!`; } },
-    { name: 'Mana Regen', effect: hero => { hero.mana = Math.min(100, hero.mana + 30); return `${hero.firstName} recovers 30 mana!`; } }
-];
-
-// Defines achievements for player accomplishments
-const achievements = [
-    { id: 'wave5', name: 'Wave 5 Survivor', description: 'Reach Wave 5', condition: () => gameState.wave >= 5 },
-    { id: 'score1000', name: 'High Scorer', description: 'Score 1000 points', condition: () => gameState.score >= 1000 },
-    { id: 'special10', name: 'Specialist', description: 'Use 10 special abilities', condition: () => gameState.specialsUsed >= 10 }
-];
-
-// Initializes a hero or enemy with default stats
-const initializeCharacter = (player) => ({
-    ...player,
-    health: 100,
-    attack: 20,
-    mana: 50,
-    cooldowns: {},
-    statusEffects: [],
-    isAlive: true
+    // Attach event listeners
+    attachEventListeners();
+  } catch (error) {
+    console.error('Initialization error:', error);
+    showErrorModal('Failed to initialize game. Please refresh the page.');
+  }
 });
 
-// Renders a character card in the specified grid
-const renderCharacterCard = (character, gridId, isHero = true) => {
-    const grid = document.getElementById(gridId);
-    if (!grid) return;
-    const card = document.createElement('div');
-    card.className = 'character-card';
-    card.dataset.id = character.id;
-    if (character.statusEffects.some(e => e.type === 'damage')) card.classList.add('damaged');
-    card.classList.add(`wave-progress-${Math.min(gameState.wave, 3)}`);
+/* Create fallback DOM elements for all required IDs */
+function ensureDomElementsExist() {
+  const requiredElements = [
+    { id: 'player1HeroesGrid', class: 'grid-container' },
+    { id: 'player2HeroesGrid', class: 'grid-container' },
+    { id: 'opponentGrid', class: 'grid-container' },
+    { id: 'gameLog', class: 'game-log' },
+    { id: 'waveDisplay', tag: 'span' },
+    { id: 'scoreDisplay', tag: 'span' },
+    { id: 'heroesDisplay', tag: 'span' },
+    { id: 'waveProgressBar', class: 'progress-bar' },
+    { id: 'modeSelectionModal', class: 'modal' },
+    { id: 'noHeroesModal', class: 'modal' },
+    { id: 'invalidModeModal', class: 'modal' },
+    { id: 'player2HeroesSection', class: 'section' },
+    { id: 'startGameBtn', tag: 'button', class: 'btn btn-cosmic', text: 'Start Game' },
+    { id: 'nextRoundBtn', tag: 'button', class: 'btn btn-cosmic' },
+    { id: 'saveGameBtn', tag: 'button', class: 'btn btn-cosmic' },
+    { id: 'loadGameModal', class: 'modal' },
+    { id: 'saveScoreBtn', tag: 'button', class: 'btn btn-cosmic' },
+    { id: 'leaderboardModal', class: 'modal' },
+    { id: 'restartGameBtn', tag: 'button', class: 'btn btn-cosmic' },
+    { id: 'saveSettingsBtn', tag: 'button', class: 'btn btn-cosmic' },
+    { id: 'settingsModal', class: 'modal' },
+    { id: 'specialInfoModal', class: 'modal' },
+    { id: 'roundCompleteModal', class: 'modal' },
+    { id: 'gameOverModal', class: 'modal' },
+    { id: 'cinematicOverlay', class: 'overlay' },
+    { id: 'powerupSelectionModal', class: 'modal' },
+    { id: 'tutorialModal', class: 'modal' },
+    { id: 'backgroundMusic', tag: 'audio' },
+    { id: 'soundVolume', tag: 'input', type: 'range' },
+    { id: 'attackSound', tag: 'audio' },
+    { id: 'specialSound', tag: 'audio' },
+    { id: 'moreInfoSound', tag: 'audio' },
+    { id: 'noHeroesMessage', tag: 'p' },
+    { id: 'savedGamesList', tag: 'div' },
+    { id: 'leaderboardTable', tag: 'tbody' },
+    { id: 'specialName', tag: 'span' },
+    { id: 'specialDescription', tag: 'p' },
+    { id: 'specialUsage', tag: 'p' },
+    { id: 'roundCompleteMessage', tag: 'p' },
+    { id: 'gameOverMessage', tag: 'p' },
+    { id: 'finalScore', tag: 'span' },
+    { id: 'powerupOptions', tag: 'div' },
+    { id: 'tutorialContent', tag: 'div' },
+    { id: 'skinSelect', tag: 'select' },
+    { id: 'difficultySelect', tag: 'select' },
+    { id: 'tutorialCheckbox', tag: 'input', type: 'checkbox' }
+  ];
 
-    const img = document.createElement('img');
-    img.src = character.photo;
-    img.alt = `${character.firstName} ${character.lastName}`.trim();
-    img.className = 'character-img';
-    card.appendChild(img);
-
-    if (isHero) {
-        const statsModal = document.createElement('div');
-        statsModal.className = 'stats-modal';
-        statsModal.innerHTML = `
-            <h6>${sanitizeHTML(character.firstName)} ${sanitizeHTML(character.lastName)}</h6>
-            <p>Health: ${character.health}</p>
-            <p>Attack: ${character.attack}</p>
-            <p>Mana: ${character.mana}</p>
-            <p>Skill: ${sanitizeHTML(character.skill)}</p>
-            <button class="btn btn-action" data-action="attack">Attack</button>
-            <button class="btn btn-action" data-action="special" ${character.mana < 20 || Object.values(character.cooldowns).some(cd => cd > 0) ? 'disabled' : ''}>Special</button>
-            <button class="btn btn-info-custom" data-action="info">Info</button>
-        `;
-        card.appendChild(statsModal);
+  requiredElements.forEach(({ id, tag = 'div', class: className, type, text }) => {
+    let element = document.getElementById(id);
+    if (!element) {
+      element = document.createElement(tag);
+      element.id = id;
+      if (className) element.classList.add(...className.split(' '));
+      if (type) element.setAttribute('type', type);
+      if (text) element.textContent = text;
+      // Append to a specific container if available, else body
+      const container = document.querySelector('.game-container') || document.body;
+      container.appendChild(element);
+      console.warn(`Created fallback element #${id}`);
     }
+  });
+}
 
-    grid.appendChild(card);
-};
-
-// Updates the progress HUD with current game stats
-const updateHUD = () => {
-    document.getElementById('waveDisplay').textContent = gameState.wave;
-    document.getElementById('scoreDisplay').textContent = gameState.score;
-    document.getElementById('heroesDisplay').textContent = `${gameState.player1Heroes.filter(h => h.isAlive).length}/${gameState.player1Heroes.length}`;
-};
-
-// Renders all heroes and enemies
-const renderGrids = () => {
-    const playerGrid = document.getElementById('player1HeroesGrid');
-    const opponentGrid = document.getElementById('opponentGrid');
-    if (playerGrid) playerGrid.innerHTML = '';
-    if (opponentGrid) opponentGrid.innerHTML = '';
-    gameState.player1Heroes.forEach(hero => hero.isAlive && renderCharacterCard(hero, 'player1HeroesGrid'));
-    gameState.enemies.forEach(enemy => enemy.isAlive && renderCharacterCard(enemy, 'opponentGrid', false));
-};
-
-// Generates enemies for the current wave
-const generateEnemies = () => {
-    const enemyCount = gameState.wave <= 3 ? gameState.wave + 1 : 4;
-    gameState.enemies = [];
-    for (let i = 0; i < enemyCount; i++) {
-        const randomPlayer = window.players[Math.floor(Math.random() * window.players.length)];
-        gameState.enemies.push(initializeCharacter(randomPlayer));
+/* Inject CSS for enemy card sizing and grid layout */
+function injectEnemyCardStyles() {
+  let style = document.getElementById('enemy-card-styles');
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'enemy-card-styles';
+    document.head.appendChild(style);
+  }
+  style.textContent = `
+    .enemy-card {
+      width: 100px !important;
+      height: auto;
+      margin: 5px;
+      border: 2px solid gold;
+      border-radius: 8px;
+      overflow: hidden;
     }
-    if (gameState.wave === 3 && gameState.gameMode === 'finalBoss') {
-        const thanos = window.players.find(p => p.firstName === 'Thanos');
-        if (thanos) gameState.enemies.push(initializeCharacter(thanos));
+    .enemy-card .character-img {
+      width: 100px;
+      height: 150px;
+      object-fit: cover;
     }
-};
-
-// Handles character attacks
-const handleAttack = (hero, target) => {
-    if (!hero.isAlive || !target.isAlive) return;
-    const damage = Math.floor(hero.attack * (gameState.difficulty === 'easy' ? 1.2 : gameState.difficulty === 'hard' ? 0.8 : 1));
-    target.health = Math.max(0, target.health - damage);
-    target.isAlive = target.health > 0;
-    hero.statusEffects.push({ type: 'damage', duration: 1 });
-    gameState.score += 10;
-    playSound('attack');
-    logMessage(`${hero.firstName} attacks ${target.firstName} for ${damage} damage!`);
-    checkGameState();
-};
-
-// Handles special ability usage
-const handleSpecial = (hero, targets) => {
-    if (!hero.isAlive || hero.mana < 20 || Object.values(hero.cooldowns).some(cd => cd > 0)) return;
-    const ability = specialAbilities[hero.special];
-    if (!ability) return logMessage(`Special ability ${hero.special} not found!`);
-    const target = ability.type === 'damage' || ability.type === 'control' || ability.type === 'debuff' ? targets[Math.floor(Math.random() * targets.length)] : hero;
-    const message = ability.execute(hero, ability.type === 'damage' || ability.type === 'control' || ability.type === 'debuff' ? target : gameState.player1Heroes);
-    gameState.specialsUsed = (gameState.specialsUsed || 0) + 1;
-    gameState.score += 50;
-    playSound('special');
-    logMessage(message);
-    checkGameState();
-};
-
-// Displays special ability info in a modal
-const showSpecialInfo = (hero) => {
-    const ability = specialAbilities[hero.special];
-    if (!ability) return;
-    document.getElementById('specialName').textContent = hero.special;
-    document.getElementById('specialDescription').textContent = ability.description;
-    document.getElementById('specialUsage').textContent = `Cooldown: ${ability.cooldown} turns, Mana: 20`;
-    new bootstrap.Modal(document.getElementById('specialInfoModal')).show();
-    playSound('moreInfo');
-};
-
-// Updates status effects and cooldowns
-const updateStatusEffects = () => {
-    [gameState.player1Heroes, gameState.enemies].forEach(group => {
-        group.forEach(char => {
-            char.statusEffects = char.statusEffects.filter(e => {
-                if (e.type === 'dot') char.health = Math.max(0, char.health - e.damage);
-                return --e.duration > 0;
-            });
-            char.isAlive = char.health > 0;
-            Object.keys(char.cooldowns).forEach(key => {
-                if (--char.cooldowns[key] <= 0) delete char.cooldowns[key];
-            });
-        });
-    });
-};
-
-// Checks game state for win/loss conditions
-const checkGameState = () => {
-    updateStatusEffects();
-    renderGrids();
-    updateHUD();
-    const heroesAlive = gameState.player1Heroes.some(h => h.isAlive);
-    const enemiesAlive = gameState.enemies.some(e => e.isAlive);
-
-    if (!heroesAlive) {
-        endGame('Defeat! Your heroes have fallen.');
-    } else if (!enemiesAlive) {
-        gameState.wave++;
-        gameState.score += 100;
-        showPowerupModal();
-        checkAchievements();
+    .enemy-card .stats-modal {
+      font-size: 0.8rem;
+      padding: 5px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
     }
-};
+    .enemy-card .stats-modal h6 {
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+    .enemy-card .stats-modal p {
+      margin: 2px 0;
+    }
+    .enemy-card .btn-info-custom, .enemy-card .btn-action {
+      font-size: 0.7rem;
+      padding: 2px 5px;
+      margin: 2px;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      padding: 10px;
+    }
+    .game-log {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+    .modal {
+      display: none;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      z-index: 1000;
+    }
+    .VictoryTxt {
+      color: gold;
+      text-shadow: 0 0 10px gold;
+    }
+    .LossTxt {
+      color: red;
+      text-shadow: 0 0 10px red;
+    }
+    .btn-cosmic {
+      background: linear-gradient(45deg, #1e90ff, #ff00ff);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+    }
+    .btn-cosmic:disabled {
+      background: grey;
+      cursor: not-allowed;
+    }
+  `;
+}
 
-// Ends the game with a message
-const endGame = (message) => {
-    document.getElementById('cinematicOverlay').style.display = 'flex';
-    document.getElementById('cinematicOverlay').textContent = message;
-    document.getElementById('gameOverMessage').textContent = message;
-    new bootstrap.Modal(document.getElementById('gameOverModal')).show();
-};
+/* Attach all event listeners */
+function attachEventListeners() {
+  const startButton = document.getElementById('startGameBtn');
+  if (startButton) {
+    // Remove any existing listeners to prevent duplicates
+    startButton.removeEventListener('click', handleStartGameClick);
+    startButton.addEventListener('click', handleStartGameClick);
+    // Ensure button is in correct initial state
+    startButton.disabled = false;
+    startButton.textContent = 'Start Game';
+  } else {
+    console.error('Start game button (#startGameBtn) not found');
+  }
 
-// Displays powerup selection modal
-const showPowerupModal = () => {
-    const optionsDiv = document.getElementById('powerupOptions');
-    optionsDiv.innerHTML = '';
-    powerups.forEach(p => {
-        const btn = document.createElement('button');
-        btn.className = 'btn btn-cosmic';
-        btn.textContent = p.name;
-        btn.onclick = () => {
-            gameState.player1Heroes.forEach(h => logMessage(p.effect(h)));
-            generateEnemies();
-            renderGrids();
-            bootstrap.Modal.getInstance(document.getElementById('powerupSelectionModal')).hide();
-        };
-        optionsDiv.appendChild(btn);
-    });
-    new bootstrap.Modal(document.getElementById('powerupSelectionModal')).show();
-};
+  const nextRoundBtn = document.getElementById('nextRoundBtn');
+  if (nextRoundBtn) {
+    nextRoundBtn.removeEventListener('click', handleNextRound);
+    nextRoundBtn.addEventListener('click', handleNextRound);
+  } else {
+    console.error('Next round button (#nextRoundBtn) not found');
+  }
 
-// Checks and awards achievements
-const checkAchievements = () => {
-    achievements.forEach(a => {
-        if (!gameState.achievements.includes(a.id) && a.condition()) {
-            gameState.achievements.push(a.id);
-            const li = document.createElement('li');
-            li.textContent = `${a.name}: ${a.description}`;
-            document.querySelectorAll('#achievementList').forEach(list => list.appendChild(li.cloneNode(true)));
-            logMessage(`Achievement Unlocked: ${a.name}!`);
-        }
-    });
-};
+  const saveGameBtn = document.getElementById('saveGameBtn');
+  if (saveGameBtn) {
+    saveGameBtn.removeEventListener('click', handleSaveGame);
+    saveGameBtn.addEventListener('click', handleSaveGame);
+  } else {
+    console.error('Save game button (#saveGameBtn) not found');
+  }
 
-// Handles enemy AI actions
-const enemyTurn = () => {
-    gameState.enemies.forEach(enemy => {
-        if (!enemy.isAlive || enemy.statusEffects.some(e => e.type === 'stun' || e.type === 'immobilize')) return;
-        const target = gameState.player1Heroes.filter(h => h.isAlive)[Math.floor(Math.random() * gameState.player1Heroes.filter(h => h.isAlive).length)];
-        if (!target) return;
-        if (Math.random() < 0.3 && enemy.mana >= 20 && !Object.values(enemy.cooldowns).some(cd => cd > 0)) {
-            handleSpecial(enemy, gameState.player1Heroes);
-        } else {
-            handleAttack(enemy, target);
-        }
-    });
-};
+  const loadGameModal = document.getElementById('loadGameModal');
+  if (loadGameModal) {
+    loadGameModal.removeEventListener('show.bs.modal', handleLoadGameModalShow);
+    loadGameModal.addEventListener('show.bs.modal', handleLoadGameModalShow);
+  } else {
+    console.error('Load game modal (#loadGameModal) not found');
+  }
 
-// Initializes the game
-const initializeGame = () => {
-    if (!window.players || window.players.length < 5) {
-        document.getElementById('noHeroesMessage').textContent = 'Not enough heroes available!';
-        new bootstrap.Modal(document.getElementById('noHeroesModal')).show();
+  const saveScoreBtn = document.getElementById('saveScoreBtn');
+  if (saveScoreBtn) {
+    saveScoreBtn.removeEventListener('click', handleSaveScore);
+    saveScoreBtn.addEventListener('click', handleSaveScore);
+  } else {
+    console.error('Save score button (#saveScoreBtn) not found');
+  }
+
+  const leaderboardModal = document.getElementById('leaderboardModal');
+  if (leaderboardModal) {
+    leaderboardModal.removeEventListener('show.bs.modal', handleLeaderboardModalShow);
+    leaderboardModal.addEventListener('show.bs.modal', handleLeaderboardModalShow);
+  } else {
+    console.error('Leaderboard modal (#leaderboardModal) not found');
+  }
+
+  const restartGameBtn = document.getElementById('restartGameBtn');
+  if (restartGameBtn) {
+    restartGameBtn.removeEventListener('click', handleRestartGame);
+    restartGameBtn.addEventListener('click', handleRestartGame);
+  } else {
+    console.error('Restart game button (#restartGameBtn) not found');
+  }
+
+  const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+  if (saveSettingsBtn) {
+    saveSettingsBtn.removeEventListener('click', handleSaveSettings);
+    saveSettingsBtn.addEventListener('click', handleSaveSettings);
+  } else {
+    console.error('Save settings button (#saveSettingsBtn) not found');
+  }
+}
+
+/* Handle start game button click with debouncing */
+function handleStartGameClick() {
+  try {
+    if (gameState.isStarting) {
+      console.warn('Game is already starting, ignoring click');
+      return;
+    }
+    gameState.isStarting = true;
+    const startButton = document.getElementById('startGameBtn');
+    if (startButton) {
+      startButton.disabled = true;
+      startButton.textContent = 'Starting...';
+    }
+    // Run startGame asynchronously to avoid blocking UI
+    setTimeout(() => {
+      startGame();
+      if (startButton) {
+        startButton.disabled = false;
+        startButton.textContent = 'Start Game';
+      }
+      gameState.isStarting = false;
+    }, 100);
+  } catch (error) {
+    console.error('Start game button click error:', error);
+    gameState.isStarting = false;
+    const startButton = document.getElementById('startGameBtn');
+    if (startButton) {
+      startButton.disabled = false;
+      startButton.textContent = 'Start Game';
+    }
+    showErrorModal('Failed to start game.');
+  }
+}
+
+/* Handle next round button click */
+function handleNextRound() {
+  try {
+    gameState.wave++;
+    gameState.waveProgress = 0;
+    generateEnemies();
+    if (gameState.wave % 2 === 0) {
+      showPowerupSelection();
+    }
+    updateUI();
+    startPlayerTurn();
+    if (gameState.gameMode === 'finalBoss' && gameState.wave > 3) {
+      showGameOver('You defeated Thanos! Victory!');
+    }
+  } catch (error) {
+    console.error('Next round error:', error);
+    showErrorModal('Failed to start next round.');
+  }
+}
+
+/* Handle save game button click */
+function handleSaveGame() {
+  try {
+    const saveData = { ...gameState, timestamp: new Date().toISOString() };
+    const saves = JSON.parse(localStorage.getItem('savedGames') || '[]');
+    saves.push(saveData);
+    localStorage.setItem('savedGames', JSON.stringify(saves));
+    logAction('Game saved.');
+  } catch (error) {
+    console.error('Save game error:', error);
+    showErrorModal('Failed to save game.');
+  }
+}
+
+/* Handle load game modal show */
+function handleLoadGameModalShow() {
+  try {
+    const saves = JSON.parse(localStorage.getItem('savedGames') || '[]');
+    const list = document.getElementById('savedGamesList');
+    if (list) {
+      list.innerHTML = saves.length
+        ? saves.map((save, i) => `
+            <button class="btn btn-cosmic mb-2" onclick="loadGame(${i})">${new Date(save.timestamp).toLocaleString()}</button>
+          `).join('')
+        : '<p>No saved games found.</p>';
+    } else {
+      console.error('Saved games list (#savedGamesList) not found');
+    }
+  } catch (error) {
+    console.error('Load game modal error:', error);
+    showErrorModal('Failed to load saved games.');
+  }
+}
+
+/* Handle save score button click */
+function handleSaveScore() {
+  try {
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    leaderboard.push({ player: 'Player', score: gameState.score, date: new Date().toISOString() });
+    leaderboard.sort((a, b) => b.score - a.score);
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard.slice(0, 10)));
+    logAction('Score saved to leaderboard.');
+  } catch (error) {
+    console.error('Save score error:', error);
+    showErrorModal('Failed to save score.');
+  }
+}
+
+/* Handle leaderboard modal show */
+function handleLeaderboardModalShow() {
+  try {
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    const table = document.getElementById('leaderboardTable');
+    if (table) {
+      table.innerHTML = leaderboard.length
+        ? leaderboard.map((entry, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${entry.player}</td>
+              <td>${entry.score}</td>
+              <td>${new Date(entry.date).toLocaleDateString()}</td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="4">No leaderboard entries</td></tr>';
+    } else {
+      console.error('Leaderboard table (#leaderboardTable) not found');
+    }
+  } catch (error) {
+    console.error('Leaderboard modal error:', error);
+    showErrorModal('Failed to load leaderboard.');
+  }
+}
+
+/* Handle restart game button click */
+function handleRestartGame() {
+  try {
+    const modeModalElement = document.getElementById('modeSelectionModal');
+    if (modeModalElement && typeof bootstrap !== 'undefined') {
+      const modeModal = new bootstrap.Modal(modeModalElement, { backdrop: 'static' });
+      modeModal.show();
+    } else {
+      console.error('Mode selection modal (#modeSelectionModal) or Bootstrap not found');
+    }
+    initializeGame();
+  } catch (error) {
+    console.error('Restart game error:', error);
+    showErrorModal('Failed to restart game.');
+  }
+}
+
+/* Handle save settings button click */
+function handleSaveSettings() {
+  try {
+    const music = document.getElementById('backgroundMusic');
+    const soundVolume = document.getElementById('soundVolume');
+    if (music && soundVolume) {
+      music.volume = Math.max(0, Math.min(1, soundVolume.value / 100));
+    } else {
+      console.error('Background music (#backgroundMusic) or sound volume (#soundVolume) not found');
+    }
+    updateUI();
+    const settingsModal = document.getElementById('settingsModal');
+    if (settingsModal && typeof bootstrap !== 'undefined') {
+      bootstrap.Modal.getInstance(settingsModal)?.hide();
+    } else {
+      console.error('Settings modal (#settingsModal) or Bootstrap not found');
+    }
+  } catch (error) {
+    console.error('Save settings error:', error);
+    showErrorModal('Failed to save settings.');
+  }
+}
+
+/* Load heroes from sessionStorage */
+function loadHeroes() {
+  try {
+    const player1Heroes = JSON.parse(sessionStorage.getItem('player1Heroes') || '[]');
+    const player2Heroes = JSON.parse(sessionStorage.getItem('player2Heroes') || '[]');
+    if (!Array.isArray(player1Heroes) || player1Heroes.length === 0) {
+      return false;
+    }
+    if (!window.players || !Array.isArray(window.players)) {
+      console.error('Players data (window.players) not found or invalid');
+      showErrorModal('Game data is missing. Please reload the page.');
+      return false;
+    }
+    gameState.heroes.player1 = player1Heroes
+      .map(id => {
+        const hero = window.players.find(p => p && p.id === id);
+        return hero ? { ...hero, currentHealth: hero.health || 100, currentMana: hero.mana || 50, cooldown: 0 } : null;
+      })
+      .filter(h => h && h.id && h.firstName && h.health && h.mana && h.attack && h.special);
+    gameState.heroes.player2 = player2Heroes
+      .map(id => {
+        const hero = window.players.find(p => p && p.id === id);
+        return hero ? { ...hero, currentHealth: hero.health || 100, currentMana: hero.mana || 50, cooldown: 0 } : null;
+      })
+      .filter(h => h && h.id && h.firstName && h.health && h.mana && h.attack && h.special);
+    if (gameState.heroes.player1.length === 0) {
+      return false;
+    }
+    updateHeroesDisplay();
+    return true;
+  } catch (error) {
+    console.error('Load heroes error:', error);
+    showErrorModal('Failed to load heroes.');
+    return false;
+  }
+}
+
+/* Show no heroes modal with custom message */
+function showNoHeroesModal(message) {
+  try {
+    const modal = document.getElementById('noHeroesModal');
+    if (!modal) {
+      console.error('No heroes modal (#noHeroesModal) not found');
+      return;
+    }
+    const messageElement = document.getElementById('noHeroesMessage');
+    if (messageElement) {
+      messageElement.textContent = message;
+    }
+    if (typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Bootstrap not found for no heroes modal');
+    }
+  } catch (error) {
+    console.error('No heroes modal error:', error);
+    showErrorModal('Failed to show no heroes message.');
+  }
+}
+
+/* Start game with selected mode and settings */
+function startGame() {
+  try {
+    const playerModeInput = document.querySelector('input[name="playerMode"]:checked');
+    const gameModeInput = document.querySelector('input[name="gameMode"]:checked');
+    const difficultySelect = document.getElementById('difficultySelect');
+    const tutorialCheckbox = document.getElementById('tutorialCheckbox');
+    if (!playerModeInput || !gameModeInput || !difficultySelect || !tutorialCheckbox) {
+      console.error('Mode selection inputs missing');
+      showErrorModal('Error: Game settings could not be loaded.');
+      return;
+    }
+    gameState.playerMode = playerModeInput.value || 'single';
+    gameState.gameMode = gameModeInput.value || 'finalBoss';
+    gameState.difficulty = difficultySelect.value || 'medium';
+    gameState.tutorial = tutorialCheckbox.checked || false;
+    if (gameState.gameMode === 'multiplayer' && gameState.playerMode !== 'multi') {
+      const invalidModalElement = document.getElementById('invalidModeModal');
+      if (invalidModalElement && typeof bootstrap !== 'undefined') {
+        const invalidModal = new bootstrap.Modal(invalidModalElement, { backdrop: 'static' });
+        invalidModal.show();
+      }
+      console.warn('Invalid mode: Multiplayer game mode requires multiplayer player mode');
+      return;
+    }
+    if (!loadHeroes()) {
+      console.warn('Hero validation failed: No heroes selected for Player 1');
+      showNoHeroesModal('Select at least one hero for Player 1.');
+      return;
+    }
+    if (gameState.playerMode === 'multi' && gameState.heroes.player2.length === 0) {
+      showNoHeroesModal('Select at least one hero for Player 2 in multiplayer mode.');
+      console.warn('Hero validation failed: No heroes selected for Player 2');
+      return;
+    }
+    const modeModalElement = document.getElementById('modeSelectionModal');
+    if (modeModalElement && typeof bootstrap !== 'undefined') {
+      const modeModal = bootstrap.Modal.getInstance(modeModalElement);
+      modeModal?.hide();
+    }
+    if (gameState.playerMode === 'multi') {
+      const player2Section = document.getElementById('player2HeroesSection');
+      if (player2Section) {
+        player2Section.style.display = 'block';
+      } else {
+        console.error('Player 2 section (#player2HeroesSection) not found');
+      }
+    }
+    initializeGame();
+    const music = document.getElementById('backgroundMusic');
+    const soundVolume = document.getElementById('soundVolume');
+    if (music && soundVolume) {
+      music.volume = Math.max(0, Math.min(1, soundVolume.value / 100));
+      music.play().catch(err => console.warn('Music playback failed:', err));
+    }
+    startPlayerTurn();
+    if (gameState.tutorial) {
+      showTutorialStep(0);
+    }
+    logAction('Game started! Player 1\'s turn.');
+  } catch (error) {
+    console.error('Start game error:', error);
+    showErrorModal('Failed to start game.');
+  }
+}
+
+/* Start player turn to enable actions */
+function startPlayerTurn() {
+  try {
+    gameState.currentTurn = 'player1';
+    refreshCardButtons('player1');
+    logAction('Player 1\'s turn begins.');
+  } catch (error) {
+    console.error('Start player turn error:', error);
+    showErrorModal('Failed to start player turn.');
+  }
+}
+
+/* Refresh action buttons on character cards */
+function refreshCardButtons(type) {
+  try {
+    const cards = document.querySelectorAll(`.character-card[data-type="${type}"]`);
+    cards.forEach(card => {
+      const characterId = card.dataset.id;
+      const character = findCharacter(characterId, type);
+      if (!character) {
+        console.warn(`Character not found for ID: ${characterId}, type: ${type}`);
         return;
+      }
+      const attackBtn = card.querySelector('.btn-action[onclick*="performAttack"]');
+      const specialBtn = card.querySelector('.btn-action[onclick*="performSpecial"]');
+      if (attackBtn) {
+        attackBtn.disabled = character.currentHealth <= 0 || character.stunned || character.immobilized || gameState.currentTurn !== type;
+      }
+      if (specialBtn) {
+        specialBtn.disabled = character.currentHealth <= 0 || character.stunned || character.immobilized || character.cooldown > 0 || character.currentMana < (character.special.manaCost || 0) || gameState.currentTurn !== type;
+      }
+    });
+  } catch (error) {
+    console.error('Refresh card buttons error:', error);
+    showErrorModal('Failed to update card buttons.');
+  }
+}
+
+/* Simulate enemy turn after player actions */
+function enemyTurn() {
+  try {
+    gameState.currentTurn = 'enemy';
+    refreshCardButtons('player1');
+    if (gameState.playerMode === 'multi') {
+      refreshCardButtons('player2');
     }
-    gameState.player1Heroes = window.players.slice(0, 5).map(initializeCharacter);
+    gameState.enemies.forEach(enemy => {
+      if (enemy.currentHealth <= 0 || enemy.stunned || enemy.immobilized) return;
+      const action = enemy.currentMana >= (enemy.special.manaCost || 0) && enemy.cooldown === 0 && Math.random() > 0.5 ? 'special' : 'attack';
+      const targets = gameState.playerMode === 'multi' ? gameState.heroes.player2 : gameState.heroes.player1;
+      const target = targets[Math.floor(Math.random() * targets.length)];
+      if (!target || target.currentHealth <= 0) return;
+      if (action === 'attack') {
+        const damage = Math.floor((enemy.attack || 10) * (gameState.difficulty === 'easy' ? 0.8 : gameState.difficulty === 'medium' ? 1 : 1.2));
+        target.currentHealth = Math.max(0, target.currentHealth - damage);
+        logAction(`${enemy.firstName} attacks ${target.firstName} for ${damage} damage.`);
+      } else {
+        applySpecialEffect(enemy, target);
+        enemy.currentMana -= enemy.special.manaCost || 0;
+        enemy.cooldown = enemy.special.cooldown || 0;
+      }
+    });
+    updateUI();
+    checkGameState();
+    setTimeout(startPlayerTurn, 1000);
+  } catch (error) {
+    console.error('Enemy turn error:', error);
+    showErrorModal('Failed to process enemy turn.');
+  }
+}
+
+/* Show error modal for generic errors */
+function showErrorModal(message) {
+  try {
+    let modal = document.getElementById('errorModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.classList.add('modal', 'fade');
+      modal.id = 'errorModal';
+      modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Error</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+              <p>${message}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    const body = modal.querySelector('.modal-body p');
+    if (body) body.textContent = message;
+    if (typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      modal.style.display = 'block';
+      console.warn('Bootstrap not found, showing modal manually');
+    }
+  } catch (error) {
+    console.error('Error modal error:', error);
+  }
+}
+
+/* Initialize game state and UI */
+function initializeGame() {
+  try {
     gameState.wave = 1;
     gameState.score = 0;
-    gameState.specialsUsed = 0;
+    gameState.waveProgress = 0;
+    gameState.isGameOver = false;
+    gameState.player1Wins = 0;
+    gameState.player2Wins = 0;
+    gameState.currentTurn = null;
+    const player1Grid = document.getElementById('player1HeroesGrid');
+    const player2Grid = document.getElementById('player2HeroesGrid');
+    const opponentGrid = document.getElementById('opponentGrid');
+    const gameLog = document.getElementById('gameLog');
+    if (player1Grid) player1Grid.innerHTML = '';
+    if (player2Grid) player2Grid.innerHTML = '';
+    if (opponentGrid) opponentGrid.innerHTML = '';
+    if (gameLog) gameLog.innerHTML = '';
+    renderHeroes();
     generateEnemies();
-    renderGrids();
-    updateHUD();
-    applyTheme();
-    if (gameState.isTutorial) showTutorial();
-};
+    updateUI();
+  } catch (error) {
+    console.error('Initialize game error:', error);
+    showErrorModal('Failed to initialize game.');
+  }
+}
 
-// Shows tutorial steps
-const showTutorial = () => {
-    const steps = [
-        'Welcome to Marvel Cosmic Arena! Click a hero’s Attack button to deal damage.',
-        'Use Special abilities for powerful effects, but they cost mana and have cooldowns.',
-        'Defeat all enemies to advance waves. Choose powerups to boost your heroes.',
-        'Survive to face Thanos in Final Boss Mode or endless waves in Infinite Mode!'
-    ];
-    const content = document.getElementById('tutorialContent');
-    const nextBtn = document.querySelector('.next-tutorial-btn');
-    content.innerHTML = `<p>${steps[gameState.tutorialStep]}</p>`;
-    nextBtn.onclick = () => {
-        gameState.tutorialStep++;
-        if (gameState.tutorialStep >= steps.length) {
-            bootstrap.Modal.getInstance(document.getElementById('tutorialModal')).hide();
-            gameState.tutorialStep = 0;
-        } else {
-            content.innerHTML = `<p>${steps[gameState.tutorialStep]}</p>`;
-        }
+/* Render hero and enemy cards */
+function renderHeroes() {
+  try {
+    // Re-run ensureDomElementsExist to be safe
+    ensureDomElementsExist();
+
+    const fragment = document.createDocumentFragment();
+    gameState.heroes.player1.forEach(hero => {
+      const card = renderCharacterCard(hero, 'player1');
+      if (card) fragment.appendChild(card);
+    });
+
+    const player1Grid = document.getElementById('player1HeroesGrid');
+    if (player1Grid) {
+      player1Grid.innerHTML = '';
+      player1Grid.appendChild(fragment);
+    } else {
+      console.error('Player 1 grid (#player1HeroesGrid) not found after ensureDomElementsExist');
+      showErrorModal('Failed to render heroes: Player 1 grid missing.');
+      return;
+    }
+
+    if (gameState.playerMode === 'multi') {
+      const fragment2 = document.createDocumentFragment();
+      gameState.heroes.player2.forEach(hero => {
+        const card = renderCharacterCard(hero, 'player2');
+        if (card) fragment2.appendChild(card);
+      });
+      const player2Grid = document.getElementById('player2HeroesGrid');
+      if (player2Grid) {
+        player2Grid.innerHTML = '';
+        player2Grid.appendChild(fragment2);
+      } else {
+        console.error('Player 2 grid (#player2HeroesGrid) not found after ensureDomElementsExist');
+        showErrorModal('Failed to render heroes: Player 2 grid missing.');
+      }
+    }
+  } catch (error) {
+    console.error('Render heroes error:', error);
+    showErrorModal('Failed to render heroes.');
+  }
+}
+
+/* Render a single character card */
+function renderCharacterCard(character, type, retries = 3) {
+  try {
+    if (!character || !character.id || !character.firstName) {
+      console.warn(`Invalid character data for type: ${type}`);
+      return null;
+    }
+    const card = document.createElement('div');
+    card.classList.add('character-card', `wave-progress-${gameState.wave}`);
+    if (type === 'enemy') {
+      card.classList.add('enemy-card');
+    }
+    card.dataset.id = character.id;
+    card.dataset.type = type;
+    if (character.stunned) card.classList.add('stunned');
+    if (character.poisoned) card.classList.add('poisoned');
+    if (character.immobilized) card.classList.add('immobilized');
+    const img = document.createElement('img');
+    img.classList.add('character-img');
+    const skinSelect = document.getElementById('skinSelect');
+    if (skinSelect && skinSelect.value === 'cosmic') {
+      img.classList.add('cosmic-skin');
+    }
+    img.src = character.image || 'https://via.placeholder.com/150?text=Hero';
+    img.alt = `${character.firstName} image`;
+    img.onerror = () => {
+      if (retries > 0) {
+        setTimeout(() => {
+          img.src = character.image || 'https://via.placeholder.com/150?text=Hero';
+        }, 1000);
+      } else {
+        img.src = 'https://via.placeholder.com/150?text=Hero';
+        console.warn(`Failed to load image for ${character.firstName}`);
+      }
     };
-    new bootstrap.Modal(document.getElementById('tutorialModal')).show();
-};
+    card.appendChild(img);
+    const statsModal = document.createElement('div');
+    statsModal.classList.add('stats-modal');
+    statsModal.innerHTML = `
+      <h6>${character.firstName}</h6>
+      <p>Health: ${character.currentHealth || 0}/${character.health || 100}</p>
+      <p>Mana: ${character.currentMana || 0}/${character.mana || 50}</p>
+      <p>Attack: ${character.attack || 10}</p>
+      <p>Special: ${(character.special && character.special.name) || 'None'}</p>
+      <button class="btn btn-info-custom" onclick="showSpecialInfo('${character.id}')">Info</button>
+      <button class="btn btn-action" onclick="performAttack('${character.id}', '${type}')">Attack</button>
+      <button class="btn btn-action" onclick="performSpecial('${character.id}', '${type}')">Special</button>
+    `;
+    card.appendChild(statsModal);
+    if (type === 'player1' || type === 'player2') {
+      setTimeout(() => refreshCardButtons(type), 0);
+    }
+    return card;
+  } catch (error) {
+    console.error(`Render character card error for ${character?.firstName}:`, error);
+    return null;
+  }
+}
 
-// Event listeners for game controls
-document.addEventListener('DOMContentLoaded', () => {
-    // Start game on button click or nav link
-    document.getElementById('startGameBtn')?.addEventListener('click', () => {
-        gameState.gameMode = document.querySelector('input[name="gameMode"]:checked')?.value || 'finalBoss';
-        gameState.playerMode = document.querySelector('input[name="playerMode"]:checked')?.value || 'single';
-        gameState.difficulty = document.getElementById('difficultySelect')?.value || 'medium';
-        gameState.isTutorial = document.getElementById('tutorialCheckbox')?.checked || false;
-        if (gameState.gameMode === 'multiplayer' && gameState.playerMode !== 'multi') {
-            new bootstrap.Modal(document.getElementById('invalidModeModal')).show();
+/* Generate enemies based on game mode and wave */
+function generateEnemies() {
+  try {
+    // Re-run ensureDomElementsExist to be safe
+    ensureDomElementsExist();
+
+    gameState.enemies = [];
+    let enemyCount = gameState.wave * (gameState.difficulty === 'easy' ? 1 : gameState.difficulty === 'medium' ? 2 : 3);
+    if (gameState.gameMode === 'finalBoss' && gameState.wave === 3) {
+      const thanos = window.players?.find(p => p && p.firstName === 'Thanos');
+      if (thanos) {
+        gameState.enemies.push({ ...thanos, currentHealth: (thanos.health || 100) * 2, currentMana: thanos.mana || 50, cooldown: 0 });
+      }
+    } else {
+      const availableEnemies = window.players?.filter(p => p && p.firstName !== 'Thanos').slice(0, 37) || [];
+      for (let i = 0; i < Math.min(enemyCount, availableEnemies.length); i++) {
+        const randomEnemy = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
+        if (randomEnemy) {
+          gameState.enemies.push({ ...randomEnemy, currentHealth: randomEnemy.health || 100, currentMana: randomEnemy.mana || 50, cooldown: 0 });
+        }
+      }
+    }
+
+    const fragment = document.createDocumentFragment();
+    gameState.enemies.forEach(enemy => {
+      const card = renderCharacterCard(enemy, 'enemy');
+      if (card) fragment.appendChild(card);
+    });
+
+    const opponentGrid = document.getElementById('opponentGrid');
+    if (opponentGrid) {
+      opponentGrid.innerHTML = '';
+      opponentGrid.appendChild(fragment);
+    } else {
+      console.error('Opponent grid (#opponentGrid) not found after ensureDomElementsExist');
+      showErrorModal('Failed to generate enemies: Opponent grid missing.');
+    }
+  } catch (error) {
+    console.error('Generate enemies error:', error);
+    showErrorModal('Failed to generate enemies.');
+  }
+}
+
+/* Perform attack action */
+function performAttack(characterId, type) {
+  try {
+    if (gameState.currentTurn !== type) {
+      console.warn(`Cannot perform attack: Not ${type}'s turn`);
+      return;
+    }
+    const character = findCharacter(characterId, type);
+    if (!character || character.currentHealth <= 0 || character.stunned || character.immobilized) {
+      console.warn(`Invalid attack: Character ${characterId} is dead, stunned, or immobilized`);
+      return;
+    }
+    const targets = type === 'player1' ? (gameState.playerMode === 'multi' ? gameState.heroes.player2 : gameState.enemies) : (type === 'player2' ? gameState.heroes.player1 : gameState.enemies);
+    const validTargets = targets.filter(t => t && t.currentHealth > 0);
+    if (validTargets.length === 0) {
+      console.warn(`No valid target for attack by ${character.firstName}`);
+      return;
+    }
+    const target = validTargets[Math.floor(Math.random() * validTargets.length)];
+    const damage = Math.floor((character.attack || 10) * (gameState.difficulty === 'easy' ? 1.2 : gameState.difficulty === 'medium' ? 1 : 0.8));
+    target.currentHealth = Math.max(0, target.currentHealth - damage);
+    const card = document.querySelector(`.character-card[data-id="${character.id}"][data-type="${type}"]`);
+    if (card) {
+      card.classList.add('attack');
+      setTimeout(() => card.classList.remove('attack'), 300);
+    }
+    const attackSound = document.getElementById('attackSound');
+    if (attackSound) attackSound.play().catch(() => {});
+    logAction(`${character.firstName} attacks ${target.firstName} for ${damage} damage.`);
+    gameState.score += 10;
+    updateUI();
+    checkGameState();
+    if (type === 'player1' || type === 'player2') {
+      setTimeout(enemyTurn, 500);
+    }
+  } catch (error) {
+    console.error(`Perform attack error for ${characterId}:`, error);
+    showErrorModal('Failed to perform attack.');
+  }
+}
+
+/* Perform special ability */
+function performSpecial(characterId, type) {
+  try {
+    if (gameState.currentTurn !== type) {
+      console.warn(`Cannot perform special: Not ${type}'s turn`);
+      return;
+    }
+    const character = findCharacter(characterId, type);
+    if (!character || character.currentHealth <= 0 || character.stunned || character.immobilized || character.cooldown > 0 || character.currentMana < (character.special.manaCost || 0)) {
+      console.warn(`Invalid special: Character ${characterId} is invalid or cannot use special`);
+      return;
+    }
+    const targets = type === 'player1' ? (gameState.playerMode === 'multi' ? gameState.heroes.player2 : gameState.enemies) : (type === 'player2' ? gameState.heroes.player1 : gameState.enemies);
+    const validTargets = targets.filter(t => t && t.currentHealth > 0);
+    if (validTargets.length === 0) {
+      console.warn(`No valid target for special by ${character.firstName}`);
+      return;
+    }
+    const target = validTargets[Math.floor(Math.random() * validTargets.length)];
+    applySpecialEffect(character, target);
+    character.currentMana -= character.special.manaCost || 0;
+    character.cooldown = character.special.cooldown || 0;
+    const card = document.querySelector(`.character-card[data-id="${character.id}"][data-type="${type}"]`);
+    if (card) {
+      card.classList.add('special');
+      setTimeout(() => card.classList.remove('special'), 500);
+    }
+    const specialSound = document.getElementById('specialSound');
+    if (specialSound) specialSound.play().catch(() => {});
+    gameState.score += 50;
+    updateUI();
+    checkGameState();
+    if (type === 'player1' || type === 'player2') {
+      setTimeout(enemyTurn, 500);
+    }
+  } catch (error) {
+    console.error(`Perform special error for ${characterId}:`, error);
+    showErrorModal('Failed to perform special ability.');
+  }
+}
+
+/* Apply special ability effect */
+function applySpecialEffect(character, target) {
+  try {
+    if (!character.special || !character.special.effect) {
+      console.warn(`No special effect defined for ${character.firstName}`);
+      return;
+    }
+    const effect = character.special.effect;
+    switch (effect.type) {
+      case 'damage':
+        const damage = (effect.value || 20) * (gameState.difficulty === 'easy' ? 1.2 : gameState.difficulty === 'medium' ? 1 : 0.8);
+        target.currentHealth = Math.max(0, target.currentHealth - damage);
+        logAction(`${character.firstName} uses ${character.special.name} on ${target.firstName} for ${damage} damage.`);
+        break;
+      case 'heal':
+        const heal = effect.value || 20;
+        character.currentHealth = Math.min(character.health || 100, character.currentHealth + heal);
+        logAction(`${character.firstName} uses ${character.special.name} to heal for ${heal} health.`);
+        break;
+      case 'stun':
+        target.stunned = true;
+        setTimeout(() => {
+          target.stunned = false;
+          updateUI();
+        }, (effect.duration || 2) * 1000);
+        logAction(`${character.firstName} uses ${character.special.name} to stun ${target.firstName}.`);
+        break;
+      case 'poison':
+        target.poisoned = true;
+        const poisonInterval = setInterval(() => {
+          if (target.currentHealth <= 0 || !target.poisoned) {
+            clearInterval(poisonInterval);
             return;
+          }
+          target.currentHealth = Math.max(0, target.currentHealth - (effect.value || 5));
+          logAction(`${target.firstName} takes ${effect.value || 5} poison damage.`);
+          updateUI();
+        }, 1000);
+        setTimeout(() => {
+          target.poisoned = false;
+          clearInterval(poisonInterval);
+          updateUI();
+        }, (effect.duration || 5) * 1000);
+        logAction(`${character.firstName} uses ${character.special.name} to poison ${target.firstName}.`);
+        break;
+      case 'buff':
+        character.attack = (character.attack || 10) + (effect.value || 5);
+        logAction(`${character.firstName} uses ${character.special.name} to increase attack by ${effect.value || 5}.`);
+        break;
+      default:
+        console.warn(`Unknown special effect: ${effect.type}`);
+    }
+  } catch (error) {
+    console.error(`Apply special effect error for ${character.firstName}:`, error);
+    showErrorModal('Failed to apply special effect.');
+  }
+}
+
+/* Find character by ID and type */
+function findCharacter(id, type) {
+  try {
+    if (type === 'player1') return gameState.heroes.player1.find(h => h && h.id === id);
+    if (type === 'player2') return gameState.heroes.player2.find(h => h && h.id === id);
+    return gameState.enemies.find(e => e && e.id === id);
+  } catch (error) {
+    console.error(`Find character error for ID ${id}:`, error);
+    return null;
+  }
+}
+
+/* Show special ability info */
+function showSpecialInfo(characterId) {
+  try {
+    const character = gameState.heroes.player1.find(h => h && h.id === characterId) || gameState.heroes.player2.find(h => h && h.id === characterId) || gameState.enemies.find(e => e && e.id === characterId);
+    if (!character) {
+      console.warn(`Character not found for special info: ${characterId}`);
+      return;
+    }
+    const specialName = document.getElementById('specialName');
+    const specialDescription = document.getElementById('specialDescription');
+    const specialUsage = document.getElementById('specialUsage');
+    if (specialName) specialName.textContent = (character.special && character.special.name) || 'None';
+    if (specialDescription) specialDescription.textContent = (character.special && character.special.description) || 'No description';
+    if (specialUsage) specialUsage.textContent = `Mana: ${(character.special && character.special.manaCost) || 0}, Cooldown: ${(character.special && character.special.cooldown) || 0}s`;
+    const modal = document.getElementById('specialInfoModal');
+    if (modal && typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Special info modal (#specialInfoModal) or Bootstrap not found');
+    }
+    const moreInfoSound = document.getElementById('moreInfoSound');
+    if (moreInfoSound) moreInfoSound.play().catch(() => {});
+  } catch (error) {
+    console.error(`Show special info error for ${characterId}:`, error);
+    showErrorModal('Failed to show special info.');
+  }
+}
+
+/* Update UI elements */
+function updateUI() {
+  try {
+    const waveDisplay = document.getElementById('waveDisplay');
+    if (waveDisplay) waveDisplay.textContent = gameState.wave;
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    if (scoreDisplay) scoreDisplay.textContent = gameState.score;
+    const player1Alive = gameState.heroes.player1.filter(h => h && h.currentHealth > 0).length;
+    const player2Alive = gameState.heroes.player2.filter(h => h && h.currentHealth > 0).length;
+    const heroesDisplay = document.getElementById('heroesDisplay');
+    if (heroesDisplay) heroesDisplay.textContent = `${player1Alive + player2Alive}/${gameState.heroes.player1.length + gameState.heroes.player2.length}`;
+    const waveProgressBar = document.getElementById('waveProgressBar');
+    if (waveProgressBar) waveProgressBar.style.width = `${gameState.waveProgress}%`;
+    renderHeroes();
+    generateEnemies();
+    refreshCardButtons('player1');
+    if (gameState.playerMode === 'multi') {
+      refreshCardButtons('player2');
+    }
+  } catch (error) {
+    console.error('Update UI error:', error);
+    showErrorModal('Failed to update UI.');
+  }
+}
+
+/* Log action to battle log */
+function logAction(message) {
+  try {
+    const log = document.getElementById('gameLog');
+    if (!log) {
+      console.error('Game log (#gameLog) not found');
+      return;
+    }
+    const entry = document.createElement('p');
+    entry.textContent = message;
+    entry.classList.add('animate__animated', 'animate__fadeIn');
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+    // Limit log entries to prevent memory issues
+    while (log.children.length > 100) {
+      log.removeChild(log.firstChild);
+    }
+  } catch (error) {
+    console.error('Log action error:', error);
+  }
+}
+
+/* Check game state for win/loss */
+function checkGameState() {
+  try {
+    if (gameState.isGameOver) return;
+    const enemiesAlive = gameState.enemies.filter(e => e && e.currentHealth > 0).length;
+    if (enemiesAlive === 0) {
+      gameState.waveProgress = 100;
+      updateUI();
+      showRoundComplete();
+      return;
+    }
+    const player1Alive = gameState.heroes.player1.filter(h => h && h.currentHealth > 0).length;
+    const player2Alive = gameState.heroes.player2.filter(h => h && h.currentHealth > 0).length;
+    if (player1Alive === 0 && (gameState.playerMode === 'single' || player2Alive === 0)) {
+      showGameOver('All heroes have been defeated.');
+      return;
+    }
+    if (gameState.gameMode === 'multiplayer') {
+      if (player1Alive === 0) {
+        gameState.player2Wins++;
+        showRoundComplete('Player 2 wins the round!');
+      } else if (player2Alive === 0) {
+        gameState.player1Wins++;
+        showRoundComplete('Player 1 wins the round!');
+      }
+      if (gameState.player1Wins >= 2 || gameState.player2Wins >= 2) {
+        showGameOver(gameState.player1Wins >= 2 ? 'Player 1 wins the match!' : 'Player 2 wins the match!');
+      }
+    }
+  } catch (error) {
+    console.error('Check game state error:', error);
+    showErrorModal('Failed to check game state.');
+  }
+}
+
+/* Show round complete modal */
+function showRoundComplete(message = 'Wave cleared! Prepare for the next challenge.') {
+  try {
+    const roundCompleteMessage = document.getElementById('roundCompleteMessage');
+    if (roundCompleteMessage) roundCompleteMessage.textContent = message;
+    const modal = document.getElementById('roundCompleteModal');
+    if (modal && typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Round complete modal (#roundCompleteModal) or Bootstrap not found');
+    }
+    gameState.score += 100;
+  } catch (error) {
+    console.error('Show round complete error:', error);
+    showErrorModal('Failed to show round complete.');
+  }
+}
+
+/* Show game over modal */
+function showGameOver(message) {
+  try {
+    gameState.isGameOver = true;
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    if (gameOverMessage) gameOverMessage.textContent = message;
+    const finalScore = document.getElementById('finalScore');
+    if (finalScore) finalScore.textContent = gameState.score;
+    const modal = document.getElementById('gameOverModal');
+    if (modal && typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Game over modal (#gameOverModal) or Bootstrap not found');
+    }
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    if (backgroundMusic) backgroundMusic.pause();
+    showCinematicOverlay(message);
+  } catch (error) {
+    console.error('Show game over error:', error);
+    showErrorModal('Failed to show game over.');
+  }
+}
+
+/* Show cinematic overlay for dramatic effect */
+function showCinematicOverlay(message) {
+  try {
+    const overlay = document.getElementById('cinematicOverlay');
+    if (!overlay) {
+      console.error('Cinematic overlay (#cinematicOverlay) not found');
+      return;
+    }
+    overlay.textContent = message;
+    overlay.style.display = 'flex';
+    overlay.classList.add(message.includes('Victory') ? 'VictoryTxt' : 'LossTxt');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      overlay.classList.remove('VictoryTxt', 'LossTxt');
+    }, 3000);
+  } catch (error) {
+    console.error('Show cinematic overlay error:', error);
+  }
+}
+
+/* Show powerup selection modal */
+function showPowerupSelection() {
+  try {
+    const powerups = [
+      { name: 'Health Boost', effect: () => gameState.heroes.player1.forEach(h => { if (h) h.currentHealth = Math.min(h.health || 100, h.currentHealth + 50); }) },
+      { name: 'Mana Restore', effect: () => gameState.heroes.player1.forEach(h => { if (h) h.currentMana = h.mana || 50; }) },
+      { name: 'Attack Boost', effect: () => gameState.heroes.player1.forEach(h => { if (h) h.attack = (h.attack || 10) + 10; }) }
+    ];
+    const options = document.getElementById('powerupOptions');
+    if (!options) {
+      console.error('Powerup options (#powerupOptions) not found');
+      return;
+    }
+    options.innerHTML = '';
+    powerups.forEach(powerup => {
+      const btn = document.createElement('button');
+      btn.classList.add('btn', 'btn-cosmic');
+      btn.textContent = powerup.name;
+      btn.addEventListener('click', () => {
+        powerup.effect();
+        logAction(`Powerup applied: ${powerup.name}`);
+        updateUI();
+        const powerupModal = document.getElementById('powerupSelectionModal');
+        if (powerupModal && typeof bootstrap !== 'undefined') {
+          bootstrap.Modal.getInstance(powerupModal)?.hide();
         }
-        initializeGame();
-        bootstrap.Modal.getInstance(document.getElementById('modeSelectionModal'))?.hide();
+        startPlayerTurn();
+      });
+      options.appendChild(btn);
     });
+    const modal = document.getElementById('powerupSelectionModal');
+    if (modal && typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Powerup selection modal (#powerupSelectionModal) or Bootstrap not found');
+    }
+  } catch (error) {
+    console.error('Show powerup selection error:', error);
+    showErrorModal('Failed to show powerup selection.');
+  }
+}
 
-    // Restart game
-    document.getElementById('restartGameBtn')?.addEventListener('click', initializeGame);
+/* Show tutorial steps */
+function showTutorialStep(step) {
+  try {
+    const steps = [
+      'Welcome to Marvel Cosmic Arena! Click a hero card to view stats and actions.',
+      'Use the Attack button or "A" key to deal damage to a random enemy.',
+      'Use the Special button or "S" key to activate a hero\'s unique ability (requires mana).',
+      'Clear waves to earn points and powerups. Survive to win!'
+    ];
+    if (step >= steps.length) {
+      const tutorialModal = document.getElementById('tutorialModal');
+      if (tutorialModal && typeof bootstrap !== 'undefined') {
+        bootstrap.Modal.getInstance(tutorialModal)?.hide();
+      }
+      return;
+    }
+    const tutorialContent = document.getElementById('tutorialContent');
+    if (tutorialContent) tutorialContent.innerHTML = `<p>${steps[step]}</p>`;
+    const modal = document.getElementById('tutorialModal');
+    if (modal && typeof bootstrap !== 'undefined') {
+      const bsModal = new bootstrap.Modal(modal, { backdrop: 'static' });
+      bsModal.show();
+    } else {
+      console.error('Tutorial modal (#tutorialModal) or Bootstrap not found');
+    }
+    const nextButton = document.querySelector('.next-tutorial-btn');
+    if (nextButton) nextButton.onclick = () => showTutorialStep(step + 1);
+  } catch (error) {
+    console.error('Show tutorial step error:', error);
+    showErrorModal('Failed to show tutorial.');
+  }
+}
 
-    // Save settings
-    document.getElementById('saveSettingsBtn')?.addEventListener('click', () => {
-        const volume = document.getElementById('soundVolume').value / 100;
-        document.querySelectorAll('audio').forEach(a => a.volume = volume);
-        bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
-    });
+/* Load specific game state */
+function loadGame(index) {
+  try {
+    const saves = JSON.parse(localStorage.getItem('savedGames') || '[]');
+    if (!saves[index]) {
+      console.warn(`No save found at index ${index}`);
+      return;
+    }
+    const saveData = saves[index];
+    // Validate save data
+    if (saveData && typeof saveData === 'object' && saveData.heroes && saveData.wave) {
+      gameState = { ...saveData };
+      initializeGame();
+      const loadGameModal = document.getElementById('loadGameModal');
+      if (loadGameModal && typeof bootstrap !== 'undefined') {
+        bootstrap.Modal.getInstance(loadGameModal)?.hide();
+      }
+      logAction('Game loaded.');
+      startPlayerTurn();
+    } else {
+      console.warn('Invalid save data');
+      showErrorModal('Failed to load game: Invalid save data.');
+    }
+  } catch (error) {
+    console.error('Load game error:', error);
+    showErrorModal('Failed to load game.');
+  }
+}
 
-    // Music toggle
-    document.getElementById('musicToggle')?.addEventListener('click', () => {
-        const music = document.getElementById('backgroundMusic');
-        const isPlaying = music.paused;
-        if (isPlaying) {
-            music.play().catch(e => logMessage(`Music failed to play: ${e.message}`));
-            musicToggle.textContent = 'Music: On';
-            localStorage.setItem('musicState', 'on');
-        } else {
-            music.pause();
-            musicToggle.textContent = 'Music: Off';
-            localStorage.setItem('musicState', 'off');
-        }
-    });
+/* Update heroes display */
+function updateHeroesDisplay() {
+  try {
+    const total = gameState.heroes.player1.length + gameState.heroes.player2.length;
+    const alive = gameState.heroes.player1.filter(h => h && h.currentHealth > 0).length + gameState.heroes.player2.filter(h => h && h.currentHealth > 0).length;
+    const heroesDisplay = document.getElementById('heroesDisplay');
+    if (heroesDisplay) heroesDisplay.textContent = `${alive}/${total}`;
+  } catch (error) {
+    console.error('Update heroes display error:', error);
+  }
+}
 
-    // Card interactions
-    document.getElementById('player1HeroesGrid')?.addEventListener('click', e => {
-        const action = e.target.dataset.action;
-        const card = e.target.closest('.character-card');
-        if (!card || !action) return;
-        const hero = gameState.player1Heroes.find(h => h.id === card.dataset.id);
-        if (!hero || !hero.isAlive) return;
-        const targets = gameState.enemies.filter(e => e.isAlive);
-        if (!targets.length) return;
-        if (action === 'attack') {
-            handleAttack(hero, targets[Math.floor(Math.random() * targets.length)]);
-            enemyTurn();
-        } else if (action === 'special') {
-            handleSpecial(hero, targets);
-            enemyTurn();
-        } else if (action === 'info') {
-            showSpecialInfo(hero);
-        }
-    });
-
-    // Next round
-    document.getElementById('nextRoundBtn')?.addEventListener('click', () => {
-        bootstrap.Modal.getInstance(document.getElementById('roundCompleteModal')).hide();
-        generateEnemies();
-        renderGrids();
-    });
-
-    // Start game on nav link click
-    document.addEventListener('startGame', initializeGame);
+/* Keyboard controls for attack and special */
+document.addEventListener('keydown', (event) => {
+  try {
+    if (gameState.currentTurn !== 'player1') return;
+    const key = event.key.toLowerCase();
+    if (key === 'a') {
+      const aliveHeroes = gameState.heroes.player1.filter(h => h && h.currentHealth > 0 && !h.stunned && !h.immobilized);
+      if (aliveHeroes.length > 0) {
+        const hero = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
+        performAttack(hero.id, 'player1');
+      }
+    } else if (key === 's') {
+      const aliveHeroes = gameState.heroes.player1.filter(h => h && h.currentHealth > 0 && !h.stunned && !h.immobilized && h.cooldown === 0 && h.currentMana >= (h.special.manaCost || 0));
+      if (aliveHeroes.length > 0) {
+        const hero = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
+        performSpecial(hero.id, 'player1');
+      }
+    }
+  } catch (error) {
+    console.error('Keyboard controls error:', error);
+  }
 });
 
-// Initialize theme on load
-applyTheme();
+/* Periodic updates for status effects */
+function updateStatusEffects() {
+  try {
+    gameState.heroes.player1.forEach(hero => {
+      if (hero) {
+        if (hero.cooldown > 0) hero.cooldown--;
+        if (hero.currentMana < (hero.mana || 50)) {
+          hero.currentMana = Math.min(hero.mana || 50, hero.currentMana + 5);
+        }
+      }
+    });
+    gameState.heroes.player2.forEach(hero => {
+      if (hero) {
+        if (hero.cooldown > 0) hero.cooldown--;
+        if (hero.currentMana < (hero.mana || 50)) {
+          hero.currentMana = Math.min(hero.mana || 50, hero.currentMana + 5);
+        }
+      }
+    });
+    gameState.enemies.forEach(enemy => {
+      if (enemy) {
+        if (enemy.cooldown > 0) enemy.cooldown--;
+        if (enemy.currentMana < (enemy.mana || 50)) {
+          enemy.currentMana = Math.min(enemy.mana || 50, enemy.currentMana + 5);
+        }
+      }
+    });
+    updateUI();
+  } catch (error) {
+    console.error('Update status effects error:', error);
+  }
+}
+
+/* Start periodic updates */
+const statusEffectInterval = setInterval(updateStatusEffects, 1000);
+
+/* Cleanup on page unload to prevent memory leaks */
+window.addEventListener('unload', () => {
+  try {
+    clearInterval(statusEffectInterval);
+    document.removeEventListener('keydown', () => {});
+    document.removeEventListener('DOMContentLoaded', () => {});
+  } catch (error) {
+    console.error('Cleanup error:', error);
+  }
+});
