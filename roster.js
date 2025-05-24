@@ -1,9 +1,13 @@
+// Wait for the DOM to be fully loaded before executing
 document.addEventListener('DOMContentLoaded', () => {
+    // Log when the roster script runs for debugging
     console.log('Roster script executed at', new Date().toLocaleString());
 
+    // Configuration for retrying player data load
     const maxRetries = 10;
     let retryCount = 0;
 
+    // Color constants used for styling elements
     const colors = {
         heroRed: '#ff2a44',
         cosmicBlue: '#1e90ff',
@@ -13,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         starWhite: '#f0f8ff'
     };
 
+    // Theme settings based on time of day for dynamic background
     const themeSettings = [
         { start: 5, end: 11, cls: 'morning', bgGradient: `linear-gradient(135deg, ${colors.heroRed} 0%, ${colors.infinityGold} 100%)` },
         { start: 11, end: 17, cls: 'afternoon', bgGradient: `linear-gradient(135deg, ${colors.cosmicBlue} 0%, #00e6e6 100%)` },
@@ -21,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { start: 0, end: 5, cls: 'night', bgGradient: `linear-gradient(135deg, ${colors.nebulaDark} 0%, #0a0a23 100%)` }
     ];
 
+    // Load player data with retry mechanism if window.players is not immediately available
     const loadPlayers = () => {
         if (window.players && Array.isArray(window.players)) {
             console.log('Players defined:', window.players);
@@ -47,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Apply theme based on current hour for dynamic styling
     const applyTheme = () => {
         const hr = new Date().getHours();
         const setting = themeSettings.find(({ start, end }) => hr >= start && hr < end) || {
@@ -60,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return hr;
     };
 
+    // Style the navigation bar with custom colors and effects
     const styleNavbar = () => {
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -101,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Style form controls (search and sort) with consistent theme
     const styleControls = () => {
         const controls = document.querySelectorAll('.form-control, .form-select');
         controls.forEach(control => {
@@ -112,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Sanitize HTML to prevent XSS attacks
     const sanitizeHTML = str => {
         if (typeof str !== 'string') return '';
         const div = document.createElement('div');
@@ -119,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     };
 
+    // Play sound effects for user interactions
     const playSound = (type) => {
         const sound = document.getElementById(`${type}Sound`);
         if (sound) {
@@ -127,51 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const toggleHeroSelection = (hero, btn) => {
-        const playerSelect = document.getElementById('playerSelect');
-        const player = playerSelect.value;
-        const selectedHeroes = JSON.parse(sessionStorage.getItem(`${player}Heroes`) || '[]');
-        const index = selectedHeroes.findIndex(h => h.id === hero.id);
-        if (index >= 0) {
-            selectedHeroes.splice(index, 1);
-            btn.classList.remove('selected', 'btn-marvel-red');
-            btn.classList.add('btn-outline-light');
-            btn.textContent = 'Select';
-            playSound('select');
-        } else {
-            if (selectedHeroes.length >= 3) {
-                const modal = new bootstrap.Modal(document.getElementById('maxHeroesModal'));
-                modal.show();
-                playSound('moreInfo');
-                return;
-            }
-            selectedHeroes.push({ id: hero.id, firstName: hero.firstName, realName: hero.realName, weapon: hero.weapon, photo: hero.photo, skill: hero.skill });
-            btn.classList.remove('btn-outline-light');
-            btn.classList.add('selected', 'btn-marvel-red');
-            btn.textContent = 'Deselect';
-            playSound('select');
-        }
-        sessionStorage.setItem(`${player}Heroes`, JSON.stringify(selectedHeroes));
-        styleCards();
-        updateSelectButtons();
-    };
+    // Removed toggleHeroSelection function as select buttons are no longer used
+    // const toggleHeroSelection = (hero, btn) => { ... }
 
-    const updateSelectButtons = () => {
-        const playerSelect = document.getElementById('playerSelect');
-        const player = playerSelect.value;
-        const selectedHeroes = JSON.parse(sessionStorage.getItem(`${player}Heroes`) || '[]');
-        const buttons = document.querySelectorAll('.select-btn');
-        buttons.forEach(btn => {
-            const heroId = btn.dataset.heroId;
-            const isSelected = selectedHeroes.some(h => h.id === heroId);
-            btn.classList.toggle('selected', isSelected);
-            btn.classList.toggle('btn-marvel-red', isSelected);
-            btn.classList.toggle('btn-outline-light', !isSelected);
-            btn.textContent = isSelected ? 'Deselect' : 'Select';
-            btn.disabled = selectedHeroes.length >= 3 && !isSelected;
-        });
-    };
+    // Removed updateSelectButtons function as select buttons are no longer used
+    // const updateSelectButtons = () => { ... }
 
+    // Debounce function to limit the frequency of filter application
     const debounce = (func, wait) => {
         let timeout;
         return (...args) => {
@@ -180,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
+    // Render the hero roster cards
     const render = (list, hr) => {
         const grid = document.getElementById('rosterGrid');
         if (!grid) {
@@ -215,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const titleId = hr >= 11 && hr < 17 ? 'VictoryTxt' : 'LossTxt';
             const modalId = `playerModal${index}`;
 
+            // Card HTML without select button
             col.innerHTML = `
                 <div class="card h-100 shadow-sm hero-card">
                     <div class="card-img-container">
@@ -225,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="badge badge-role">Real Name: ${sanitizeHTML(p.realName)}</div>
                         <p class="card-text">Weapon: ${sanitizeHTML(p.weapon)}</p>
                         <button type="button" class="btn btn-sm btn-outline-light mt-2 more-info-btn" data-bs-toggle="modal" data-bs-target="#${modalId}">More Info</button>
-                        <button class="btn btn-sm btn-outline-light select-btn mt-2" data-hero-id="${p.id}">Select</button>
                     </div>
                 </div>
                 <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-describedby="${modalId}Desc" aria-hidden="true">
@@ -276,9 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            const selectBtn = col.querySelector('.select-btn');
-            selectBtn.addEventListener('click', () => toggleHeroSelection(p, selectBtn));
-
             const moreInfoBtn = col.querySelector('.more-info-btn');
             moreInfoBtn.addEventListener('click', () => playSound('moreInfo'));
         });
@@ -288,11 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.background = `rgba(211, 24, 24, 0.9)`;
             card.style.border = `2px solid ${colors.infinityGold}`;
             card.style.boxShadow = `0 0 15px ${colors.cosmicBlue}`;
-            const selectBtn = card.querySelector('.select-btn');
-            if (selectBtn && selectBtn.classList.contains('selected')) {
-                card.style.border = `3px solid ${colors.heroRed}`;
-                card.style.boxShadow = `0 0 20px ${colors.heroRed}`;
-            }
         });
 
         const badges = document.querySelectorAll('.badge-role');
@@ -302,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Apply search and sort filters to the hero list
     const applyFilters = (players, searchInput, sortSelect, hr) => {
         console.log('Applying filters');
         if (!players || !Array.isArray(players)) {
@@ -332,14 +299,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let hr = new Date().getHours();
 
+    // Initialize the application with required elements
     const initializeApp = (players) => {
+        // Get required DOM elements
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
-        const playerSelect = document.getElementById('playerSelect');
         const grid = document.getElementById('rosterGrid');
 
-        if (!grid || !searchInput || !sortSelect || !playerSelect) {
-            console.error('Missing DOM elements:', { grid, searchInput, sortSelect, playerSelect });
+        // Check if required elements exist
+        if (!grid || !searchInput || !sortSelect) {
+            console.error('Missing DOM elements:', { grid, searchInput, sortSelect });
             if (grid) {
                 grid.innerHTML = `
                     <div class="col-12">
@@ -359,14 +328,15 @@ document.addEventListener('DOMContentLoaded', () => {
         styleNavbar();
         styleControls();
 
+        // Set up debounced filter application
         const debouncedFilters = debounce(() => applyFilters(players, searchInput, sortSelect, hr), 300);
         searchInput.addEventListener('input', debouncedFilters);
         sortSelect.addEventListener('change', debouncedFilters);
-        playerSelect.addEventListener('change', updateSelectButtons);
 
+        // Apply initial filters and render the roster
         applyFilters(players, searchInput, sortSelect, hr);
-        updateSelectButtons();
     };
 
+    // Start loading players
     loadPlayers();
 });

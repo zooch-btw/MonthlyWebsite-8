@@ -2,17 +2,24 @@
 <html lang="en">
 
 <head>
+    <!-- Set character encoding and responsive viewport -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Page title -->
     <title>Marvel Universe | Roster</title>
+    <!-- Bootstrap CSS for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Google Fonts for custom typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap"
         rel="stylesheet">
+    <!-- Custom CSS files -->
     <link rel="stylesheet" href="glow.css">
     <link rel="stylesheet" href="style.css">
+    <!-- Favicon for the page -->
     <link rel="icon" type="image/png" href="logo.png">
+    <!-- Inline styles for modal customization -->
     <style>
         .modal-content {
             background: rgba(13, 27, 42, 0.98);
@@ -42,14 +49,19 @@
 </head>
 
 <body>
+    <!-- Particle background effect -->
     <div id="particle-bg"><span></span><span></span><span></span></div>
+    <!-- Navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-marvel-dark shadow">
         <div class="container-fluid">
+            <!-- Brand logo/link -->
             <a class="navbar-brand" href="index.html">Marvel Universe</a>
+            <!-- Navbar toggle button for mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
                 aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="navbarMarvel">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
@@ -57,18 +69,24 @@
                     <li class="nav-item"><a class="nav-link" href="about.html">About Marvel</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" onclick="checkGameAccess()">Game</a></li>
                 </ul>
+                <!-- Marvel logo in navbar -->
                 <img src="marvel.png" alt="Marvel Logo" class="navbar-logo d-none d-lg-block">
             </div>
         </div>
     </nav>
+    <!-- Main content area -->
     <main class="container py-4 text-center">
+        <!-- Page heading -->
         <h1 class="display-4 fw-bold mb-4">Hero Roster</h1>
+        <!-- Search and sort controls -->
         <div class="row mb-4 g-3 justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
+                <!-- Search input for filtering heroes -->
                 <input type="search" id="searchInput" class="form-control shadow-sm"
                     placeholder="Search heroes by name…" aria-label="Search heroes">
             </div>
             <div class="col-12 col-md-4 col-lg-3">
+                <!-- Sort dropdown for ordering heroes -->
                 <select id="sortSelect" class="form-select shadow-sm" aria-label="Sort options">
                     <option value="firstName-asc">First Name (A→Z)</option>
                     <option value="firstName-desc">First Name (Z→A)</option>
@@ -77,40 +95,18 @@
                 </select>
             </div>
             <div class="col-12 col-md-2 col-lg-2">
+                <!-- Search button -->
                 <button id="searchButton" class="btn btn-marvel-red text-white w-100 shadow-sm">Search</button>
             </div>
         </div>
-        <div class="row mb-4 g-3 justify-content-center">
-            <div class="col-12 col-md-6 col-lg-4">
-                <select id="playerSelect" class="form-select shadow-sm" aria-label="Player selection">
-                    <option value="player1">Player 1</option>
-                    <option value="player2">Player 2</option>
-                </select>
-            </div>
-        </div>
+        <!-- Grid for displaying hero cards -->
         <div id="rosterGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center"></div>
     </main>
+    <!-- Footer -->
     <footer class="p-3 m-3">
-        Created by Salvatore DiPalma &copy; 2025
+        Created by Salvatore DiPalma © 2025
     </footer>
-    <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="noHeroesModalLabel">No Heroes Selected</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Please select at least one hero for Player 1 (and Player 2 for multiplayer).</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-marvel-red text-white">Select Heroes</a>
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Modal for maximum heroes selected -->
     <div class="modal fade" id="maxHeroesModal" tabindex="-1" aria-labelledby="maxHeroesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -128,24 +124,22 @@
             </div>
         </div>
     </div>
+    <!-- Audio elements for sound effects -->
     <audio id="selectSound" src="https://example.com/select.mp3"></audio>
     <audio id="moreInfoSound" src="https://example.com/moreinfo.mp3"></audio>
+    <!-- Bootstrap JavaScript bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <!-- Custom JavaScript files -->
     <script src="players.js"></script>
     <script src="roster.js"></script>
+    <!-- Inline script for game access check -->
     <script>
+        // Check if the game can be accessed
         function checkGameAccess() {
-            const player1Heroes = JSON.parse(sessionStorage.getItem('player1Heroes') || '[]');
-            const player2Heroes = JSON.parse(sessionStorage.getItem('player2Heroes') || '[]');
-            const playerMode = sessionStorage.getItem('playerMode') || 'single';
-            if (player1Heroes.length === 0 || (playerMode === 'multi' && player2Heroes.length === 0)) {
-                const modal = new bootstrap.Modal(document.getElementById('noHeroesModal'));
-                modal.show();
-            } else {
-                window.location.href = 'game.html';
-            }
+            // Removed logic related to checking selected heroes since selection is disabled
+            window.location.href = 'game.html';
         }
     </script>
 </body>
