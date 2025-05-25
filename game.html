@@ -1,208 +1,176 @@
 <!DOCTYPE html>
+<!-- HTML: Declare HTML5 document for Galaxy BattleForge hero selection -->
 <html lang="en">
 
 <head>
-    <!-- Setting character encoding for proper text rendering -->
+    <!-- HTML: Set character encoding to UTF-8 for universal compatibility -->
     <meta charset="UTF-8">
-    <!-- Ensuring responsive design across devices -->
+    <!-- HTML: Ensure responsive viewport scaling for mobile and desktop -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Providing a description for SEO and accessibility -->
-    <meta name="description" content="Marvel Cosmic Arena: Assemble heroes to battle cosmic foes!">
-    <!-- Defining keywords for search engine optimization -->
-    <meta name="keywords" content="Marvel, superhero, game, cosmic arena, multiplayer">
-    <!-- Crediting the author of the game -->
+    <!-- HTML: Add SEO description for accessibility and search engines -->
+    <meta name="description" content="Select your warriors for Galaxy BattleForge single-player campaign">
+    <!-- HTML: Define keywords for search engine optimization -->
+    <meta name="keywords" content="Marvel, superhero, roster, galaxy battleforge, single-player">
+    <!-- HTML: Credit the creator of the application -->
     <meta name="author" content="Salvatore DiPalma">
-    <!-- Setting the page title for the game interface -->
-    <title>Marvel Cosmic Arena | Epic Battle</title>
-    <!-- Including Bootstrap 5.3.2 for styling and components -->
+    <!-- HTML: Set page title for browser tab and accessibility -->
+    <title>Galaxy BattleForge | Warrior Selection</title>
+    <!-- CSS: Include Bootstrap 5.3.2 for responsive styling and components -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- Importing Google Fonts for consistent typography -->
+    <!-- CSS: Import Google Fonts for custom typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- Including Animate.css for animations -->
+    <!-- CSS: Include Animate.css for UI animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-    <!-- Linking custom glow effects stylesheet -->
+    <!-- CSS: Link to glow effects stylesheet (assumed to exist) -->
     <link rel="stylesheet" href="glow.css">
-    <!-- Linking general stylesheet for additional styling -->
+    <!-- CSS: Link to additional custom styles (assumed to exist) -->
     <link rel="stylesheet" href="style.css">
-    <!-- Defining inline styles for custom theming and game-specific elements -->
+    <!-- CSS: Define inline styles for theming, layout, and modal behavior -->
     <style>
-        /* Establishing CSS variables for consistent theming */
+        /* CSS: Define theme variables for consistent styling */
         :root {
             --cosmic-blue: #1a2b5f;
-            /* Primary blue for cosmic theme */
+            /* Primary cosmic blue for buttons and accents */
             --vibrant-red: #e63946;
-            /* Red for action elements */
+            /* Action red for buttons */
             --glowing-gold: #f4d35e;
-            /* Gold for highlights */
+            /* Highlight gold for borders and effects */
             --nebula-dark: #0a0f2b;
-            /* Dark background base */
+            /* Dark background for cosmic theme */
             --star-white: #f1faee;
-            /* Light text color */
+            /* Light text color for readability */
             --tech-gray: #457b9d;
-            /* Gray for secondary elements */
+            /* Secondary gray for UI elements */
             --pulse-purple: #7209b7;
-            /* Purple for accents */
+            /* Accent purple for selections */
             --light-bg: #e9ecef;
             /* Light theme background */
             --light-text: #212529;
             /* Light theme text */
             --hero-red: #ff2a44;
-            /* Hero button color */
+            /* Button red for Marvel theme */
             --infinity-gold: #ffd700;
-            /* Bright gold for borders */
+            /* Gold borders for buttons */
             --marvel-dark: #0d1b2a;
-            /* Dark navbar base */
+            /* Dark button base color */
         }
 
-        /* Styling the body for cosmic background and typography */
+        /* CSS: Style body with cosmic background and flexible layout */
         body {
             font-family: 'Nunito', 'Montserrat', sans-serif;
-            /* Setting primary fonts */
-            background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
-            /* Creating gradient background */
+            /* Use custom fonts */
+            background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
+            /* Cosmic gradient */
             color: var(--star-white);
-            /* Setting text color */
-            overflow-x: hidden;
-            /* Preventing horizontal scroll */
+            /* Light text for contrast */
             margin: 0;
-            /* Removing default margins */
-            position: relative;
-            /* Enabling positioned children */
+            /* Remove default margins */
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+            display: flex;
+            /* Use flexbox for layout */
+            flex-direction: column;
+            /* Stack content vertically */
+            min-height: 100vh;
+            /* Ensure full viewport height */
             animation: nebulaGlow 15s infinite alternate;
-            /* Applying background animation */
+            /* Apply background animation */
             transition: background 0.5s, color 0.5s;
-            /* Smoothing theme transitions */
+            /* Smooth theme transitions */
         }
 
-        /* Applying light theme styles */
-        body.light-theme {
-            background: linear-gradient(135deg, var(--light-bg) 0%, #dee2e6 100%);
-            /* Light gradient background */
+        /* CSS: Apply light theme styles when toggled */
+        .light-theme {
+            background: linear-gradient(135deg, var(--light-bg), #dee2e6);
+            /* Light gradient */
             color: var(--light-text);
             /* Dark text for readability */
         }
 
-        /* Defining background animation for cosmic effect */
+        /* CSS: Define cosmic background animation for visual effect */
         @keyframes nebulaGlow {
-            0% {
-                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            from {
+                background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             }
 
-            50% {
-                background: linear-gradient(135deg, #1d3557 0%, var(--cosmic-blue) 100%);
-            }
-
-            100% {
-                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            to {
+                background: linear-gradient(135deg, #1d3557, var(--cosmic-blue));
             }
         }
 
-        /* Styling the navbar for fixed positioning and theming */
-        .navbar {
-            background: linear-gradient(180deg, var(--marvel-dark) 0%, rgba(13, 27, 42, 0.9) 100%) !important;
-            /* Setting navbar gradient */
-            border-bottom: 3px solid transparent;
-            /* Adding transparent border */
-            border-image: linear-gradient(90deg, transparent, var(--infinity-gold), transparent) 1;
-            /* Creating glowing border */
-            padding: 0.75rem 1.5rem;
-            /* Setting padding */
-            z-index: 1000;
-            /* Ensuring navbar stays on top */
-            animation: glowBorder 3s ease-in-out infinite;
-            /* Applying border animation */
-        }
-
-        /* Adjusting navbar for light theme */
-        .light-theme .navbar {
-            background: linear-gradient(180deg, var(--light-bg) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
-            /* Light gradient */
-            border-image: linear-gradient(90deg, transparent, var(--cosmic-blue), transparent) 1;
-            /* Blue border */
-        }
-
-        /* Defining border glow animation */
-        @keyframes glowBorder {
-
-            0%,
-            100% {
-                border-image-source: linear-gradient(90deg, transparent, var(--infinity-gold), transparent);
-            }
-
-            50% {
-                border-image-source: linear-gradient(90deg, transparent, #1e90ff, transparent);
-            }
-        }
-
-        /* Aligning navbar content */
-        .navbar .container-fluid {
+        /* CSS: Center main content container with flexible layout */
+        .container-fluid {
+            flex: 1;
+            /* Grow to fill available space */
             display: flex;
-            /* Using flexbox for layout */
+            /* Use flexbox for alignment */
+            flex-direction: column;
+            /* Stack content vertically */
+            justify-content: center;
+            /* Center vertically */
             align-items: center;
-            /* Centering vertically */
-            justify-content: flex-start;
-            /* Aligning to start */
+            /* Center horizontally */
+            padding: 20px;
+            /* Add padding for spacing */
+            max-width: 1600px;
+            /* Limit maximum width */
+            margin: auto;
+            /* Center container */
         }
 
-        /* Positioning progress HUD within navbar */
-        .navbar #progressHUD {
-            position: static;
-            /* Removing absolute positioning */
-            margin-right: 1rem;
-            /* Adding spacing */
-            order: -1;
-            /* Placing before buttons */
-        }
-
-        /* Styling navigation buttons container */
+        /* CSS: Style navigation buttons container for layout */
         .nav-buttons {
             display: flex;
-            /* Arranging buttons horizontally */
-            gap: 0.5rem;
-            /* Setting space between buttons */
+            /* Use flexbox for button alignment */
+            gap: 1rem;
+            /* Space between buttons */
             flex-wrap: wrap;
-            /* Allowing wrapping on small screens */
+            /* Allow wrapping on small screens */
+            justify-content: center;
+            /* Center buttons */
+            margin: 2rem 0;
+            /* Add vertical margin */
+            padding: 1rem;
+            /* Add padding */
         }
 
-        /* Styling custom Marvel-themed buttons */
-        .btn-marvel-red {
+        /* CSS: Style Marvel-themed navigation buttons */
+        .btn-marvel {
             background-color: var(--hero-red);
-            /* Setting button background */
+            /* Red background */
             border: 2px solid var(--infinity-gold);
-            /* Adding gold border */
+            /* Gold border */
             color: var(--star-white);
-            /* Setting text color */
+            /* White text */
             font-family: 'Bebas Neue', sans-serif;
-            /* Using bold font */
-            font-size: 1.3rem;
-            /* Setting font size */
+            /* Bold font */
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            /* Responsive font size */
             letter-spacing: 1.5px;
-            /* Adding letter spacing */
+            /* Add letter spacing */
             text-transform: uppercase;
-            /* Making text uppercase */
+            /* Uppercase text */
             padding: 0.5rem 1.5rem;
-            /* Setting padding */
-            border-radius: 0.25rem;
-            /* Rounding corners */
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            /* Adding transitions */
-            position: relative;
-            /* Enabling pseudo-element positioning */
-            overflow: hidden;
-            /* Hiding overflow for effects */
+            /* Add padding */
+            border-radius: 5px;
+            /* Rounded corners */
+            transition: background-color 0.3s, box-shadow 0.3s;
+            /* Smooth transitions */
             text-align: center;
-            /* Centering text */
+            /* Center text */
             text-decoration: none;
-            /* Removing underline */
+            /* Remove underline for links */
             text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
-            /* Adding glow effect */
+            /* Subtle glow */
+            cursor: pointer;
+            /* Indicate clickable */
         }
 
-        /* Adjusting buttons for light theme */
-        .light-theme .btn-marvel-red {
+        /* CSS: Adjust Marvel buttons for light theme */
+        .light-theme .btn-marvel {
             background-color: #e0233d;
             /* Slightly darker red */
             border-color: var(--cosmic-blue);
@@ -213,186 +181,129 @@
             /* Blue glow */
         }
 
-        /* Defining hover effects for buttons */
-        .btn-marvel-red:hover {
+        /* CSS: Define hover effects for Marvel buttons */
+        .btn-marvel:hover {
             background-color: #e0233d;
-            /* Darkening background */
-            transform: scale(1.1);
-            /* Scaling up */
+            /* Darker red on hover */
             box-shadow: 0 0 20px var(--infinity-gold);
-            /* Adding glow */
-        }
-
-        /* Creating pseudo-element for hover animation */
-        .btn-marvel-red::before {
-            content: '';
-            /* Empty content */
-            position: absolute;
-            /* Positioning absolutely */
-            top: 50%;
-            /* Centering vertically */
-            left: 50%;
-            /* Centering horizontally */
-            width: 0;
-            /* Starting width */
-            height: 0;
-            /* Starting height */
-            background: rgba(255, 215, 0, 0.5);
             /* Gold glow */
-            border-radius: 50%;
-            /* Circular shape */
-            transform: translate(-50%, -50%);
-            /* Centering */
-            transition: width 0.6s ease, height 0.6s ease;
-            /* Animating size */
         }
 
-        /* Expanding pseudo-element on hover */
-        .btn-marvel-red:hover::before {
-            width: 200px;
-            /* Expanding width */
-            height: 200px;
-            /* Expanding height */
+        /* CSS: Highlight active state for buttons (e.g., remove hero) */
+        .btn-marvel.active {
+            background-color: var(--pulse-purple);
+            /* Purple background */
+            box-shadow: 0 0 15px var(--pulse-purple);
+            /* Purple glow */
+            text-shadow: 0 0 10px var(--pulse-purple);
+            /* Purple text glow */
         }
 
-        /* Highlighting active navigation button */
-        .btn-marvel-red.active {
-            background-color: var(--hero-red);
-            /* Maintaining background */
-            text-shadow: 0 0 10px var(--hero-red);
-            /* Enhancing glow */
-        }
-
-        /* Styling main content container */
-        .container-fluid {
-            padding: 2rem;
-            /* Adding padding */
-            max-width: 1600px;
-            /* Limiting width */
-            margin: auto;
-            /* Centering */
-        }
-
-        /* Styling character cards */
+        /* CSS: Style character cards for warriors */
         .character-card {
             width: clamp(140px, 16vw, 200px);
             /* Responsive width */
             height: clamp(210px, 24vw, 300px);
             /* Responsive height */
             margin: 0.75rem;
-            /* Adding spacing */
+            /* Add margin */
             border: 4px solid var(--pulse-purple);
             /* Purple border */
             border-radius: 12px;
-            /* Rounding corners */
+            /* Rounded corners */
             overflow: hidden;
-            /* Hiding overflow */
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.5s;
-            /* Adding transitions */
+            /* Hide overflow */
+            transition: box-shadow 0.3s;
+            /* Smooth shadow transition */
             position: relative;
-            /* Enabling positioned children */
+            /* Position stats modal */
             cursor: pointer;
-            /* Indicating interactivity */
+            /* Indicate clickable */
             background: rgba(255, 255, 255, 0.05);
             /* Semi-transparent background */
         }
 
-        /* Adjusting card background for light theme */
+        /* CSS: Highlight cards in removal mode */
+        .character-card.removal-mode {
+            border-color: var(--pulse-purple);
+            /* Purple border */
+            box-shadow: 0 0 10px var(--pulse-purple);
+            /* Purple glow */
+        }
+
+        /* CSS: Adjust card background for light theme */
         .light-theme .character-card {
             background: rgba(0, 0, 0, 0.1);
-            /* Darker background for contrast */
+            /* Darker semi-transparent background */
         }
 
-        /* Changing border color based on wave progress */
-        .character-card.wave-progress-1 {
-            border-color: #a663cc;
-        }
-
-        /* Lighter purple */
-        .character-card.wave-progress-2 {
-            border-color: #8e55aa;
-        }
-
-        /* Medium purple */
-        .character-card.wave-progress-3 {
-            border-color: #7209b7;
-        }
-
-        /* Dark purple */
-
-        /* Defining hover effects for cards */
+        /* CSS: Add glow effect on card hover */
         .character-card:hover {
-            transform: scale(1.15) rotate(3deg);
-            /* Scaling and rotating */
             box-shadow: 0 0 25px var(--glowing-gold);
-            /* Adding glow */
+            /* Gold glow */
         }
 
-        /* Styling character images */
+        /* CSS: Style warrior images within cards */
         .character-img {
             width: 100%;
-            /* Filling card */
+            /* Fill card width */
             height: 100%;
-            /* Filling card */
+            /* Fill card height */
             object-fit: cover;
-            /* Covering area */
+            /* Cover card area */
             border-radius: 8px;
-            /* Rounding corners */
+            /* Rounded corners */
             filter: brightness(0.9);
-            /* Slightly dimming */
-            transition: filter 0.3s, transform 0.3s;
-            /* Adding transitions */
+            /* Slightly dim image */
+            transition: filter 0.3s;
+            /* Smooth brightness transition */
         }
 
-        /* Applying cosmic skin effect */
-        .character-img.cosmic-skin {
-            filter: brightness(1.1) hue-rotate(30deg);
-            /* Brightening and tinting */
-        }
-
-        /* Enhancing image on card hover */
+        /* CSS: Brighten image on card hover */
         .character-card:hover .character-img {
             filter: brightness(1.2);
-            /* Brightening */
-            transform: scale(1.05);
-            /* Slight zoom */
+            /* Increase brightness */
         }
 
-        /* Styling card grids */
+        /* CSS: Style grid layout for cards */
         .card-grid {
             display: flex;
-            /* Using flexbox */
+            /* Use flexbox for grid */
             flex-wrap: wrap;
-            /* Allowing wrapping */
+            /* Allow wrapping */
             gap: 1.5rem;
-            /* Setting spacing */
+            /* Space between cards */
             justify-content: center;
-            /* Centering cards */
+            /* Center cards */
             padding: 1rem;
-            /* Adding padding */
+            /* Add padding */
+            width: 100%;
+            /* Full width */
         }
 
-        /* Styling section titles */
+        /* CSS: Style section titles for grids */
         .section-title {
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
+            /* Use Nunito font */
             font-size: clamp(1.8rem, 4.5vw, 2.5rem);
             /* Responsive font size */
             text-transform: uppercase;
-            /* Making text uppercase */
+            /* Uppercase text */
             color: var(--glowing-gold);
             /* Gold color */
             text-shadow: 0 0 12px var(--glowing-gold);
-            /* Adding glow */
+            /* Gold glow */
             margin-bottom: 2rem;
-            /* Spacing below */
+            /* Add bottom margin */
             text-align: center;
-            /* Centering text */
+            /* Center text */
             animation: pulseGlow 2s infinite;
-            /* Applying glow animation */
+            /* Apply glow animation */
+            width: 100%;
+            /* Full width */
         }
 
-        /* Adjusting titles for light theme */
+        /* CSS: Adjust section titles for light theme */
         .light-theme .section-title {
             color: var(--cosmic-blue);
             /* Blue color */
@@ -400,197 +311,184 @@
             /* Blue glow */
         }
 
-        /* Styling battle log sidebar */
-        #gameLogSidebar {
-            position: fixed;
-            /* Fixing to right side */
-            top: 80px;
-            /* Aligning below navbar */
-            right: 0;
-            /* Positioning at right edge */
-            width: clamp(250px, 30vw, 350px);
-            /* Responsive width */
-            height: calc(100vh - 80px);
-            /* Full height minus navbar */
-            background: rgba(10, 15, 43, 0.95);
-            /* Semi-transparent background */
-            border-left: 3px solid var(--glowing-gold);
+        /* CSS: Style select button for available warriors */
+        .btn-select {
+            background-color: var(--vibrant-red);
+            /* Red background */
+            border: 2px solid var(--glowing-gold);
             /* Gold border */
-            padding: 2rem;
-            /* Adding padding */
-            overflow-y: auto;
-            /* Enabling vertical scroll */
             color: var(--star-white);
-            /* Text color */
-            z-index: 900;
-            /* Placing below navbar */
-            transition: transform 0.4s ease;
-            /* Smoothing slide animation */
-            display: none;
-            /* Hiding by default */
-        }
-
-        /* Adjusting sidebar for light theme */
-        .light-theme #gameLogSidebar {
-            background: rgba(255, 255, 255, 0.95);
-            /* Light background */
-            color: var(--light-text);
-            /* Dark text */
-            border-left-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Showing sidebar when active */
-        #gameLogSidebar.show {
-            display: block;
-            /* Displaying sidebar */
-        }
-
-        /* Styling sidebar title */
-        #gameLogSidebar h2 {
+            /* White text */
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
-            /* Responsive font size */
-            color: var(--glowing-gold);
-            /* Gold color */
-        }
-
-        /* Adjusting sidebar title for light theme */
-        .light-theme #gameLogSidebar h2 {
-            color: var(--cosmic-blue);
-            /* Blue color */
-        }
-
-        /* Styling sidebar log entries */
-        #gameLogSidebar p {
-            font-size: clamp(0.8rem, 2.2vw, 1rem);
-            /* Responsive font size */
-            margin-bottom: 0.5rem;
-            /* Spacing below */
-        }
-
-        /* Styling modal content */
-        .modal-content {
-            background: rgba(10, 15, 43, 0.95);
-            /* Semi-transparent background */
-            border: 3px solid var(--glowing-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* Text color */
-            border-radius: 15px;
-            /* Rounding corners */
-            animation: fadeIn 0.5s;
-            /* Applying fade-in animation */
-        }
-
-        /* Adjusting modals for light theme */
-        .light-theme .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            /* Light background */
-            color: var(--light-text);
-            /* Dark text */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Styling modal header, body, and footer */
-        .modal-header,
-        .modal-body,
-        .modal-footer {
-            border-color: var(--glowing-gold);
-            /* Gold borders */
+            /* Nunito font */
+            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
+            /* Responsive padding */
+            border-radius: 5px;
+            /* Rounded corners */
+            margin: 0.3rem;
+            /* Add margin */
+            transition: all 0.3s;
+            /* Smooth transitions */
+            width: 100%;
+            /* Full width */
             text-align: center;
-            /* Centering content */
+            /* Center text */
+            cursor: pointer;
+            /* Indicate clickable */
         }
 
-        /* Adjusting modal borders for light theme */
-        .light-theme .modal-header,
-        .light-theme .modal-body,
-        .light-theme .modal-footer {
+        /* CSS: Style selected state for select button */
+        .btn-select.selected {
+            background-color: var(--pulse-purple);
+            /* Purple background */
+            box-shadow: 0 0 15px var(--pulse-purple);
+            /* Purple glow */
+        }
+
+        /* CSS: Adjust select button for light theme */
+        .light-theme .btn-select {
+            background-color: var(--cosmic-blue);
+            /* Blue background */
+            border-color: var(--tech-gray);
+            /* Gray border */
+            color: var(--star-white);
+            /* White text */
+        }
+
+        /* CSS: Define hover effects for select button */
+        .btn-select:hover {
+            background-color: var(--pulse-purple);
+            /* Purple on hover */
+            box-shadow: 0 0 15px var(--pulse-purple);
+            /* Purple glow */
+        }
+
+        /* CSS: Style stats modal for warrior details */
+        .stats-modal {
+            position: absolute;
+            /* Position over card */
+            top: 50%;
+            /* Center vertically */
+            left: 50%;
+            /* Center horizontally */
+            transform: translate(-50%, -50%);
+            /* Offset to center */
+            min-width: clamp(180px, 20vw, 240px);
+            /* Responsive min width */
+            max-width: clamp(260px, 30vw, 360px);
+            /* Responsive max width */
+            max-height: 80vh;
+            /* Limit height */
+            background: rgba(10, 15, 43, 0.95);
+            /* Dark semi-transparent background */
+            border: 2px solid var(--glowing-gold);
+            /* Gold border */
+            border-radius: 12px;
+            /* Rounded corners */
+            padding: 1rem;
+            /* Add padding */
+            color: var(--star-white);
+            /* White text */
+            z-index: 1500;
+            /* Ensure above other elements */
+            display: none;
+            /* Hidden by default */
+            animation: fadeIn 0.4s;
+            /* Fade-in animation */
+            text-align: left;
+            /* Left-align text */
+            overflow-y: auto;
+            /* Scroll if content overflows */
+            box-sizing: border-box;
+            /* Include padding in size */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            /* Subtle shadow */
+            overflow-wrap: break-word;
+            /* Wrap long text */
+        }
+
+        /* CSS: Adjust stats modal for light theme */
+        .light-theme .stats-modal {
+            background: rgba(255, 255, 255, 0.95);
+            /* Light semi-transparent background */
+            color: var(--light-text);
+            /* Dark text */
             border-color: var(--cosmic-blue);
-            /* Blue borders */
+            /* Blue border */
         }
 
-        /* Styling modal title */
-        .modal-title {
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+        /* CSS: Show stats modal on card hover */
+        .character-card:hover .stats-modal {
+            display: block;
+            /* Show modal */
+        }
+
+        /* CSS: Style stats modal heading */
+        .stats-modal h6 {
+            margin: 0.5rem 0;
+            /* Add margin */
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             /* Responsive font size */
-            color: var(--glowing-gold);
-            /* Gold color */
-            text-shadow: 0 0 10px var(--glowing-gold);
-            /* Adding glow */
+            font-weight: bold;
+            /* Bold text */
+            text-align: center;
+            /* Center text */
         }
 
-        /* Adjusting modal title for light theme */
-        .light-theme .modal-title {
-            color: var(--cosmic-blue);
-            /* Blue color */
-            text-shadow: 0 0 10px var(--cosmic-blue);
-            /* Blue glow */
-        }
-
-        /* Styling modal headings */
-        .modal-body h6,
-        .modal-body h5 {
-            color: var(--vibrant-red);
-            /* Red color */
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(1rem, 2.8vw, 1.2rem);
+        /* CSS: Style stats modal paragraphs */
+        .stats-modal p {
+            margin: 0.3rem 0;
+            /* Add margin */
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
             /* Responsive font size */
+            line-height: 1.4;
+            /* Improve readability */
         }
 
-        /* Adjusting modal headings for light theme */
-        .light-theme .modal-body h6,
-        .light-theme .modal-body h5 {
-            color: var(--cosmic-blue);
-            /* Blue color */
+        /* CSS: Define modal fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                /* Start invisible */
+                transform: translate(-50%, -60%);
+                /* Slide up slightly */
+            }
+
+            to {
+                opacity: 1;
+                /* Fully visible */
+                transform: translate(-50%, -50%);
+                /* Centered */
+            }
         }
 
-        /* Styling modal footer for centered buttons */
-        .modal-footer {
-            justify-content: center;
-            /* Centering buttons */
-            gap: 1rem;
-            /* Spacing buttons */
-        }
-
-        /* Enhancing close button visibility */
-        .btn-close-white {
-            filter: brightness(1.5);
-            /* Brightening close button */
-        }
-
-        /* Adjusting close button for light theme */
-        .light-theme .btn-close-white {
-            filter: brightness(0.8);
-            /* Darkening for contrast */
-        }
-
-        /* Styling cosmic-themed buttons */
+        /* CSS: Style play button for starting the game */
         .btn-cosmic {
             background-color: var(--cosmic-blue);
-            /* Setting background */
-            border-color: var(--glowing-gold);
-            /* Setting border */
+            /* Blue background */
+            border: 2px solid var(--glowing-gold);
+            /* Gold border */
             color: var(--star-white);
-            /* Setting text color */
+            /* White text */
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
+            /* Nunito font */
             text-transform: uppercase;
-            /* Making text uppercase */
+            /* Uppercase text */
             padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.8rem, 2.5vw, 1.2rem);
             /* Responsive padding */
             border-radius: 6px;
-            /* Rounding corners */
+            /* Rounded corners */
             transition: all 0.3s;
-            /* Adding transitions */
+            /* Smooth transitions */
+            margin: 1rem auto;
+            /* Center with margin */
+            display: block;
+            /* Block display */
+            cursor: pointer;
+            /* Indicate clickable */
         }
 
-        /* Adjusting cosmic buttons for light theme */
+        /* CSS: Adjust play button for light theme */
         .light-theme .btn-cosmic {
             background-color: var(--tech-gray);
             /* Gray background */
@@ -600,1035 +498,235 @@
             /* Dark text */
         }
 
-        /* Defining hover effects for cosmic buttons */
+        /* CSS: Define hover effects for play button */
         .btn-cosmic:hover {
             background-color: var(--pulse-purple);
-            /* Purple background */
+            /* Purple on hover */
             box-shadow: 0 0 20px var(--pulse-purple);
             /* Purple glow */
             transform: translateY(-2px);
-            /* Lifting button */
+            /* Slight lift */
         }
 
-        /* Styling action buttons for attacks/specials */
-        .btn-action {
-            background-color: var(--vibrant-red);
-            /* Red background */
-            border-color: var(--glowing-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* White text */
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
-            /* Responsive padding */
-            border-radius: 5px;
-            /* Rounding corners */
-            margin: 0.3rem;
-            /* Adding spacing */
-            transition: all 0.3s;
-            /* Adding transitions */
-        }
-
-        /* Adjusting action buttons for light theme */
-        .light-theme .btn-action {
-            background-color: var(--cosmic-blue);
-            /* Blue background */
-            border-color: var(--tech-gray);
-            /* Gray border */
-            color: var(--star-white);
-            /* White text */
-        }
-
-        /* Defining hover effects for action buttons */
-        .btn-action:hover {
-            background-color: var(--pulse-purple);
-            /* Purple background */
-            box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
-        }
-
-        /* Styling info buttons for ability details */
-        .btn-info-custom {
-            background-color: var(--tech-gray);
-            /* Gray background */
-            border-color: var(--glowing-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* White text */
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
-            /* Responsive padding */
-            border-radius: 5px;
-            /* Rounding corners */
-            margin: 0.3rem;
-            /* Adding spacing */
-        }
-
-        /* Adjusting info buttons for light theme */
-        .light-theme .btn-info-custom {
-            background-color: var(--light-bg);
-            /* Light background */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-            color: var(--light-text);
-            /* Dark text */
-        }
-
-        /* Defining hover effects for info buttons */
-        .btn-info-custom:hover {
-            background-color: var(--pulse-purple);
-            /* Purple background */
-            box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
-        }
-
-        /* Styling outline buttons for modals */
-        .btn-outline-cosmic {
-            color: var(--star-white);
-            /* White text */
-            border-color: var(--glowing-gold);
-            /* Gold border */
-            transition: all 0.3s;
-            /* Adding transitions */
-        }
-
-        /* Adjusting outline buttons for light theme */
-        .light-theme .btn-outline-cosmic {
-            color: var(--light-text);
-            /* Dark text */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Defining hover effects for outline buttons */
-        .btn-outline-cosmic:hover {
-            background-color: var(--glowing-gold);
-            /* Gold background */
-            color: var(--nebula-dark);
-            /* Dark text */
-        }
-
-        /* Styling header container for action buttons */
-        .header-container {
-            display: flex;
-            /* Using flexbox */
-            flex-wrap: wrap;
-            /* Allowing wrapping */
-            align-items: center;
-            /* Centering vertically */
-            justify-content: center;
-            /* Centering horizontally */
-            gap: 0.75rem;
-            /* Setting spacing */
-            margin-bottom: 2.5rem;
-            /* Spacing below */
-            animation: pulseGlow 2s infinite;
-            /* Applying glow animation */
-        }
-
-        /* Defining glow animation for titles and headers */
+        /* CSS: Define pulse glow animation for titles */
         @keyframes pulseGlow {
             0% {
                 text-shadow: 0 0 6px var(--glowing-gold);
+                /* Subtle glow */
             }
 
             50% {
                 text-shadow: 0 0 18px var(--glowing-gold);
+                /* Stronger glow */
             }
 
             100% {
                 text-shadow: 0 0 6px var(--glowing-gold);
+                /* Subtle glow */
             }
         }
 
-        /* Styling progress HUD for game stats */
-        #progressHUD {
-            display: inline-flex;
-            /* Using inline flexbox */
-            align-items: center;
-            /* Centering vertically */
-            background: rgba(10, 15, 43, 0.9);
-            /* Semi-transparent background */
-            border: 2px solid var(--glowing-gold);
-            /* Gold border */
-            border-radius: 12px;
-            /* Rounding corners */
-            padding: 0.4rem 0.8rem;
-            /* Setting padding */
+        /* CSS: Style hidden victory text (unused in selection) */
+        #VictoryTxt {
+            animation: glowVictory 1.5s infinite alternate;
+            /* Victory animation */
+            font-family: 'Bebas Neue', sans-serif;
+            /* Bold font */
+            font-size: 2rem;
+            /* Large text */
             color: var(--star-white);
             /* White text */
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            /* Responsive font size */
-            gap: 0.75rem;
-            /* Spacing elements */
-            z-index: 1000;
-            /* Ensuring visibility */
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-            /* Adding shadow */
-        }
-
-        /* Adjusting HUD for light theme */
-        .light-theme #progressHUD {
-            background: rgba(255, 255, 255, 0.9);
-            /* Light background */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-            color: var(--light-text);
-            /* Dark text */
-        }
-
-        /* Styling wave progress bar container */
-        #waveProgress {
-            width: 50px;
-            /* Fixed width */
-            height: 5px;
-            /* Fixed height */
-            background: rgba(255, 255, 255, 0.2);
-            /* Semi-transparent background */
-            border-radius: 3px;
-            /* Rounding corners */
-            margin-left: 0.5rem;
-            /* Adding spacing */
-        }
-
-        /* Styling wave progress bar */
-        #waveProgressBar {
-            height: 100%;
-            /* Filling container */
-            background: var(--glowing-gold);
-            /* Gold color */
-            border-radius: 3px;
-            /* Rounding corners */
-            transition: width 0.5s;
-            /* Smoothing width changes */
-        }
-
-        /* Styling cinematic overlay for major events */
-        #cinematicOverlay {
-            position: fixed;
-            /* Covering entire screen */
-            top: 0;
-            /* Aligning to top */
-            left: 0;
-            /* Aligning to left */
-            width: 100%;
-            /* Full width */
-            height: 100%;
-            /* Full height */
-            background: rgba(0, 0, 0, 0.9);
-            /* Dark overlay */
-            z-index: 3000;
-            /* Placing above all */
+            text-align: center;
+            /* Center text */
+            margin-top: 1rem;
+            /* Add margin */
             display: none;
-            /* Hiding by default */
-            justify-content: center;
-            /* Centering content */
-            align-items: center;
-            /* Centering content */
-            color: var(--glowing-gold);
-            /* Gold text */
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            /* Responsive font size */
-            text-shadow: 0 0 20px var(--glowing-gold);
-            /* Adding glow */
-            animation: fadeIn 1s;
-            /* Applying fade-in animation */
+            /* Hidden by default */
         }
 
-        /* Styling victory text */
-        .VictoryTxt {
-            color: var(--glowing-gold);
-            /* Gold color */
-            text-shadow: 0 0 15px var(--glowing-gold);
-            /* Gold glow */
-        }
-
-        /* Styling loss text */
-        .LossTxt {
-            color: var(--vibrant-red);
-            /* Red color */
-            text-shadow: 0 0 15px var(--vibrant-red);
-            /* Red glow */
-        }
-
-        /* Styling achievement list */
-        #achievementList {
-            list-style: none;
-            /* Removing bullets */
-            padding: 0;
-            /* Removing padding */
-            margin-top: 1.5rem;
-            /* Adding spacing */
-        }
-
-        /* Styling achievement items */
-        #achievementList li {
-            background: rgba(255, 255, 255, 0.15);
-            /* Semi-transparent background */
-            padding: clamp(0.6rem, 1.8vw, 0.9rem);
-            /* Responsive padding */
-            margin-bottom: 0.75rem;
-            /* Spacing below */
-            border-radius: 6px;
-            /* Rounding corners */
+        /* CSS: Style hidden loss text (unused in selection) */
+        #LossTxt {
+            animation: glowLoss 1.5s infinite alternate;
+            /* Loss animation */
+            font-family: 'Bebas Neue', sans-serif;
+            /* Bold font */
+            font-size: 2rem;
+            /* Large text */
             color: var(--star-white);
             /* White text */
-            font-size: clamp(0.9rem, 2.2vw, 1.1rem);
-            /* Responsive font size */
-        }
-
-        /* Adjusting achievements for light theme */
-        .light-theme #achievementList li {
-            background: rgba(0, 0, 0, 0.1);
-            /* Darker background */
-            color: var(--light-text);
-            /* Dark text */
-        }
-
-        /* Styling modal achievement list */
-        #modalAchievementList {
-            list-style: none;
-            /* Removing bullets */
-            padding: 0;
-            /* Removing padding */
-            margin-top: 1.5rem;
-            /* Adding spacing */
-        }
-
-        /* Styling modal achievement items */
-        #modalAchievementList li {
-            background: rgba(255, 255, 255, 0.15);
-            /* Semi-transparent background */
-            padding: clamp(0.6rem, 1.8vw, 0.9rem);
-            /* Responsive padding */
-            margin-bottom: 0.75rem;
-            /* Spacing below */
-            border-radius: 6px;
-            /* Rounding corners */
-            color: var(--star-white);
-            /* White text */
-            font-size: clamp(0.9rem, 2.2vw, 1.1rem);
-            /* Responsive font size */
-        }
-
-        /* Adjusting modal achievements for light theme */
-        .light-theme #modalAchievementList li {
-            background: rgba(0, 0, 0, 0.1);
-            /* Darker background */
-            color: var(--light-text);
-            /* Dark text */
-        }
-
-        /* Styling stats modal for character details */
-        .stats-modal {
-            position: absolute;
-            /* Positioning over card */
-            top: 50%;
-            /* Centering vertically */
-            left: 50%;
-            /* Centering horizontally */
-            transform: translate(-50%, -50%);
-            /* Centering */
-            width: clamp(220px, 28vw, 320px);
-            /* Responsive width */
-            background: rgba(10, 15, 43, 0.95);
-            /* Semi-transparent background */
-            border: 2px solid var(--glowing-gold);
-            /* Gold border */
-            border-radius: 12px;
-            /* Rounding corners */
-            padding: 1.5rem;
-            /* Adding padding */
-            color: var(--star-white);
-            /* White text */
-            z-index: 1500;
-            /* Placing above cards */
+            text-align: center;
+            /* Center text */
+            margin-top: 1rem;
+            /* Add margin */
             display: none;
-            /* Hiding by default */
-            animation: fadeIn 0.4s;
-            /* Applying fade-in animation */
+            /* Hidden by default */
         }
 
-        /* Adjusting stats modal for light theme */
-        .light-theme .stats-modal {
-            background: rgba(255, 255, 255, 0.95);
-            /* Light background */
-            color: var(--light-text);
-            /* Dark text */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Showing stats modal on card hover */
-        .character-card:hover .stats-modal {
-            display: block;
-            /* Displaying modal */
-        }
-
-        /* Styling stats modal headings and text */
-        .stats-modal h6,
-        .stats-modal p {
-            margin: 0.5rem 0;
-            /* Adding spacing */
-            font-size: clamp(0.9rem, 2.2vw, 1rem);
-            /* Responsive font size */
-        }
-
-        /* Defining fade-in animation for modals */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-
-            /* Starting state */
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-
-            /* Ending state */
-        }
-
-        /* Defining shake animation for card effects */
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-6px);
-            }
-
-            50% {
-                transform: translateX(6px);
-            }
-
-            75% {
-                transform: translateX(-6px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        /* Applying attack animation to cards */
-        .character-card.attack {
-            animation: attackFlash 0.3s;
-            /* Flash effect */
-        }
-
-        /* Defining attack flash animation */
-        @keyframes attackFlash {
-            0% {
-                box-shadow: 0 0 10px var(--vibrant-red);
-            }
-
-            50% {
-                box-shadow: 0 0 30px var(--vibrant-red);
-            }
-
-            100% {
-                box-shadow: 0 0 10px var(--vibrant-red);
-            }
-        }
-
-        /* Applying special ability animation to cards */
-        .character-card.special {
-            animation: specialGlow 0.5s;
-            /* Glow effect */
-        }
-
-        /* Defining special ability glow animation */
-        @keyframes specialGlow {
-            0% {
-                box-shadow: 0 0 15px var(--pulse-purple);
-            }
-
-            50% {
-                box-shadow: 0 0 40px var(--pulse-purple);
-            }
-
-            100% {
-                box-shadow: 0 0 15px var(--pulse-purple);
-            }
-        }
-
-        /* Applying responsive styles for medium screens */
+        /* CSS: Responsive styles for medium screens (tablets) */
         @media (max-width: 992px) {
             .container-fluid {
                 padding: 1.5rem;
+                /* Reduce padding */
             }
 
-            /* Reducing padding */
-            .header-container {
-                gap: 0.5rem;
-            }
-
-            /* Tightening button spacing */
-            .btn-cosmic {
-                font-size: clamp(0.9rem, 2.5vw, 1rem);
-            }
-
-            /* Smaller buttons */
             .card-grid {
                 gap: 1rem;
+                /* Reduce gap */
             }
 
-            /* Reducing card spacing */
-            #progressHUD {
-                font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-                padding: 0.3rem 0.6rem;
+            .btn-select {
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+                /* Smaller font */
             }
 
-            /* Smaller HUD */
-            .nav-buttons .btn-marvel-red {
-                font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-                padding: 0.3rem 0.8rem;
+            .nav-buttons {
+                gap: 0.75rem;
+                /* Reduce gap */
             }
 
-            /* Smaller nav buttons */
+            .section-title {
+                font-size: clamp(1.6rem, 4vw, 2.2rem);
+                /* Smaller title */
+            }
+
+            .stats-modal {
+                min-width: clamp(160px, 18vw, 220px);
+                /* Adjust modal width */
+                max-width: clamp(240px, 28vw, 320px);
+                padding: 0.8rem;
+                /* Reduce padding */
+            }
+
+            .stats-modal h6 {
+                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+                /* Smaller heading */
+            }
+
+            .stats-modal p {
+                font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+                /* Smaller text */
+            }
+
+            .btn-marvel {
+                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+                /* Smaller font */
+                padding: 0.4rem 1.2rem;
+                /* Adjust padding */
+            }
         }
 
-        /* Applying responsive styles for small screens */
+        /* CSS: Responsive styles for small screens (phones) */
         @media (max-width: 576px) {
             .container-fluid {
                 padding: 1rem;
+                /* Minimal padding */
             }
 
-            /* Further reducing padding */
-            #gameLogSidebar {
-                width: 100%;
-                height: 40vh;
-                top: auto;
-                bottom: 0;
-                border-left: none;
-                border-top: 3px solid var(--glowing-gold);
-            }
-
-            /* Bottom sidebar */
-            #gameLogSidebar.show {
-                display: block;
-            }
-
-            /* Ensuring sidebar visibility */
-            .stats-modal {
-                width: 90%;
-                font-size: clamp(0.8rem, 2vw, 0.9rem);
-            }
-
-            /* Full-width modal */
-            #progressHUD {
-                font-size: clamp(0.6rem, 1.6vw, 0.7rem);
-                padding: 0.2rem 0.5rem;
-                gap: 0.5rem;
-            }
-
-            /* Smaller HUD */
             .character-card {
                 width: clamp(120px, 20vw, 160px);
+                /* Smaller cards */
                 height: clamp(180px, 30vw, 240px);
             }
 
-            /* Smaller cards */
+            .card-grid {
+                gap: 1rem;
+                /* Reduce gap */
+            }
+
             .section-title {
-                font-size: clamp(1.5rem, 4vw, 2rem);
+                font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+                /* Smaller title */
             }
 
-            /* Smaller titles */
-            .header-container {
-                gap: 0.4rem;
+            .btn-select {
+                font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+                /* Smaller font */
             }
 
-            /* Tighter button spacing */
             .nav-buttons {
-                gap: 0.3rem;
+                gap: 0.5rem;
+                /* Minimal gap */
+                margin: 1rem 0;
+                /* Reduce margin */
+                padding: 0.75rem;
+                /* Adjust padding */
             }
 
-            /* Tighter nav button spacing */
-            .nav-buttons .btn-marvel-red {
-                font-size: clamp(0.6rem, 1.6vw, 0.7rem);
-                padding: 0.2rem 0.5rem;
+            .btn-marvel {
+                font-size: clamp(0.8rem, 2vw, 1rem);
+                /* Smaller font */
+                padding: 0.4rem 1rem;
+                /* Adjust padding */
             }
 
-            /* Smaller nav buttons */
+            .btn-cosmic {
+                padding: 0.3rem 0.8rem;
+                /* Smaller padding */
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+                /* Smaller font */
+            }
+
+            .stats-modal {
+                min-width: clamp(140px, 16vw, 200px);
+                /* Smaller modal */
+                max-width: clamp(220px, 26vw, 300px);
+                padding: 0.6rem;
+                /* Minimal padding */
+            }
+
+            .stats-modal h6 {
+                font-size: clamp(0.85rem, 2.2vw, 1rem);
+                /* Smaller heading */
+            }
+
+            .stats-modal p {
+                font-size: clamp(0.7rem, 1.7vw, 0.85rem);
+                /* Smaller text */
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Adding particle background for cosmic effect -->
-    <div id="particle-bg"><span></span><span></span><span></span></div>
-    <!-- Creating navigation bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow">
-        <div class="container-fluid">
-            <!-- Displaying game progress HUD -->
-            <div id="progressHUD" aria-live="polite">
-                <span>Wave: <span id="waveDisplay">1</span></span> <!-- Showing current wave -->
-                <span>Score: <span id="scoreDisplay">0</span></span> <!-- Showing current score -->
-                <span>Heroes: <span id="heroesDisplay">0/0</span></span> <!-- Showing hero count -->
-                <div id="waveProgress"> <!-- Progress bar container -->
-                    <div id="waveProgressBar" style="width: 0%;"></div> <!-- Progress bar -->
-                </div>
-            </div>
-            <!-- Grouping navigation buttons -->
-            <div class="nav-buttons">
-                <a href="menu.html" class="btn btn-marvel-red" role="button" aria-label="Go to Home">Home</a>
-                <!-- Linking to home -->
-                <a href="roster.html" class="btn btn-marvel-red" role="button" aria-label="Go to Roster">Roster</a>
-                <!-- Linking to roster -->
-                <a href="log.html" class="btn btn-marvel-red" role="button" aria-label="Go to Battle Log">Log</a>
-                <!-- Linking to battle log -->
-                <a href="game.html" class="btn btn-marvel-red active" role="button"
-                    aria-label="Stay on Game page">Game</a> <!-- Current page -->
-            </div>
-            <!-- Adding toggler for mobile navigation -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
-                aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Placeholder for collapsed navbar content -->
-            <div class="collapse navbar-collapse" id="navbarMarvel"></div>
-        </div>
-    </nav>
-    <!-- Creating main content area -->
+    <!-- HTML: Create main content container for warrior selection -->
     <div class="container-fluid">
-        <div class="row">
-            <!-- Defining main game interface -->
-            <main class="col">
-                <!-- Grouping header action buttons -->
-                <div class="header-container">
-                    <button type="button" class="btn btn-cosmic toggle-sidebar" data-bs-toggle="tooltip"
-                        title="Toggle battle log" aria-label="Toggle game log sidebar" role="button">☰ Log</button>
-                    <!-- Toggling sidebar -->
-                    <button type="button" class="btn btn-cosmic" id="musicToggle" data-bs-toggle="tooltip"
-                        title="Toggle background music" aria-label="Toggle background music" role="button">Music:
-                        Off</button> <!-- Toggling music -->
-                    <button type="button" class="btn btn-cosmic" id="themeToggle" data-bs-toggle="tooltip"
-                        title="Switch themes" aria-label="Toggle theme" role="button">Theme: Dark</button>
-                    <!-- Toggling theme -->
-                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal" data-bs-target="#settingsModal"
-                        data-bs-toggle="tooltip" title="Adjust settings" aria-label="Open settings"
-                        role="button">Settings</button> <!-- Opening settings -->
-                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
-                        data-bs-target="#achievementsModal" data-bs-toggle="tooltip" title="View achievements"
-                        aria-label="View achievements" role="button">Achievements</button> <!-- Opening achievements -->
-                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
-                        data-bs-target="#instructionsModal" data-bs-toggle="tooltip" title="Game rules"
-                        aria-label="View instructions" role="button">Instructions</button> <!-- Opening instructions -->
-                    <button type="button" class="btn btn-cosmic" data-bs-toggle="modal"
-                        data-bs-target="#leaderboardModal" data-bs-toggle="tooltip" title="High scores"
-                        aria-label="View leaderboard" role="button">Leaderboard</button> <!-- Opening leaderboard -->
-                    <button type="button" class="btn btn-cosmic" id="saveGameBtn" data-bs-toggle="tooltip"
-                        title="Save progress" aria-label="Save game" role="button">Save Game</button>
-                    <!-- Saving game -->
-                    <button type="button" class="btn btn-cosmic" id="loadGameBtn" data-bs-toggle="modal"
-                        data-bs-target="#loadGameModal" data-bs-toggle="tooltip" title="Load game"
-                        aria-label="Load game" role="button">Load Game</button> <!-- Loading game -->
-                    <button type="button" class="btn btn-cosmic" id="restartGameBtn" data-bs-toggle="tooltip"
-                        title="Restart game" aria-label="Restart game" role="button">Restart</button>
-                    <!-- Restarting game -->
-                </div>
-                <!-- Organizing game grids -->
-                <div class="row">
-                    <!-- Displaying Player 1 heroes -->
-                    <div class="col-12 col-lg-6">
-                        <h2 class="section-title VictoryTxt">Player 1 Heroes</h2> <!-- Player 1 title -->
-                        <div id="player1HeroesGrid" class="card-grid" role="grid" aria-label="Player 1 heroes"></div>
-                        <!-- Player 1 hero grid -->
-                    </div>
-                    <!-- Displaying Player 2 heroes (multiplayer) -->
-                    <div class="col-12 col-lg-6" id="player2HeroesSection" style="display: none;">
-                        <h2 class="section-title VictoryTxt">Player 2 Heroes</h2> <!-- Player 2 title -->
-                        <div id="player2HeroesGrid" class="card-grid" role="grid" aria-label="Player 2 heroes"></div>
-                        <!-- Player 2 hero grid -->
-                    </div>
-                    <!-- Displaying enemies -->
-                    <div class="col-12 col-lg-6">
-                        <h2 class="section-title LossTxt" id="opponentTitle">Enemies</h2> <!-- Enemy title -->
-                        <div id="opponentGrid" class="card-grid" role="grid" aria-label="Enemies"></div>
-                        <!-- Enemy grid -->
-                    </div>
-                </div>
-                <!-- Displaying achievements -->
-                <div class="row mt-5">
-                    <div class="col-12">
-                        <h2 class="section-title VictoryTxt">Achievements</h2> <!-- Achievements title -->
-                        <ul id="achievementList" aria-live="polite"></ul> <!-- Achievements list -->
-                    </div>
-                </div>
-            </main>
-            <!-- Creating battle log sidebar -->
-            <aside id="gameLogSidebar" aria-live="polite">
-                <h2 class="mb-4">Battle Log</h2> <!-- Sidebar title -->
-                <div id="gameLog"></div> <!-- Log content -->
-            </aside>
-        </div>
+        <!-- HTML: Define warrior selection section -->
+        <main class="col text-center">
+            <!-- HTML: Display title for available warriors -->
+            <h2 class="section-title">Available Warriors</h2>
+            <!-- HTML: Grid for displaying all available warriors -->
+            <div id="allHeroesGrid" class="card-grid" role="grid" aria-label="Available warriors"></div>
+            <!-- HTML: Display title for selected warriors -->
+            <h2 class="section-title">Selected Warriors</h2>
+            <!-- HTML: Grid for displaying selected warriors -->
+            <div id="selectedHeroesGrid" class="card-grid" role="grid" aria-label="Selected warriors"></div>
+            <!-- HTML: Button to start single-player game -->
+            <button type="button" class="btn btn-cosmic" id="playModeBtn" aria-label="Start single-player game">Play
+                Singleplayer</button>
+            <!-- HTML: Navigation buttons for site navigation and hero removal -->
+            <div class="nav-buttons">
+                <a href="home.html" class="btn btn-marvel" role="button" aria-label="Go to Home page">Home</a>
+                <a href="roster.html" class="btn btn-marvel" role="button" aria-label="Go to Roster page">Roster</a>
+                <a href="game.html" class="btn btn-marvel active" role="button" aria-label="Current Game page">Game</a>
+                <button type="button" class="btn btn-marvel" id="removeHeroBtn"
+                    aria-label="Toggle warrior removal mode">Remove Warrior</button>
+            </div>
+            <!-- HTML: Hidden victory text (unused in selection screen) -->
+            <div id="VictoryTxt" style="display: none;">Victory!</div>
+            <!-- HTML: Hidden loss text (unused in selection screen) -->
+            <div id="LossTxt" style="display: none;">Defeat!</div>
+        </main>
     </div>
-    <!-- Creating cinematic overlay for events -->
-    <div id="cinematicOverlay" role="alert"></div>
-    <!-- Adding footer with creator credit -->
-    <footer class="p-4 m-4 text-center">
+    <!-- HTML: Footer with creator credit and copyright -->
+    <footer class="p-4 text-center">
         <p>Created by Salvatore DiPalma © 2025</p>
     </footer>
-    <!-- Defining modals for game interactions -->
-    <!-- Creating instructions modal -->
-    <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="instructionsModalLabel">Game Instructions</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Assemble heroes to battle in Marvel Cosmic Arena!</p>
-                    <h6>Controls:</h6>
-                    <ul class="text-start">
-                        <li><strong>Attack ('A'):</strong> Deal damage to a random enemy.</li>
-                        <li><strong>Special ('S'):</strong> Use abilities (needs mana, cooldown).</li>
-                        <li><strong>Info ('I'):</strong> View ability details.</li>
-                        <li><strong>Arrow Keys:</strong> Navigate cards.</li>
-                        <li><strong>Enter:</strong> Confirm actions.</li>
-                    </ul>
-                    <h6>Game Modes:</h6>
-                    <ul class="text-start">
-                        <li><strong>Final Boss:</strong> Defeat Thanos in three waves.</li>
-                        <li><strong>Infinite:</strong> Survive endless waves.</li>
-                        <li><strong>Multiplayer:</strong> Best-of-three match.</li>
-                    </ul>
-                    <h6>Powerups:</h6>
-                    <p>Choose powerups after waves to boost heroes.</p>
-                    <h6>Scoring:</h6>
-                    <p>Points: Attacks (10), Specials (50), Wave Clears (100).</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating mode selection modal -->
-    <div class="modal fade" id="modeSelectionModal" tabindex="-1" aria-labelledby="modeSelectionModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modeSelectionModalLabel">Select Game Mode</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <h6>Number of Players</h6>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="playerMode" id="singlePlayer" value="single"
-                            checked aria-label="Single Player">
-                        <label class="form-check-label" for="singlePlayer">Single Player</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="playerMode" id="multiPlayer" value="multi"
-                            aria-label="Multiplayer">
-                        <label class="form-check-label" for="multiPlayer">Multiplayer</label>
-                    </div>
-                    <h6 class="mt-3">Game Mode</h6>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="finalBossMode"
-                            value="finalBoss" checked aria-label="Final Boss Mode">
-                        <label class="form-check-label" for="finalBossMode">Final Boss Mode</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="infiniteMode" value="infinite"
-                            aria-label="Infinite Mode">
-                        <label class="form-check-label" for="infiniteMode">Infinite Mode</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gameMode" id="multiplayerMode"
-                            value="multiplayer" aria-label="Multiplayer Mode">
-                        <label class="form-check-label" for="multiplayerMode">Multiplayer Mode</label>
-                    </div>
-                    <h6 class="mt-3">Difficulty</h6>
-                    <select id="difficultySelect" class="form-select" aria-label="Select difficulty">
-                        <option value="easy">Easy</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="tutorialCheckbox"
-                            aria-label="Enable tutorial">
-                        <label class="form-check-label" for="tutorialCheckbox">Enable Tutorial</label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-cosmic" id="startGameBtn" aria-label="Start game">Start
-                        Game</button>
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating no heroes selected modal -->
-    <div class="modal fade" id="noHeroesModal" tabindex="-1" aria-labelledby="noHeroesModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="noHeroesModalLabel">No Heroes Selected</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p id="noHeroesMessage">Select at least one hero for Player 1 (and Player 2 for multiplayer).</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select heroes">Select Heroes</a>
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating game over modal -->
-    <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="gameOverModalLabel">Game Over</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p id="gameOverMessage"></p>
-                    <p>Final Score: <span id="finalScore">0</span></p>
-                </div>
-                <div class="modal-footer">
-                    <a href="roster.html" class="btn btn-cosmic" aria-label="Select new heroes">Select New Heroes</a>
-                    <button type="button" class="btn btn-cosmic" id="saveScoreBtn" aria-label="Save score">Save
-                        Score</button>
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating special ability info modal -->
-    <div class="modal fade" id="specialInfoModal" tabindex="-1" aria-labelledby="specialInfoModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="specialInfoModalLabel">Special Ability</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <h6 id="specialName"></h6>
-                    <p id="specialDescription"></p>
-                    <p id="specialUsage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating invalid mode selection modal -->
-    <div class="modal fade" id="invalidModeModal" tabindex="-1" aria-labelledby="invalidModeModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="invalidModeModalLabel">Invalid Mode Selection</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Multiplayer game mode requires multiplayer player mode.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating round complete modal -->
-    <div class="modal fade" id="roundCompleteModal" tabindex="-1" aria-labelledby="roundCompleteModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="roundCompleteModalLabel">Round Complete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p id="roundCompleteMessage">Wave cleared! Prepare for the next challenge.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-cosmic" id="nextRoundBtn" aria-label="Next round">Next
-                        Round</button>
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating powerup selection modal -->
-    <div class="modal fade" id="powerupSelectionModal" tabindex="-1" aria-labelledby="powerupSelectionModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="powerupSelectionModalLabel">Choose a Powerup</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Select one powerup to boost your heroes.</p>
-                    <div id="powerupOptions" class="d-flex flex-wrap justify-content-center gap-2"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Skip powerup">Skip</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating tutorial modal -->
-    <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tutorialModalLabel">Tutorial</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center" id="tutorialContent">
-                    <p>Welcome to Marvel Cosmic Arena! Let's learn how to play.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-cosmic next-tutorial-btn"
-                        aria-label="Next tutorial step">Next</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating settings modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Game Settings</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <h6>Sound Volume</h6>
-                    <input type="range" id="soundVolume" min="0" max="100" value="50" class="form-range"
-                        aria-label="Adjust sound volume">
-                    <h6 class="mt-3">Voice Speed</h6>
-                    <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1.2" class="form-range"
-                        aria-label="Adjust voice speed">
-                    <h6 class="mt-3">Hero Skins</h6>
-                    <select id="skinSelect" class="form-select" aria-label="Select hero skin">
-                        <option value="classic">Classic</option>
-                        <option value="cosmic">Cosmic</option>
-                    </select>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="vibrationCheckbox" checked
-                            aria-label="Enable vibration">
-                        <label class="form-check-label" for="vibrationCheckbox">Enable Vibration (Mobile)</label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-cosmic" id="saveSettingsBtn"
-                        aria-label="Save settings">Save</button>
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating achievements modal -->
-    <div class="modal fade" id="achievementsModal" tabindex="-1" aria-labelledby="achievementsModalLabel">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="achievementsModalLabel">Achievements</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <ul id="modalAchievementList" aria-live="polite"></ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating leaderboard modal -->
-    <div class="modal fade" id="leaderboardModal" tabindex="-1" aria-labelledby="leaderboardModalLabel">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <table class="table table-dark table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Rank</th>
-                                <th scope="col">Player</th>
-                                <th scope="col">Score</th>
-                                <th scope="col">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardTable"></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Creating load game modal -->
-    <div class="modal fade" id="loadGameModal" tabindex="-1" aria-labelledby="loadGameModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loadGameModalLabel">Load Game</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Select a saved game to load:</p>
-                    <div id="savedGamesList"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal"
-                        aria-label="Close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Including Bootstrap JS for interactivity -->
+    <!-- JS: Include Bootstrap 5.3.2 for modals and interactivity -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"
         defer></script>
-    <!-- Including game logic scripts -->
-    <script src="players.js" defer></script>
-    <script src="game.js" defer></script>
-    <script src="init.js" defer></script>
+    <!-- JS: Include menu logic for warrior selection -->
+    <script src="menu.js" defer></script>
 </body>
 
 </html>

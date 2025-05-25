@@ -1,9 +1,14 @@
-/* JS: Define global flag for removal mode */
+/* JS: Menu logic for Galaxy BattleForge warrior selection screen.
+ * Manages the selection of up to 3 Marvel heroes as warriors for the single-player campaign.
+ * Clears selected warriors on page refresh and saves selections in a format compatible with game.js.
+ */
+
+/* JS: Global flag to track removal mode for deselecting warriors */
 let isRemovalMode = false;
 
-/* JS: Define player data for Marvel Cosmic Arena with attributes for each hero */
+/* JS: Define warrior data for Galaxy BattleForge (37 Marvel heroes) */
 window.players = [
-    /* Hero 1: Iron Man */
+    /* Warrior 1: Iron Man */
     {
         id: 'hero-1',
         firstName: 'Iron',
@@ -14,7 +19,7 @@ window.players = [
         skill: 'Genius Inventor: Designs advanced tech on the fly.',
         special: 'Repulsor Barrage: Fires a focused energy blast at one enemy.'
     },
-    /* Hero 2: Captain America */
+    /* Warrior 2: Captain America */
     {
         id: 'hero-2',
         firstName: 'Captain',
@@ -25,18 +30,18 @@ window.players = [
         skill: 'Tactical Leadership: Inspires and coordinates allies.',
         special: 'Shield Bash: Stuns a single enemy for one turn.'
     },
-    /* Hero 3: Thor */
+    /* Warrior 3: Thor */
     {
         id: 'hero-3',
         firstName: 'Thor',
         lastName: 'Odinson',
-        realName: 'Thor Odinson',
+        realName: 'ThomaxHealth: 120, attack: 22, mana: 45r Odinson',
         weapon: 'Mjolnir',
         photo: 'imgs/thor.png',
         skill: 'Storm Summoning: Controls lightning and storms.',
         special: 'Thunder Strike: Deals heavy damage to one enemy with a lightning bolt.'
     },
-    /* Hero 4: Black Widow */
+    /* Warrior 4: Black Widow */
     {
         id: 'hero-4',
         firstName: 'Black',
@@ -47,7 +52,7 @@ window.players = [
         skill: 'Master Espionage: Infiltrates and gathers intel.',
         special: 'Stealth Strike: Attacks with increased critical chance.'
     },
-    /* Hero 5: Hawkeye */
+    /* Warrior 5: Hawkeye */
     {
         id: 'hero-5',
         firstName: 'Hawkeye',
@@ -58,7 +63,7 @@ window.players = [
         skill: 'Precision Aim: Never misses a target.',
         special: 'Explosive Arrow: Damages all enemies in a small area.'
     },
-    /* Hero 6: Spider-Man */
+    /* Warrior 6: Spider-Man */
     {
         id: 'hero-6',
         firstName: 'Spider',
@@ -69,7 +74,7 @@ window.players = [
         skill: 'Spider-Sense: Detects imminent danger.',
         special: 'Web Trap: Immobilizes an enemy, preventing their next action.'
     },
-    /* Hero 7: Doctor Strange */
+    /* Warrior 7: Doctor Strange */
     {
         id: 'hero-7',
         firstName: 'Doctor',
@@ -80,7 +85,7 @@ window.players = [
         skill: 'Dimensional Manipulation: Opens portals across realms.',
         special: 'Time Loop: Resets health of one ally to its starting value.'
     },
-    /* Hero 8: Black Panther */
+    /* Warrior 8: Black Panther */
     {
         id: 'hero-8',
         firstName: 'Black',
@@ -91,7 +96,7 @@ window.players = [
         skill: 'Kinetic Energy Absorption: Stores and redirects energy.',
         special: 'Vibranium Slash: Deals damage and absorbs some for self-healing.'
     },
-    /* Hero 9: Scarlet Witch */
+    /* Warrior 9: Scarlet Witch */
     {
         id: 'hero-9',
         firstName: 'Scarlet',
@@ -102,7 +107,7 @@ window.players = [
         skill: 'Reality Warping: Alters reality with a thought.',
         special: 'Hex Bolt: Randomly reduces an enemy’s attack or health.'
     },
-    /* Hero 10: Ant-Man */
+    /* Warrior 10: Ant-Man */
     {
         id: 'hero-10',
         firstName: 'Ant',
@@ -113,7 +118,7 @@ window.players = [
         skill: 'Size Manipulation: Shrinks or grows instantly.',
         special: 'Giant Stomp: Deals massive damage to one enemy.'
     },
-    /* Hero 11: Wolverine */
+    /* Warrior 11: Wolverine */
     {
         id: 'hero-11',
         firstName: 'Wolverine',
@@ -124,7 +129,7 @@ window.players = [
         skill: 'Berserker Rage: Unleashes unstoppable fury.',
         special: 'Adamantium Frenzy: Attacks multiple times in one turn.'
     },
-    /* Hero 12: Storm */
+    /* Warrior 12: Storm */
     {
         id: 'hero-12',
         firstName: 'Storm',
@@ -135,7 +140,7 @@ window.players = [
         skill: 'Atmospheric Control: Creates hurricanes or clear skies.',
         special: 'Tornado Blast: Pushes back all enemies, delaying their actions.'
     },
-    /* Hero 13: Cyclops */
+    /* Warrior 13: Cyclops */
     {
         id: 'hero-13',
         firstName: 'Cyclops',
@@ -146,7 +151,7 @@ window.players = [
         skill: 'Energy Beam Precision: Adjusts blast intensity.',
         special: 'Optic Barrage: Hits all enemies with reduced damage.'
     },
-    /* Hero 14: Phoenix */
+    /* Warrior 14: Phoenix */
     {
         id: 'hero-14',
         firstName: 'Phoenix',
@@ -157,7 +162,7 @@ window.players = [
         skill: 'Psychic Overload: Overwhelms minds with psychic energy.',
         special: 'Mind Crush: Deals damage based on target’s remaining health.'
     },
-    /* Hero 15: Beast */
+    /* Warrior 15: Beast */
     {
         id: 'hero-15',
         firstName: 'Beast',
@@ -168,7 +173,7 @@ window.players = [
         skill: 'Scientific Expertise: Solves complex problems instantly.',
         special: 'Primal Leap: Attacks and boosts own agility for one turn.'
     },
-    /* Hero 16: Gambit */
+    /* Warrior 16: Gambit */
     {
         id: 'hero-16',
         firstName: 'Gambit',
@@ -179,7 +184,7 @@ window.players = [
         skill: 'Kinetic Charge: Infuses objects with explosive energy.',
         special: 'Ace of Spades: Throws a single card for high damage.'
     },
-    /* Hero 17: Rogue */
+    /* Warrior 17: Rogue */
     {
         id: 'hero-17',
         firstName: 'Rogue',
@@ -190,7 +195,7 @@ window.players = [
         skill: 'Memory Assimilation: Gains memories of those touched.',
         special: 'Power Drain: Steals health from an enemy to heal self.'
     },
-    /* Hero 18: Deadpool */
+    /* Warrior 18: Deadpool */
     {
         id: 'hero-18',
         firstName: 'Deadpool',
@@ -201,7 +206,7 @@ window.players = [
         skill: 'Fourth Wall Break: Interacts with narrative reality.',
         special: 'Chimichanga Bomb: Explosive attack with random extra effects.'
     },
-    /* Hero 19: Venom */
+    /* Warrior 19: Venom */
     {
         id: 'hero-19',
         firstName: 'Venom',
@@ -212,7 +217,7 @@ window.players = [
         skill: 'Symbiote Morph: Shapeshifts into weapons or forms.',
         special: 'Tendril Assault: Attacks all enemies with symbiote tendrils.'
     },
-    /* Hero 20: Magneto */
+    /* Warrior 20: Magneto */
     {
         id: 'hero-20',
         firstName: 'Magneto',
@@ -223,7 +228,7 @@ window.players = [
         skill: 'Electromagnetic Pulse: Disables all electronics.',
         special: 'Metal Storm: Crushes one enemy with magnetic force.'
     },
-    /* Hero 21: Doctor Doom */
+    /* Warrior 21: Doctor Doom */
     {
         id: 'hero-21',
         firstName: 'Doctor',
@@ -234,7 +239,7 @@ window.players = [
         skill: 'Mystic-Tech Fusion: Combines magic and technology.',
         special: 'Doom’s Curse: Applies a damage-over-time effect to one enemy.'
     },
-    /* Hero 22: Thanos */
+    /* Warrior 22: Thanos */
     {
         id: 'hero-22',
         firstName: 'Thanos',
@@ -245,7 +250,7 @@ window.players = [
         skill: 'Cosmic Domination: Commands universal forces.',
         special: 'Infinity Snap: Instantly defeats a weakened enemy.'
     },
-    /* Hero 23: Loki */
+    /* Warrior 23: Loki */
     {
         id: 'hero-23',
         firstName: 'Loki',
@@ -256,7 +261,7 @@ window.players = [
         skill: 'Shape-shifting: Transforms into any form.',
         special: 'Illusionary Double: Creates a decoy to absorb one attack.'
     },
-    /* Hero 24: Ultron */
+    /* Warrior 24: Ultron */
     {
         id: 'hero-24',
         firstName: 'Ultron',
@@ -267,7 +272,7 @@ window.players = [
         skill: 'Network Hijacking: Controls digital systems.',
         special: 'Data Corruption: Reduces an enemy’s attack permanently.'
     },
-    /* Hero 25: Red Skull */
+    /* Warrior 25: Red Skull */
     {
         id: 'hero-25',
         firstName: 'Red',
@@ -278,7 +283,7 @@ window.players = [
         skill: 'Strategic Manipulation: Orchestrates complex schemes.',
         special: 'Cube Surge: Boosts all allies’ attack for one turn.'
     },
-    /* Hero 26: Green Goblin */
+    /* Warrior 26: Green Goblin */
     {
         id: 'hero-26',
         firstName: 'Green',
@@ -289,7 +294,7 @@ window.players = [
         skill: 'Insanity Inducing Gas: Disorients foes with chemicals.',
         special: 'Pumpkin Barrage: Throws multiple bombs at random enemies.'
     },
-    /* Hero 27: Kingpin */
+    /* Warrior 27: Kingpin */
     {
         id: 'hero-27',
         firstName: 'Kingpin',
@@ -300,7 +305,7 @@ window.players = [
         skill: 'Criminal Overlord: Controls underworld networks.',
         special: 'Crushing Blow: Deals high damage to one enemy.'
     },
-    /* Hero 28: Black Cat */
+    /* Warrior 28: Black Cat */
     {
         id: 'hero-28',
         firstName: 'Black',
@@ -311,7 +316,7 @@ window.players = [
         skill: 'Probability Shift: Alters luck in her favor.',
         special: 'Lucky Strike: Guarantees a critical hit on one enemy.'
     },
-    /* Hero 29: Mysterio */
+    /* Warrior 29: Mysterio */
     {
         id: 'hero-29',
         firstName: 'Mysterio',
@@ -322,7 +327,7 @@ window.players = [
         skill: 'Holographic Deception: Creates lifelike illusions.',
         special: 'Smoke and Mirrors: Confuses all enemies, reducing accuracy.'
     },
-    /* Hero 30: Rhino */
+    /* Warrior 30: Rhino */
     {
         id: 'hero-30',
         firstName: 'Rhino',
@@ -333,7 +338,7 @@ window.players = [
         skill: 'Unstoppable Charge: Crushes obstacles in a rampage.',
         special: 'Rhino Rush: Charges through, damaging multiple enemies.'
     },
-    /* Hero 31: Sandman */
+    /* Warrior 31: Sandman */
     {
         id: 'hero-31',
         firstName: 'Sand',
@@ -344,7 +349,7 @@ window.players = [
         skill: 'Sand Reformation: Rebuilds body from sand particles.',
         special: 'Sandstorm: Blinds enemies, reducing their attack.'
     },
-    /* Hero 32: Electro */
+    /* Warrior 32: Electro */
     {
         id: 'hero-32',
         firstName: 'Electro',
@@ -355,7 +360,7 @@ window.players = [
         skill: 'Power Surge: Overloads electrical systems.',
         special: 'Volt Surge: Chains lightning to hit multiple enemies.'
     },
-    /* Hero 33: Doctor Octopus */
+    /* Warrior 33: Doctor Octopus */
     {
         id: 'hero-33',
         firstName: 'Doctor',
@@ -366,7 +371,7 @@ window.players = [
         skill: 'Multitasking Mastery: Controls arms independently.',
         special: 'Tentacle Slam: Attacks up to three enemies at once.'
     },
-    /* Hero 34: Kraven the Hunter */
+    /* Warrior 34: Kraven the Hunter */
     {
         id: 'hero-34',
         firstName: 'Kraven',
@@ -377,7 +382,7 @@ window.players = [
         skill: 'Predator Instinct: Tracks prey across any terrain.',
         special: 'Hunter’s Trap: Immobilizes one enemy for two turns.'
     },
-    /* Hero 35: Shocker */
+    /* Warrior 35: Shocker */
     {
         id: 'hero-35',
         firstName: 'Shocker',
@@ -388,7 +393,7 @@ window.players = [
         skill: 'Shockwave Burst: Emits area-wide vibrations.',
         special: 'Vibro-Pulse: Disrupts all enemies, delaying their actions.'
     },
-    /* Hero 36: Scorpion */
+    /* Warrior 36: Scorpion */
     {
         id: 'hero-36',
         firstName: 'Scorpion',
@@ -399,7 +404,7 @@ window.players = [
         skill: 'Venomous Sting: Paralyzes with tail strike.',
         special: 'Toxic Tail: Poisons one enemy, dealing damage over time.'
     },
-    /* Hero 37: Vulture */
+    /* Warrior 37: Vulture */
     {
         id: 'hero-37',
         firstName: 'Vulture',
@@ -414,254 +419,288 @@ window.players = [
 
 /* JS: Initialize selection screen when DOM is fully loaded */
 document.addEventListener('DOMContentLoaded', () => {
-    /* JS: Load saved settings and initialize grids */
-    loadSettings();
-    populateAllHeroes();
-    populateSelectedHeroes();
-    initializeEventListeners();
+    try {
+        /* JS: Clear selected warriors to ensure empty grid on refresh */
+        localStorage.setItem('player1Heroes', JSON.stringify([]));
+        localStorage.setItem('player2Heroes', JSON.stringify([]));
+        localStorage.setItem('warriors', JSON.stringify([])); // Clear game.js warriors
+        /* JS: Load settings and initialize UI */
+        loadSettings();
+        populateAllHeroes();
+        populateSelectedHeroes();
+        initializeEventListeners();
+    } catch (e) {
+        console.error('Error initializing selection screen:', e);
+        alert('Failed to initialize selection screen. Please check console.');
+    }
 });
 
 /* JS: Load saved settings from localStorage or set defaults */
 function loadSettings() {
-    /* JS: Retrieve saved settings or use empty object as fallback */
-    const savedSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
-    /* JS: Define global settings with defaults */
-    window.settings = {
-        soundVolume: 50,
-        voiceSpeed: 1.2,
-        heroSkin: 'classic',
-        vibration: true,
-        theme: 'dark',
-        playerMode: 'single',
-        ...savedSettings
-    };
-    /* JS: Apply light theme if set */
-    document.body.classList.toggle('light-theme', window.settings.theme === 'light');
-    /* JS: Update play button label based on mode */
-    updatePlayButtonLabel();
+    try {
+        /* JS: Retrieve saved settings or use empty object */
+        const savedSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+        /* JS: Define global settings with defaults, fixed to single-player */
+        window.settings = {
+            soundVolume: savedSettings.soundVolume || 50, // Volume (0-100)
+            voiceSpeed: savedSettings.voiceSpeed || 1, // Voice speed (0.5-2)
+            heroSkin: savedSettings.heroSkin || 'classic', // Warrior skin
+            vibration: savedSettings.vibration ?? true, // Haptic feedback
+            theme: savedSettings.theme || 'dark', // UI theme
+            playerMode: 'single' // Fixed to single-player
+        };
+        /* JS: Apply light theme if set */
+        document.body.classList.toggle('light-theme', window.settings.theme === 'light');
+    } catch (e) {
+        console.error('Error loading settings:', e);
+        /* JS: Fallback to default settings */
+        window.settings = {
+            soundVolume: 50,
+            voiceSpeed: 1,
+            heroSkin: 'classic',
+            vibration: true,
+            theme: 'dark',
+            playerMode: 'single'
+        };
+    }
 }
 
-/* JS: Populate grid with all available heroes */
+/* JS: Populate grid with all available warriors */
 function populateAllHeroes() {
-    /* JS: Get grid container and clear existing content */
-    const allHeroesGrid = document.getElementById('allHeroesGrid');
-    allHeroesGrid.innerHTML = '';
-    /* JS: Load current selections */
-    const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-    const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-    /* JS: Create card for each hero */
-    window.players.forEach((hero, index) => {
-        const isSelected = player1Heroes.some(h => h.id === hero.id) || player2Heroes.some(h => h.id === hero.id);
-        const card = createHeroCard(hero, index, null, isSelected);
-        allHeroesGrid.appendChild(card);
-    });
+    try {
+        /* JS: Get grid container and clear content */
+        const allHeroesGrid = document.getElementById('allHeroesGrid');
+        if (!allHeroesGrid) throw new Error('allHeroesGrid not found');
+        allHeroesGrid.innerHTML = '';
+        /* JS: Load current selections */
+        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+        /* JS: Create card for each warrior */
+        window.players.forEach((hero, index) => {
+            const isSelected = player1Heroes.some(h => h.id === hero.id);
+            const card = createHeroCard(hero, index, null, isSelected);
+            allHeroesGrid.appendChild(card);
+        });
+    } catch (e) {
+        console.error('Error populating all heroes:', e);
+    }
 }
 
-/* JS: Populate grid with selected heroes */
+/* JS: Populate grid with selected warriors */
 function populateSelectedHeroes() {
-    /* JS: Get grid container and clear existing content */
-    const selectedGrid = document.getElementById('selectedHeroesGrid');
-    selectedGrid.innerHTML = '';
-    /* JS: Load Player 1's selections */
-    const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-    player1Heroes.forEach((hero, index) => {
-        const card = createHeroCard(hero, index, 'player1');
-        if (isRemovalMode) card.classList.add('removal-mode');
-        selectedGrid.appendChild(card);
-    });
-    /* JS: Load Player 2's selections if in multiplayer */
-    if (window.settings.playerMode === 'multi') {
-        const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-        player2Heroes.forEach((hero, index) => {
-            const card = createHeroCard(hero, index, 'player2');
+    try {
+        /* JS: Get grid container and clear content */
+        const selectedGrid = document.getElementById('selectedHeroesGrid');
+        if (!selectedGrid) throw new Error('selectedHeroesGrid not found');
+        selectedGrid.innerHTML = '';
+        /* JS: Load Player 1's selections (single-player only) */
+        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+        player1Heroes.forEach((hero, index) => {
+            const card = createHeroCard(hero, index, 'player1');
             if (isRemovalMode) card.classList.add('removal-mode');
             selectedGrid.appendChild(card);
         });
+    } catch (e) {
+        console.error('Error populating selected heroes:', e);
     }
 }
 
-/* JS: Create a hero card for available or selected grids */
+/* JS: Create a warrior card for available or selected grids */
 function createHeroCard(hero, index, player, isSelected = false) {
-    /* JS: Create card container */
-    const card = document.createElement('div');
-    card.classList.add('character-card');
-    card.setAttribute('data-index', index);
-    if (player) card.setAttribute('data-player', player);
-    card.setAttribute('data-hero-id', hero.id);
-    card.setAttribute('aria-label', `${hero.firstName} ${hero.lastName} card`);
+    try {
+        /* JS: Create card container */
+        const card = document.createElement('div');
+        card.classList.add('character-card');
+        card.setAttribute('data-index', index); // Store index for reference
+        if (player) card.setAttribute('data-player', player); // Indicate player
+        card.setAttribute('data-hero-id', hero.id); // Store hero ID
+        card.setAttribute('aria-label', `${hero.firstName} ${hero.lastName} card`); // Accessibility label
 
-    /* JS: Create hero image */
-    const img = document.createElement('img');
-    img.src = hero.photo;
-    img.alt = `${hero.firstName} ${hero.lastName}`;
-    img.classList.add('character-img');
-    if (window.settings.heroSkin === 'cosmic') img.classList.add('cosmic-skin');
+        /* JS: Create warrior image */
+        const img = document.createElement('img');
+        img.src = hero.photo; // Set image source
+        img.alt = `${hero.firstName} ${hero.lastName}`; // Alt text for accessibility
+        img.classList.add('character-img');
+        if (window.settings.heroSkin === 'cosmic') img.classList.add('cosmic-skin'); // Apply skin
 
-    /* JS: Create stats modal for hero details */
-    const statsModal = document.createElement('div');
-    statsModal.classList.add('stats-modal');
-    statsModal.innerHTML = `
-        <h6>${hero.firstName} ${hero.lastName}</h6>
-        <p>Real Name: ${hero.realName}</p>
-        <p>Weapon: ${hero.weapon}</p>
-        <p>Skill: ${hero.skill}</p>
-        <p>Special: ${hero.special}</p>
-    `;
+        /* JS: Create stats modal for warrior details */
+        const statsModal = document.createElement('div');
+        statsModal.classList.add('stats-modal');
+        statsModal.innerHTML = `
+            <h6>${hero.firstName} ${hero.lastName}</h6>
+            <p>Real Name: ${hero.realName}</p>
+            <p>Weapon: ${hero.weapon}</p>
+            <p>Skill: ${hero.skill}</p>
+            <p>Special: ${hero.special}</p>
+        `;
 
-    /* JS: Add click handler for selection, deselection, or removal */
-    card.addEventListener('click', () => {
-        if (isRemovalMode && player) {
-            /* JS: Remove hero in removal mode */
-            removeHero(hero, player);
-            toggleRemovalMode(); /* Exit removal mode */
-        } else if (player && !isRemovalMode) {
-            /* JS: Deselect hero in normal mode */
-            removeHero(hero, player);
-        } else if (!isRemovalMode && !isSelected) {
-            /* JS: Select hero in normal mode */
-            addHero(hero);
-        }
-    });
-
-    /* JS: Create select button for available heroes */
-    if (!player) {
-        const button = document.createElement('button');
-        button.classList.add('btn', 'btn-select');
-        button.textContent = 'Select';
-        button.disabled = isSelected;
-        button.addEventListener('click', (e) => {
-            e.stopPropagation(); /* JS: Prevent card click */
-            if (!isRemovalMode) addHero(hero);
+        /* JS: Add click handler for selection or removal */
+        card.addEventListener('click', () => {
+            if (isRemovalMode && player) {
+                /* JS: Remove warrior in removal mode */
+                removeHero(hero, player);
+                toggleRemovalMode(); // Exit removal mode
+            } else if (player && !isRemovalMode) {
+                /* JS: Deselect warrior in normal mode */
+                removeHero(hero, player);
+            } else if (!isRemovalMode && !isSelected) {
+                /* JS: Select warrior in normal mode */
+                addHero(hero);
+            }
         });
-        card.append(img, statsModal, button);
-    } else {
-        card.append(img, statsModal);
-    }
 
-    return card;
+        /* JS: Add select button for available warriors */
+        if (!player) {
+            const button = document.createElement('button');
+            button.classList.add('btn', 'btn-select');
+            button.textContent = 'Select';
+            button.disabled = isSelected; // Disable if already selected
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                if (!isRemovalMode) addHero(hero); // Select warrior
+            });
+            card.append(img, statsModal, button);
+        } else {
+            card.append(img, statsModal);
+        }
+
+        return card;
+    } catch (e) {
+        console.error('Error creating hero card:', e);
+        return document.createElement('div'); // Return empty div as fallback
+    }
 }
 
-/* JS: Add a hero to a player's roster */
+/* JS: Add a warrior to Player 1's roster */
 function addHero(hero) {
-    /* JS: Load current selections */
-    const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-    const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-    /* JS: Check for duplicate selection */
-    if (player1Heroes.some(h => h.id === hero.id) || player2Heroes.some(h => h.id === hero.id)) {
-        alert('This hero is already selected!');
-        return;
-    }
-
-    /* JS: Define max heroes per player */
-    const maxHeroes = 3;
-    const isMultiplayer = window.settings.playerMode === 'multi';
-    let targetPlayer = 'player1';
-
-    /* JS: Determine target player in multiplayer */
-    if (isMultiplayer && player1Heroes.length >= maxHeroes) {
-        if (player2Heroes.length >= maxHeroes) {
-            alert('Both players have reached the maximum of 3 heroes!');
+    try {
+        /* JS: Load current selections */
+        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+        /* JS: Check for duplicate selection */
+        if (player1Heroes.some(h => h.id === hero.id)) {
+            alert('This warrior is already selected!');
             return;
         }
-        targetPlayer = 'player2';
-    } else if (player1Heroes.length >= maxHeroes) {
-        alert('Player 1 has reached the maximum of 3 heroes!');
-        return;
-    }
-
-    /* JS: Add hero to target player's roster */
-    const targetHeroes = targetPlayer === 'player1' ? player1Heroes : player2Heroes;
-    targetHeroes.push(hero);
-    localStorage.setItem(`${targetPlayer}Heroes`, JSON.stringify(targetHeroes));
-
-    /* JS: Refresh grids */
-    populateAllHeroes();
-    populateSelectedHeroes();
-
-    /* JS: Trigger vibration feedback if enabled */
-    if (window.settings.vibration && navigator.vibrate) {
-        navigator.vibrate(100);
+        /* JS: Enforce maximum of 3 warriors */
+        const maxHeroes = 3;
+        if (player1Heroes.length >= maxHeroes) {
+            alert('You can select up to 3 warriors!');
+            return;
+        }
+        /* JS: Add warrior to Player 1's roster */
+        player1Heroes.push(hero);
+        localStorage.setItem('player1Heroes', JSON.stringify(player1Heroes));
+        /* JS: Sync with game.js warriors format */
+        syncWarriorsToGame();
+        /* JS: Refresh grids */
+        populateAllHeroes();
+        populateSelectedHeroes();
+        /* JS: Trigger vibration feedback if enabled */
+        if (window.settings.vibration && navigator.vibrate) {
+            navigator.vibrate(100); // Short vibration
+        }
+    } catch (e) {
+        console.error('Error adding hero:', e);
+        alert('Failed to add warrior.');
     }
 }
 
-/* JS: Remove hero from player's roster */
+/* JS: Remove warrior from Player 1's roster */
 function removeHero(hero, player) {
-    /* JS: Load and update selections */
-    const heroes = JSON.parse(localStorage.getItem(`${player}Heroes`) || '[]');
-    const updatedHeroes = heroes.filter(h => h.id !== hero.id);
-    localStorage.setItem(`${player}Heroes`, JSON.stringify(updatedHeroes));
-
-    /* JS: Refresh grids */
-    populateAllHeroes();
-    populateSelectedHeroes();
-
-    /* JS: Trigger vibration feedback if enabled */
-    if (window.settings.vibration && navigator.vibrate) {
-        navigator.vibrate(100);
+    try {
+        /* JS: Load and update selections */
+        const heroes = JSON.parse(localStorage.getItem(`${player}Heroes`) || '[]');
+        const updatedHeroes = heroes.filter(h => h.id !== hero.id);
+        localStorage.setItem(`${player}Heroes`, JSON.stringify(updatedHeroes));
+        /* JS: Sync with game.js warriors format */
+        syncWarriorsToGame();
+        /* JS: Refresh grids */
+        populateAllHeroes();
+        populateSelectedHeroes();
+        /* JS: Trigger vibration feedback if enabled */
+        if (window.settings.vibration && navigator.vibrate) {
+            navigator.vibrate(100); // Short vibration
+        }
+    } catch (e) {
+        console.error('Error removing hero:', e);
+        alert('Failed to remove warrior.');
     }
 }
 
-/* JS: Update play button label based on game mode */
-function updatePlayButtonLabel() {
-    const playButton = document.getElementById('playModeBtn');
-    playButton.textContent = window.settings.playerMode === 'single' ? 'Play Singleplayer' : 'Play Multiplayer';
+/* JS: Sync selected warriors to game.js warriors format in localStorage */
+function syncWarriorsToGame() {
+    try {
+        /* JS: Load Player 1's selections */
+        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+        /* JS: Map to game.js warrior format */
+        const warriors = player1Heroes.map(hero => ({
+            name: hero.realName,
+            health: hero.realName === 'Tony Stark' ? 100 : hero.realName === 'Steve Rogers' ? 110 : hero.realName === 'Thor Odinson' ? 120 : 100, // Default health
+            attack: hero.realName === 'Tony Stark' ? 20 : hero.realName === 'Steve Rogers' ? 18 : hero.realName === 'Thor Odinson' ? 22 : 20, // Default attack
+            mana: hero.realName === 'Tony Stark' ? 50 : hero.realName === 'Steve Rogers' ? 40 : hero.realName === 'Thor Odinson' ? 45 : 50 // Default mana
+        }));
+        /* JS: Save to localStorage for game.js */
+        localStorage.setItem('warriors', JSON.stringify(warriors));
+    } catch (e) {
+        console.error('Error syncing warriors:', e);
+    }
 }
 
-/* JS: Toggle removal mode for hero deselection */
+/* JS: Toggle removal mode for deselecting warriors */
 function toggleRemovalMode() {
-    /* JS: Toggle removal mode flag */
-    isRemovalMode = !isRemovalMode;
-    /* JS: Update button appearance */
-    const removeButton = document.getElementById('removeHeroBtn');
-    removeButton.classList.toggle('active', isRemovalMode);
-    removeButton.textContent = isRemovalMode ? 'Cancel Removal' : 'Remove Hero';
-    /* JS: Update selected heroes' cards */
-    populateSelectedHeroes();
+    try {
+        /* JS: Toggle removal mode flag */
+        isRemovalMode = !isRemovalMode;
+        /* JS: Update button appearance */
+        const removeButton = document.getElementById('removeHeroBtn');
+        if (removeButton) {
+            removeButton.classList.toggle('active', isRemovalMode);
+            removeButton.textContent = isRemovalMode ? 'Cancel Removal' : 'Remove Warrior';
+        }
+        /* JS: Update selected warriors' cards */
+        populateSelectedHeroes();
+    } catch (e) {
+        console.error('Error toggling removal mode:', e);
+    }
 }
 
-/* JS: Initialize event listeners for buttons */
+/* JS: Initialize event listeners for UI buttons */
 function initializeEventListeners() {
-    /* JS: Handle play mode button click to toggle mode and redirect */
-    const playModeBtn = document.getElementById('playModeBtn');
-    playModeBtn.addEventListener('click', () => {
-        /* JS: Toggle game mode */
-        window.settings.playerMode = window.settings.playerMode === 'single' ? 'multi' : 'single';
-        /* JS: Save settings */
-        localStorage.setItem('gameSettings', JSON.stringify(window.settings));
-        /* JS: Clear Player 2's selections if single player */
-        if (window.settings.playerMode === 'single') {
-            localStorage.setItem('player2Heroes', JSON.stringify([]));
-        }
-        /* JS: Update button label */
-        updatePlayButtonLabel();
-
-        /* JS: Validate selections */
-        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-        const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-        if (player1Heroes.length === 0) {
-            alert('Please select at least one hero for Player 1.');
-            return;
-        }
-        if (window.settings.playerMode === 'multi' && player2Heroes.length === 0) {
-            alert('Please select at least one hero for Player 2.');
-            return;
+    try {
+        /* JS: Handle play button click to start single-player game */
+        const playModeBtn = document.getElementById('playModeBtn');
+        if (playModeBtn) {
+            playModeBtn.addEventListener('click', () => {
+                /* JS: Validate selections */
+                const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+                if (player1Heroes.length === 0) {
+                    alert('Please select at least one warrior.');
+                    return;
+                }
+                /* JS: Ensure single-player mode */
+                window.settings.playerMode = 'single';
+                localStorage.setItem('gameSettings', JSON.stringify(window.settings));
+                localStorage.setItem('player2Heroes', JSON.stringify([])); // Clear Player 2
+                /* JS: Redirect to game page */
+                window.location.href = 'game.html';
+            });
         }
 
-        /* JS: Redirect to game page */
-        window.location.href = 'game.html';
-    });
-
-    /* JS: Handle remove hero button click to toggle removal mode */
-    const removeHeroBtn = document.getElementById('removeHeroBtn');
-    removeHeroBtn.addEventListener('click', () => {
-        /* JS: Toggle removal mode */
-        toggleRemovalMode();
-        /* JS: Check if selected heroes grid is empty */
-        const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-        const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-        if (isRemovalMode && player1Heroes.length === 0 && player2Heroes.length === 0) {
-            alert('No heroes selected to remove!');
-            toggleRemovalMode(); /* Exit removal mode */
+        /* JS: Handle remove warrior button click */
+        const removeHeroBtn = document.getElementById('removeHeroBtn');
+        if (removeHeroBtn) {
+            removeHeroBtn.addEventListener('click', () => {
+                /* JS: Toggle removal mode */
+                toggleRemovalMode();
+                /* JS: Check if selected warriors grid is empty */
+                const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+                if (isRemovalMode && player1Heroes.length === 0) {
+                    alert('No warriors selected to remove!');
+                    toggleRemovalMode(); // Exit removal mode
+                }
+            });
         }
-    });
+    } catch (e) {
+        console.error('Error initializing event listeners:', e);
+        alert('Failed to initialize buttons.');
+    }
 }
