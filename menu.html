@@ -1,550 +1,357 @@
 <!DOCTYPE html>
+<!-- HTML: Declare HTML5 document -->
 <html lang="en">
 
 <head>
-    <!-- Setting character encoding for proper text rendering -->
+    <!-- HTML: Set character encoding to UTF-8 -->
     <meta charset="UTF-8">
-    <!-- Ensuring responsive design across devices -->
+    <!-- HTML: Ensure responsive viewport scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Providing a description for SEO and accessibility -->
+    <!-- HTML: Add SEO description for accessibility -->
     <meta name="description" content="Select your heroes for Marvel Cosmic Arena!">
-    <!-- Defining keywords for search engine optimization -->
+    <!-- HTML: Define keywords for search engines -->
     <meta name="keywords" content="Marvel, superhero, roster, cosmic arena">
-    <!-- Crediting the author of the game -->
+    <!-- HTML: Credit the creator -->
     <meta name="author" content="Salvatore DiPalma">
-    <!-- Setting the page title for the menu interface -->
+    <!-- HTML: Set page title -->
     <title>Marvel Cosmic Arena | Hero Selection</title>
-    <!-- Including Bootstrap 5.3.2 for styling and components -->
+    <!-- CSS: Include Bootstrap 5.3.2 for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- Importing Google Fonts for consistent typography -->
+    <!-- CSS: Import Google Fonts for typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- Including Animate.css for animations -->
+    <!-- CSS: Include Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-    <!-- Linking custom glow effects stylesheet -->
+    <!-- CSS: Link to glow effects stylesheet -->
     <link rel="stylesheet" href="glow.css">
-    <!-- Linking general stylesheet for additional styling -->
+    <!-- CSS: Link to additional styles (assumed to exist) -->
     <link rel="stylesheet" href="style.css">
-    <!-- Defining inline styles for custom theming and menu-specific elements -->
+    <!-- CSS: Define inline styles for custom theming and modal -->
     <style>
-        /* Establishing CSS variables for consistent theming */
+        /* CSS: Define theme variables */
         :root {
             --cosmic-blue: #1a2b5f;
-            /* Primary blue for cosmic theme */
+            /* Primary cosmic blue */
             --vibrant-red: #e63946;
-            /* Red for action elements */
+            /* Action red */
             --glowing-gold: #f4d35e;
-            /* Gold for highlights */
+            /* Highlight gold */
             --nebula-dark: #0a0f2b;
-            /* Dark background base */
+            /* Dark background */
             --star-white: #f1faee;
-            /* Light text color */
+            /* Light text */
             --tech-gray: #457b9d;
-            /* Gray for secondary elements */
+            /* Secondary gray */
             --pulse-purple: #7209b7;
-            /* Purple for accents */
+            /* Accent purple */
             --light-bg: #e9ecef;
             /* Light theme background */
             --light-text: #212529;
             /* Light theme text */
             --hero-red: #ff2a44;
-            /* Hero button color */
+            /* Button red */
             --infinity-gold: #ffd700;
-            /* Bright gold for borders */
+            /* Gold borders */
             --marvel-dark: #0d1b2a;
-            /* Dark base for buttons */
+            /* Dark button base */
         }
 
-        /* Styling the body for cosmic background and typography */
+        /* CSS: Style body with cosmic background and center content */
         body {
             font-family: 'Nunito', 'Montserrat', sans-serif;
-            /* Setting primary fonts */
-            background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
-            /* Creating gradient background */
+            background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             color: var(--star-white);
-            /* Setting text color */
-            overflow-x: hidden;
-            /* Preventing horizontal scroll */
             margin: 0;
-            /* Removing default margins */
-            position: relative;
-            /* Enabling positioned children */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             animation: nebulaGlow 15s infinite alternate;
-            /* Applying background animation */
             transition: background 0.5s, color 0.5s;
-            /* Smoothing theme transitions */
         }
 
-        /* Applying light theme styles */
-        body.light-theme {
-            background: linear-gradient(135deg, var(--light-bg) 0%, #dee2e6 100%);
-            /* Light gradient background */
+        /* CSS: Apply light theme styles */
+        .light-theme {
+            background: linear-gradient(135deg, var(--light-bg), #dee2e6);
             color: var(--light-text);
-            /* Dark text for readability */
         }
 
-        /* Defining background animation for cosmic effect */
+        /* CSS: Define cosmic background animation */
         @keyframes nebulaGlow {
-            0% {
-                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            from {
+                background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             }
 
-            50% {
-                background: linear-gradient(135deg, #1d3557 0%, var(--cosmic-blue) 100%);
-            }
-
-            100% {
-                background: linear-gradient(135deg, var(--nebula-dark) 0%, #1d3557 100%);
+            to {
+                background: linear-gradient(135deg, #1d3557, var(--cosmic-blue));
             }
         }
 
-        /* Styling navigation buttons container */
+        /* CSS: Center main content container */
+        .container-fluid {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            max-width: 1600px;
+            margin: auto;
+        }
+
+        /* CSS: Style navigation buttons container */
         .nav-buttons {
             display: flex;
-            /* Arranging buttons horizontally */
             gap: 1rem;
-            /* Setting space between buttons */
             flex-wrap: wrap;
-            /* Allowing wrapping on small screens */
             justify-content: center;
-            /* Centering buttons */
             margin: 2rem 0;
-            /* Adding vertical margin */
             padding: 1rem;
-            /* Adding padding around buttons */
         }
 
-        /* Styling custom Marvel-themed buttons */
-        .btn-marvel-red {
+        /* CSS: Style Marvel-themed buttons (navigation, remove) */
+        .btn-marvel {
             background-color: var(--hero-red);
-            /* Setting button background */
             border: 2px solid var(--infinity-gold);
-            /* Adding gold border */
             color: var(--star-white);
-            /* Setting text color */
             font-family: 'Bebas Neue', sans-serif;
-            /* Using bold font */
-            font-size: 1.3rem;
-            /* Setting font size */
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
             letter-spacing: 1.5px;
-            /* Adding letter spacing */
             text-transform: uppercase;
-            /* Making text uppercase */
             padding: 0.5rem 1.5rem;
-            /* Setting padding */
-            border-radius: 0.25rem;
-            /* Rounding corners */
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            /* Adding transitions */
-            position: relative;
-            /* Enabling pseudo-element positioning */
-            overflow: hidden;
-            /* Hiding overflow for effects */
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
             text-align: center;
-            /* Centering text */
             text-decoration: none;
-            /* Removing underline */
             text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
-            /* Adding glow effect */
+            cursor: pointer;
         }
 
-        /* Adjusting buttons for light theme */
-        .light-theme .btn-marvel-red {
+        /* CSS: Adjust Marvel-themed buttons for light theme */
+        .light-theme .btn-marvel {
             background-color: #e0233d;
-            /* Slightly darker red */
             border-color: var(--cosmic-blue);
-            /* Blue border */
             color: var(--light-text);
-            /* Dark text */
             text-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
-            /* Blue glow */
         }
 
-        /* Defining hover effects for buttons */
-        .btn-marvel-red:hover {
+        /* CSS: Define hover effects for Marvel-themed buttons */
+        .btn-marvel:hover {
             background-color: #e0233d;
-            /* Darkening background */
-            transform: scale(1.1);
-            /* Scaling up */
             box-shadow: 0 0 20px var(--infinity-gold);
-            /* Adding glow */
         }
 
-        /* Highlighting active navigation button */
-        .btn-marvel-red.active {
-            background-color: var(--hero-red);
-            /* Maintaining background */
-            text-shadow: 0 0 10px var(--hero-red);
-            /* Enhancing glow */
+        /* CSS: Highlight active state for buttons (e.g., remove hero) */
+        .btn-marvel.active {
+            background-color: var(--pulse-purple);
+            box-shadow: 0 0 15px var(--pulse-purple);
+            text-shadow: 0 0 10px var(--pulse-purple);
         }
 
-        /* Styling main content container */
-        .container-fluid {
-            padding: 2rem;
-            /* Adding padding */
-            max-width: 1600px;
-            /* Limiting width */
-            margin: auto;
-            /* Centering */
-        }
-
-        /* Styling character cards */
+        /* CSS: Style character cards */
         .character-card {
             width: clamp(140px, 16vw, 200px);
-            /* Responsive width */
             height: clamp(210px, 24vw, 300px);
-            /* Responsive height */
             margin: 0.75rem;
-            /* Adding spacing */
             border: 4px solid var(--pulse-purple);
-            /* Purple border */
             border-radius: 12px;
-            /* Rounding corners */
             overflow: hidden;
-            /* Hiding overflow */
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.5s;
-            /* Adding transitions */
+            transition: box-shadow 0.3s;
             position: relative;
-            /* Enabling positioned children */
             cursor: pointer;
-            /* Indicating interactivity */
             background: rgba(255, 255, 255, 0.05);
-            /* Semi-transparent background */
         }
 
-        /* Adjusting card background for light theme */
+        /* CSS: Highlight selected hero cards in removal mode */
+        .character-card.removal-mode {
+            border-color: var(--pulse-purple);
+            box-shadow: 0 0 10px var(--pulse-purple);
+        }
+
+        /* CSS: Adjust card background for light theme */
         .light-theme .character-card {
             background: rgba(0, 0, 0, 0.1);
-            /* Darker background for contrast */
         }
 
-        /* Defining hover effects for cards */
+        /* CSS: Add glow effect on hover for character cards */
         .character-card:hover {
-            transform: scale(1.15) rotate(3deg);
-            /* Scaling and rotating */
             box-shadow: 0 0 25px var(--glowing-gold);
-            /* Adding glow */
         }
 
-        /* Styling character images */
+        /* CSS: Style character images */
         .character-img {
             width: 100%;
-            /* Filling card */
             height: 100%;
-            /* Filling card */
             object-fit: cover;
-            /* Covering area */
             border-radius: 8px;
-            /* Rounding corners */
             filter: brightness(0.9);
-            /* Slightly dimming */
-            transition: filter 0.3s, transform 0.3s;
-            /* Adding transitions */
+            transition: filter 0.3s;
         }
 
-        /* Enhancing image on card hover */
+        /* CSS: Enhance image brightness on hover */
         .character-card:hover .character-img {
             filter: brightness(1.2);
-            /* Brightening */
-            transform: scale(1.05);
-            /* Slight zoom */
         }
 
-        /* Styling card grids */
+        /* CSS: Style card grids */
         .card-grid {
             display: flex;
-            /* Using flexbox */
             flex-wrap: wrap;
-            /* Allowing wrapping */
             gap: 1.5rem;
-            /* Setting spacing */
             justify-content: center;
-            /* Centering cards */
             padding: 1rem;
-            /* Adding padding */
+            width: 100%;
         }
 
-        /* Styling section titles */
+        /* CSS: Style section titles */
         .section-title {
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
             font-size: clamp(1.8rem, 4.5vw, 2.5rem);
-            /* Responsive font size */
             text-transform: uppercase;
-            /* Making text uppercase */
             color: var(--glowing-gold);
-            /* Gold color */
             text-shadow: 0 0 12px var(--glowing-gold);
-            /* Adding glow */
             margin-bottom: 2rem;
-            /* Spacing below */
             text-align: center;
-            /* Centering text */
             animation: pulseGlow 2s infinite;
-            /* Applying glow animation */
+            width: 100%;
         }
 
-        /* Adjusting titles for light theme */
+        /* CSS: Adjust section titles for light theme */
         .light-theme .section-title {
             color: var(--cosmic-blue);
-            /* Blue color */
             text-shadow: 0 0 12px var(--cosmic-blue);
-            /* Blue glow */
         }
 
-        /* Styling select and remove buttons for hero management */
-        .btn-select,
-        .btn-remove {
+        /* CSS: Style select button for available heroes */
+        .btn-select {
             background-color: var(--vibrant-red);
-            /* Red background */
-            border-color: var(--glowing-gold);
-            /* Gold border */
+            border: 2px solid var(--glowing-gold);
             color: var(--star-white);
-            /* White text */
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
             padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
-            /* Responsive padding */
             border-radius: 5px;
-            /* Rounding corners */
             margin: 0.3rem;
-            /* Adding spacing */
             transition: all 0.3s;
-            /* Adding transitions */
             width: 100%;
-            /* Full width */
+            text-align: center;
+            cursor: pointer;
         }
 
-        /* Styling selected state for buttons */
+        /* CSS: Style selected button state */
         .btn-select.selected {
             background-color: var(--pulse-purple);
-            /* Purple background */
             box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
         }
 
-        /* Adjusting buttons for light theme */
-        .light-theme .btn-select,
-        .light-theme .btn-remove {
+        /* CSS: Adjust select button for light theme */
+        .light-theme .btn-select {
             background-color: var(--cosmic-blue);
-            /* Blue background */
             border-color: var(--tech-gray);
-            /* Gray border */
             color: var(--star-white);
-            /* White text */
         }
 
-        /* Defining hover effects for buttons */
-        .btn-select:hover,
-        .btn-remove:hover {
+        /* CSS: Define hover effects for select button */
+        .btn-select:hover {
             background-color: var(--pulse-purple);
-            /* Purple background */
             box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
         }
 
-        /* Styling stats modal for character details */
+        /* CSS: Style stats modal for hero details */
         .stats-modal {
             position: absolute;
-            /* Positioning over card */
             top: 50%;
-            /* Centering vertically */
             left: 50%;
-            /* Centering horizontally */
             transform: translate(-50%, -50%);
-            /* Centering */
-            width: clamp(220px, 28vw, 320px);
-            /* Responsive width */
+            min-width: clamp(180px, 20vw, 240px);
+            max-width: clamp(260px, 30vw, 360px);
+            max-height: 80vh;
             background: rgba(10, 15, 43, 0.95);
-            /* Semi-transparent background */
             border: 2px solid var(--glowing-gold);
-            /* Gold border */
             border-radius: 12px;
-            /* Rounding corners */
-            padding: 1.5rem;
-            /* Adding padding */
+            padding: 1rem;
             color: var(--star-white);
-            /* White text */
             z-index: 1500;
-            /* Placing above cards */
             display: none;
-            /* Hiding by default */
             animation: fadeIn 0.4s;
-            /* Applying fade-in animation */
+            text-align: left;
+            overflow-y: auto;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            overflow-wrap: break-word;
         }
 
-        /* Adjusting stats modal for light theme */
+        /* CSS: Adjust stats modal for light theme */
         .light-theme .stats-modal {
             background: rgba(255, 255, 255, 0.95);
-            /* Light background */
             color: var(--light-text);
-            /* Dark text */
             border-color: var(--cosmic-blue);
-            /* Blue border */
         }
 
-        /* Showing stats modal on card hover */
+        /* CSS: Show stats modal on card hover */
         .character-card:hover .stats-modal {
             display: block;
-            /* Displaying modal */
         }
 
-        /* Styling stats modal headings and text */
-        .stats-modal h6,
-        .stats-modal p {
+        /* CSS: Style stats modal heading */
+        .stats-modal h6 {
             margin: 0.5rem 0;
-            /* Adding spacing */
-            font-size: clamp(0.9rem, 2.2vw, 1rem);
-            /* Responsive font size */
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            text-align: center;
         }
 
-        /* Defining fade-in animation for modals */
+        /* CSS: Style stats modal paragraphs */
+        .stats-modal p {
+            margin: 0.3rem 0;
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+            line-height: 1.4;
+        }
+
+        /* CSS: Define modal fade-in animation */
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translate(-50%, -60%);
             }
 
-            /* Starting state */
             to {
                 opacity: 1;
                 transform: translate(-50%, -50%);
             }
-
-            /* Ending state */
         }
 
-        /* Styling modal content */
-        .modal-content {
-            background: rgba(10, 15, 43, 0.95);
-            /* Semi-transparent background */
-            border: 3px solid var(--glowing-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* Text color */
-            border-radius: 15px;
-            /* Rounding corners */
-            animation: fadeIn 0.5s;
-            /* Applying fade-in animation */
-        }
-
-        /* Adjusting modals for light theme */
-        .light-theme .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            /* Light background */
-            color: var(--light-text);
-            /* Dark text */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Styling modal header, body, and footer */
-        .modal-header,
-        .modal-body,
-        .modal-footer {
-            border-color: var(--glowing-gold);
-            /* Gold borders */
-            text-align: center;
-            /* Centering content */
-        }
-
-        /* Adjusting modal borders for light theme */
-        .light-theme .modal-header,
-        .light-theme .modal-body,
-        .light-theme .modal-footer {
-            border-color: var(--cosmic-blue);
-            /* Blue borders */
-        }
-
-        /* Styling modal title */
-        .modal-title {
-            font-family: 'Nunito', sans-serif;
-            /* Using clean font */
-            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
-            /* Responsive font size */
-            color: var(--glowing-gold);
-            /* Gold color */
-            text-shadow: 0 0 10px var(--glowing-gold);
-            /* Adding glow */
-        }
-
-        /* Adjusting modal title for light theme */
-        .light-theme .modal-title {
-            color: var(--cosmic-blue);
-            /* Blue color */
-            text-shadow: 0 0 10px var(--cosmic-blue);
-            /* Blue glow */
-        }
-
-        /* Styling cosmic-themed buttons */
+        /* CSS: Style play button */
         .btn-cosmic {
             background-color: var(--cosmic-blue);
-            /* Setting background */
-            border-color: var(--glowing-gold);
-            /* Setting border */
+            border: 2px solid var(--glowing-gold);
             color: var(--star-white);
-            /* Setting text color */
             font-family: 'Nunito', sans-serif;
-            /* Using clean font */
             text-transform: uppercase;
-            /* Making text uppercase */
             padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.8rem, 2.5vw, 1.2rem);
-            /* Responsive padding */
             border-radius: 6px;
-            /* Rounding corners */
             transition: all 0.3s;
-            /* Adding transitions */
+            margin: 1rem auto;
+            display: block;
+            cursor: pointer;
         }
 
-        /* Adjusting cosmic buttons for light theme */
+        /* CSS: Adjust play button for light theme */
         .light-theme .btn-cosmic {
             background-color: var(--tech-gray);
-            /* Gray background */
             border-color: var(--cosmic-blue);
-            /* Blue border */
             color: var(--light-text);
-            /* Dark text */
         }
 
-        /* Defining hover effects for cosmic buttons */
+        /* CSS: Define play button hover effects */
         .btn-cosmic:hover {
             background-color: var(--pulse-purple);
-            /* Purple background */
             box-shadow: 0 0 20px var(--pulse-purple);
-            /* Purple glow */
             transform: translateY(-2px);
-            /* Lifting button */
         }
 
-        /* Styling outline buttons for modals */
-        .btn-outline-cosmic {
-            color: var(--star-white);
-            /* White text */
-            border-color: var(--glowing-gold);
-            /* Gold border */
-            transition: all 0.3s;
-            /* Adding transitions */
-        }
-
-        /* Adjusting outline buttons for light theme */
-        .light-theme .btn-outline-cosmic {
-            color: var(--light-text);
-            /* Dark text */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-        }
-
-        /* Defining hover effects for outline buttons */
-        .btn-outline-cosmic:hover {
-            background-color: var(--glowing-gold);
-            /* Gold background */
-            color: var(--nebula-dark);
-            /* Dark text */
-        }
-
-        /* Defining pulse glow animation for titles */
+        /* CSS: Define pulse glow animation for titles */
         @keyframes pulseGlow {
             0% {
                 text-shadow: 0 0 6px var(--glowing-gold);
@@ -559,722 +366,164 @@
             }
         }
 
-        /* Applying responsive styles for medium screens */
+        /* CSS: Style victory text (hidden) */
+        #VictoryTxt {
+            animation: glowVictory 1.5s infinite alternate;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--star-white);
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* CSS: Style loss text (hidden) */
+        #LossTxt {
+            animation: glowLoss 1.5s infinite alternate;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--star-white);
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* CSS: Responsive styles for medium screens */
         @media (max-width: 992px) {
             .container-fluid {
                 padding: 1.5rem;
             }
 
-            /* Reducing padding */
             .card-grid {
                 gap: 1rem;
             }
 
-            /* Reducing card spacing */
-            .btn-select,
-            .btn-remove {
+            .btn-select {
                 font-size: clamp(0.8rem, 2vw, 0.9rem);
             }
 
-            /* Smaller buttons */
             .nav-buttons {
                 gap: 0.75rem;
             }
 
-            /* Reducing button spacing */
+            .section-title {
+                font-size: clamp(1.6rem, 4vw, 2.2rem);
+            }
+
+            .stats-modal {
+                min-width: clamp(160px, 18vw, 220px);
+                max-width: clamp(240px, 28vw, 320px);
+                padding: 0.8rem;
+            }
+
+            .stats-modal h6 {
+                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+            }
+
+            .stats-modal p {
+                font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+            }
+
+            .btn-marvel {
+                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+                padding: 0.4rem 1.2rem;
+            }
         }
 
-        /* Applying responsive styles for small screens */
+        /* CSS: Responsive styles for small screens */
         @media (max-width: 576px) {
             .container-fluid {
                 padding: 1rem;
             }
 
-            /* Further reducing padding */
             .character-card {
                 width: clamp(120px, 20vw, 160px);
                 height: clamp(180px, 30vw, 240px);
             }
 
-            /* Smaller cards */
-            .section-title {
-                font-size: clamp(1.5rem, 4vw, 2rem);
+            .card-grid {
+                gap: 1rem;
             }
 
-            /* Smaller titles */
-            .btn-select,
-            .btn-remove {
+            .section-title {
+                font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+            }
+
+            .btn-select {
                 font-size: clamp(0.7rem, 1.8vw, 0.8rem);
             }
 
-            /* Smaller buttons */
             .nav-buttons {
                 gap: 0.5rem;
-                margin: 1.5rem 0;
+                margin: 1rem 0;
                 padding: 0.75rem;
             }
 
-            /* Adjusting spacing */
-            .btn-marvel-red {
-                font-size: 1rem;
+            .btn-marvel {
+                font-size: clamp(0.8rem, 2vw, 1rem);
                 padding: 0.4rem 1rem;
             }
 
-            /* Smaller nav buttons */
+            .btn-cosmic {
+                padding: 0.3rem 0.8rem;
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+            }
+
+            .stats-modal {
+                min-width: clamp(140px, 16vw, 200px);
+                max-width: clamp(220px, 26vw, 300px);
+                padding: 0.6rem;
+            }
+
+            .stats-modal h6 {
+                font-size: clamp(0.85rem, 2.2vw, 1rem);
+            }
+
+            .stats-modal p {
+                font-size: clamp(0.7rem, 1.7vw, 0.85rem);
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Adding particle background for cosmic effect -->
-    <div id="particle-bg"><span></span><span></span><span></span></div>
-    <!-- Creating main content area -->
-    <div class="container-fluid mt-5 pt-4">
-        <div class="row">
-            <!-- Defining hero selection interface -->
-            <main class="col">
-                <!-- Displaying selected heroes -->
-                <h2 class="section-title">Selected Heroes</h2> <!-- Unified heroes title -->
-                <div id="selectedHeroesGrid" class="card-grid" role="grid" aria-label="Selected heroes"></div>
-                <!-- Unified selected heroes grid -->
-                <!-- Adding buttons for hero selection and confirmation -->
-                <div class="text-center mt-4">
-                    <button type="button" class="btn btn-cosmic" id="addHeroBtn" data-bs-toggle="modal"
-                        data-bs-target="#addHeroModal" aria-label="Add a hero">Add Hero</button>
-                    <!-- Opening modal to add hero -->
-                    <button type="button" class="btn btn-cosmic" id="confirmSelectionBtn"
-                        aria-label="Confirm hero selection">Confirm Selection</button> <!-- Confirming selection -->
-                </div>
-                <!-- Adding navigation buttons at the bottom center -->
-                <div class="nav-buttons">
-                    <a href="home.html" class="btn btn-marvel-red" role="button" aria-label="Go to Home">Home</a>
-                    <!-- Linking to home -->
-                    <a href="roster.html" class="btn btn-marvel-red" role="button" aria-label="Go to Roster">Roster</a>
-                    <!-- Linking to roster -->
-                    <a href="game.html" class="btn btn-marvel-red active" role="button" aria-label="Go to Game">Game</a>
-                    <!-- Current page (game) -->
-                </div>
-            </main>
-        </div>
-    </div>
-    <!-- Creating modal for adding heroes -->
-    <div class="modal fade" id="addHeroModal" tabindex="-1" aria-labelledby="addHeroModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Defining modal header -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addHeroModalLabel">Add Hero</h5> <!-- Modal title -->
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button> <!-- Close button -->
-                </div>
-                <!-- Defining modal body -->
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="heroSelect" class="form-label">Select Hero</label> <!-- Hero selection label -->
-                        <select class="form-select" id="heroSelect" aria-label="Select a hero">
-                            <!-- Options populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="mb-3" id="playerSelectGroup" style="display: none;">
-                        <label for="playerSelect" class="form-label">Assign to Player</label>
-                        <!-- Player assignment label -->
-                        <select class="form-select" id="playerSelect" aria-label="Select player">
-                            <option value="player1">Player 1</option>
-                            <option value="player2">Player 2</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Defining modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-cosmic" data-bs-dismiss="modal">Cancel</button>
-                    <!-- Cancel button -->
-                    <button type="button" class="btn btn-cosmic" id="confirmAddHeroBtn">Add</button>
-                    <!-- Confirm add button -->
-                </div>
+    <!-- HTML: Create main content container -->
+    <div class="container-fluid">
+        <!-- HTML: Define hero selection section -->
+        <main class="col text-center">
+            <!-- HTML: Display available heroes title -->
+            <h2 class="section-title">Available Heroes</h2>
+            <!-- HTML: Grid for available heroes -->
+            <div id="allHeroesGrid" class="card-grid" role="grid" aria-label="Available heroes"></div>
+            <!-- HTML: Display selected heroes title -->
+            <h2 class="section-title">Selected Heroes</h2>
+            <!-- HTML: Grid for selected heroes -->
+            <div id="selectedHeroesGrid" class="card-grid" role="grid" aria-label="Selected heroes"></div>
+            <!-- HTML: Play mode button -->
+            <button type="button" class="btn btn-cosmic" id="playModeBtn" aria-label="Toggle game mode and play">Play
+                Singleplayer</button>
+            <!-- HTML: Navigation buttons, including remove hero -->
+            <div class="nav-buttons">
+                <a href="home.html" class="btn btn-marvel" role="button" aria-label="Go to Home">Home</a>
+                <a href="roster.html" class="btn btn-marvel" role="button" aria-label="Go to Roster">Roster</a>
+                <a href="game.html" class="btn btn-marvel active" role="button" aria-label="Go to Game">Game</a>
+                <button type="button" class="btn btn-marvel" id="removeHeroBtn"
+                    aria-label="Toggle hero removal mode">Remove Hero</button>
             </div>
-        </div>
+            <!-- HTML: Hidden victory text -->
+            <div id="VictoryTxt" style="display: none;">Victory!</div>
+            <!-- HTML: Hidden loss text -->
+            <div id="LossTxt" style="display: none;">Defeat!</div>
+        </main>
     </div>
-    <!-- Adding footer with creator credit -->
-    <footer class="p-4 m-4 text-center">
+    <!-- HTML: Footer with creator credit -->
+    <footer class="p-4 text-center">
         <p>Created by Salvatore DiPalma © 2025</p>
     </footer>
-    <!-- Including Bootstrap JS for interactivity -->
+    <!-- JS: Include Bootstrap for interactivity -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"
         defer></script>
-    <!-- Including menu script -->
-    <script>
-        // Defining player data for Marvel Cosmic Arena
-        // Each player has a unique id, name, weapon, photo, skill, and special ability
-        window.players = [
-            {
-                id: 'hero-1',
-                firstName: 'Iron',
-                lastName: 'Man',
-                realName: 'Tony Stark',
-                weapon: 'Iron Man Armor',
-                photo: 'imgs/iron man.png',
-                skill: 'Genius Inventor: Designs advanced tech on the fly.',
-                special: 'Repulsor Barrage: Fires a focused energy blast at one enemy.'
-            },
-            {
-                id: 'hero-2',
-                firstName: 'Captain',
-                lastName: 'America',
-                realName: 'Steve Rogers',
-                weapon: 'Vibranium Shield',
-                photo: 'imgs/capam.png',
-                skill: 'Tactical Leadership: Inspires and coordinates allies.',
-                special: 'Shield Bash: Stuns a single enemy for one turn.'
-            },
-            {
-                id: 'hero-3',
-                firstName: 'Thor',
-                lastName: 'Odinson',
-                realName: 'Thor Odinson',
-                weapon: 'Mjolnir',
-                photo: 'imgs/thor.png',
-                skill: 'Storm Summoning: Controls lightning and storms.',
-                special: 'Thunder Strike: Deals heavy damage to one enemy with a lightning bolt.'
-            },
-            {
-                id: 'hero-4',
-                firstName: 'Black',
-                lastName: 'Widow',
-                realName: 'Natasha Romanoff',
-                weapon: 'Electroshock Batons',
-                photo: 'imgs/widow.png',
-                skill: 'Master Espionage: Infiltrates and gathers intel.',
-                special: 'Stealth Strike: Attacks with increased critical chance.'
-            },
-            {
-                id: 'hero-5',
-                firstName: 'Hawkeye',
-                lastName: '',
-                realName: 'Clint Barton',
-                weapon: 'Bow and Trick Arrows',
-                photo: 'imgs/hawkeye.png',
-                skill: 'Precision Aim: Never misses a target.',
-                special: 'Explosive Arrow: Damages all enemies in a small area.'
-            },
-            {
-                id: 'hero-6',
-                firstName: 'Spider',
-                lastName: 'Man',
-                realName: 'Peter Parker',
-                weapon: 'Web-shooters',
-                photo: 'imgs/spiderman.png',
-                skill: 'Spider-Sense: Detects imminent danger.',
-                special: 'Web Trap: Immobilizes an enemy, preventing their next action.'
-            },
-            {
-                id: 'hero-7',
-                firstName: 'Doctor',
-                lastName: 'Strange',
-                realName: 'Stephen Strange',
-                weapon: 'Mystic Arts / Eye of Agamotto',
-                photo: 'imgs/strange.png',
-                skill: 'Dimensional Manipulation: Opens portals across realms.',
-                special: 'Time Loop: Resets health of one ally to its starting value.'
-            },
-            {
-                id: 'hero-8',
-                firstName: 'Black',
-                lastName: 'Panther',
-                realName: 'T’Challa',
-                weapon: 'Vibranium Suit and Claws',
-                photo: 'imgs/panther.png',
-                skill: 'Kinetic Energy Absorption: Stores and redirects energy.',
-                special: 'Vibranium Slash: Deals damage and absorbs some for self-healing.'
-            },
-            {
-                id: 'hero-9',
-                firstName: 'Scarlet',
-                lastName: 'Witch',
-                realName: 'Wanda Maximoff',
-                weapon: 'Chaos Magic',
-                photo: 'imgs/witch.png',
-                skill: 'Reality Warping: Alters reality with a thought.',
-                special: 'Hex Bolt: Randomly reduces an enemy’s attack or health.'
-            },
-            {
-                id: 'hero-10',
-                firstName: 'Ant',
-                lastName: 'Man',
-                realName: 'Scott Lang',
-                weapon: 'Pym Particles Suit',
-                photo: 'imgs/antman.png',
-                skill: 'Size Manipulation: Shrinks or grows instantly.',
-                special: 'Giant Stomp: Deals massive damage to one enemy.'
-            },
-            {
-                id: 'hero-11',
-                firstName: 'Wolverine',
-                lastName: '',
-                realName: 'James Howlett/Logan',
-                weapon: 'Adamantium Claws and Healing Factor',
-                photo: 'imgs/bub.png',
-                skill: 'Berserker Rage: Unleashes unstoppable fury.',
-                special: 'Adamantium Frenzy: Attacks multiple times in one turn.'
-            },
-            {
-                id: 'hero-12',
-                firstName: 'Storm',
-                lastName: '',
-                realName: 'Ororo Munroe',
-                weapon: 'Weather Manipulation',
-                photo: 'imgs/storm.png',
-                skill: 'Atmospheric Control: Creates hurricanes or clear skies.',
-                special: 'Tornado Blast: Pushes back all enemies, delaying their actions.'
-            },
-            {
-                id: 'hero-13',
-                firstName: 'Cyclops',
-                lastName: '',
-                realName: 'Scott Summers',
-                weapon: 'Optic Blasts',
-                photo: 'imgs/scott.png',
-                skill: 'Energy Beam Precision: Adjusts blast intensity.',
-                special: 'Optic Barrage: Hits all enemies with reduced damage.'
-            },
-            {
-                id: 'hero-14',
-                firstName: 'Phoenix',
-                lastName: '',
-                realName: 'Jean Grey Summers',
-                weapon: 'Telepathy and Telekinesis',
-                photo: 'imgs/jean.png',
-                skill: 'Psychic Overload: Overwhelms minds with psychic energy.',
-                special: 'Mind Crush: Deals damage based on target’s remaining health.'
-            },
-            {
-                id: 'hero-15',
-                firstName: 'Beast',
-                lastName: '',
-                realName: 'Henry McCoy',
-                weapon: 'Enhanced Strength and Agility',
-                photo: 'imgs/beast.png',
-                skill: 'Scientific Expertise: Solves complex problems instantly.',
-                special: 'Primal Leap: Attacks and boosts own agility for one turn.'
-            },
-            {
-                id: 'hero-16',
-                firstName: 'Gambit',
-                lastName: '',
-                realName: 'Remy LeBeau',
-                weapon: 'Charged Playing Cards',
-                photo: 'imgs/gambit.png',
-                skill: 'Kinetic Charge: Infuses objects with explosive energy.',
-                special: 'Ace of Spades: Throws a single card for high damage.'
-            },
-            {
-                id: 'hero-17',
-                firstName: 'Rogue',
-                lastName: '',
-                realName: 'Anna Marie',
-                weapon: 'Power Absorption',
-                photo: 'imgs/rogue.png',
-                skill: 'Memory Assimilation: Gains memories of those touched.',
-                special: 'Power Drain: Steals health from an enemy to heal self.'
-            },
-            {
-                id: 'hero-18',
-                firstName: 'Deadpool',
-                lastName: '',
-                realName: 'Wade Wilson',
-                weapon: 'Regenerative Healing Factor and Katanas',
-                photo: 'imgs/wade.png',
-                skill: 'Fourth Wall Break: Interacts with narrative reality.',
-                special: 'Chimichanga Bomb: Explosive attack with random extra effects.'
-            },
-            {
-                id: 'hero-19',
-                firstName: 'Venom',
-                lastName: '',
-                realName: 'Eddie Brock',
-                weapon: 'Symbiote Powers',
-                photo: 'imgs/venom.png',
-                skill: 'Symbiote Morph: Shapeshifts into weapons or forms.',
-                special: 'Tendril Assault: Attacks all enemies with symbiote tendrils.'
-            },
-            {
-                id: 'hero-20',
-                firstName: 'Magneto',
-                lastName: '',
-                realName: 'Max Eisenhardt',
-                weapon: 'Magnetic Fields',
-                photo: 'imgs/max.png',
-                skill: 'Electromagnetic Pulse: Disables all electronics.',
-                special: 'Metal Storm: Crushes one enemy with magnetic force.'
-            },
-            {
-                id: 'hero-21',
-                firstName: 'Doctor',
-                lastName: 'Doom',
-                realName: 'Victor Von Doom',
-                weapon: 'Power Armor and Sorcery',
-                photo: 'imgs/doom.png',
-                skill: 'Mystic-Tech Fusion: Combines magic and technology.',
-                special: 'Doom’s Curse: Applies a damage-over-time effect to one enemy.'
-            },
-            {
-                id: 'hero-22',
-                firstName: 'Thanos',
-                lastName: '',
-                realName: 'Thanos',
-                weapon: 'Infinity Gauntlet',
-                photo: 'imgs/thanos.png',
-                skill: 'Cosmic Domination: Commands universal forces.',
-                special: 'Infinity Snap: Instantly defeats a weakened enemy.'
-            },
-            {
-                id: 'hero-23',
-                firstName: 'Loki',
-                lastName: '',
-                realName: 'Loki Laufeyson',
-                weapon: 'Sorcery and Illusions',
-                photo: 'imgs/loki.png',
-                skill: 'Shape-shifting: Transforms into any form.',
-                special: 'Illusionary Double: Creates a decoy to absorb one attack.'
-            },
-            {
-                id: 'hero-24',
-                firstName: 'Ultron',
-                lastName: '',
-                realName: 'Ultron',
-                weapon: 'Artificial Intelligence and Energy Blasts',
-                photo: 'imgs/ai.png',
-                skill: 'Network Hijacking: Controls digital systems.',
-                special: 'Data Corruption: Reduces an enemy’s attack permanently.'
-            },
-            {
-                id: 'hero-25',
-                firstName: 'Red',
-                lastName: 'Skull',
-                realName: 'Johann Schmidt',
-                weapon: 'Cosmic Cube',
-                photo: 'imgs/skull.png',
-                skill: 'Strategic Manipulation: Orchestrates complex schemes.',
-                special: 'Cube Surge: Boosts all allies’ attack for one turn.'
-            },
-            {
-                id: 'hero-26',
-                firstName: 'Green',
-                lastName: 'Goblin',
-                realName: 'Norman Osborn',
-                weapon: 'Pumpkin Bombs and Goblin Glider',
-                photo: 'imgs/osborn.png',
-                skill: 'Insanity Inducing Gas: Disorients foes with chemicals.',
-                special: 'Pumpkin Barrage: Throws multiple bombs at random enemies.'
-            },
-            {
-                id: 'hero-27',
-                firstName: 'Kingpin',
-                lastName: '',
-                realName: 'Wilson Fisk',
-                weapon: 'Superhuman Strength and Criminal Empire',
-                photo: 'imgs/fisk.png',
-                skill: 'Criminal Overlord: Controls underworld networks.',
-                special: 'Crushing Blow: Deals high damage to one enemy.'
-            },
-            {
-                id: 'hero-28',
-                firstName: 'Black',
-                lastName: 'Cat',
-                realName: 'Felicia Hardy',
-                weapon: 'Enhanced Agility and Luck Manipulation',
-                photo: 'imgs/cat.png',
-                skill: 'Probability Shift: Alters luck in her favor.',
-                special: 'Lucky Strike: Guarantees a critical hit on one enemy.'
-            },
-            {
-                id: 'hero-29',
-                firstName: 'Mysterio',
-                lastName: '',
-                realName: 'Quentin Beck',
-                weapon: 'Illusions and Special Effects',
-                photo: 'imgs/illusion.png',
-                skill: 'Holographic Deception: Creates lifelike illusions.',
-                special: 'Smoke and Mirrors: Confuses all enemies, reducing accuracy.'
-            },
-            {
-                id: 'hero-30',
-                firstName: 'Rhino',
-                lastName: '',
-                realName: 'Aleksei Sytsevich',
-                weapon: 'Superhuman Strength and Durability',
-                photo: 'imgs/rhino.png',
-                skill: 'Unstoppable Charge: Crushes obstacles in a rampage.',
-                special: 'Rhino Rush: Charges through, damaging multiple enemies.'
-            },
-            {
-                id: 'hero-31',
-                firstName: 'Sand',
-                lastName: 'Man',
-                realName: 'Flint Marko',
-                weapon: 'Sand Manipulation',
-                photo: 'imgs/sand.png',
-                skill: 'Sand Reformation: Rebuilds body from sand particles.',
-                special: 'Sandstorm: Blinds enemies, reducing their attack.'
-            },
-            {
-                id: 'hero-32',
-                firstName: 'Electro',
-                lastName: '',
-                realName: 'Max Dillon',
-                weapon: 'Electricity Manipulation',
-                photo: 'imgs/dillon.png',
-                skill: 'Power Surge: Overloads electrical systems.',
-                special: 'Volt Surge: Chains lightning to hit multiple enemies.'
-            },
-            {
-                id: 'hero-33',
-                firstName: 'Doctor',
-                lastName: 'Octopus',
-                realName: 'Otto Octavius',
-                weapon: 'Mechanical Arms',
-                photo: 'imgs/ock.png',
-                skill: 'Multitasking Mastery: Controls arms independently.',
-                special: 'Tentacle Slam: Attacks up to three enemies at once.'
-            },
-            {
-                id: 'hero-34',
-                firstName: 'Kraven',
-                lastName: 'the Hunter',
-                realName: 'Sergei Kravinoff',
-                weapon: 'Enhanced Strength and Tracking',
-                photo: 'imgs/hunt.png',
-                skill: 'Predator Instinct: Tracks prey across any terrain.',
-                special: 'Hunter’s Trap: Immobilizes one enemy for two turns.'
-            },
-            {
-                id: 'hero-35',
-                firstName: 'Shocker',
-                lastName: '',
-                realName: 'Herman Schultz',
-                weapon: 'Vibro-smash Gauntlets',
-                photo: 'imgs/shock.png',
-                skill: 'Shockwave Burst: Emits area-wide vibrations.',
-                special: 'Vibro-Pulse: Disrupts all enemies, delaying their actions.'
-            },
-            {
-                id: 'hero-36',
-                firstName: 'Scorpion',
-                lastName: '',
-                realName: 'Mac Gargan',
-                weapon: 'Mechanical Tail and Enhanced Strength',
-                photo: 'imgs/sting.png',
-                skill: 'Venomous Sting: Paralyzes with tail strike.',
-                special: 'Toxic Tail: Poisons one enemy, dealing damage over time.'
-            },
-            {
-                id: 'hero-37',
-                firstName: 'Vulture',
-                lastName: '',
-                realName: 'Adrian Toomes',
-                weapon: 'Winged Flight and Enhanced Strength',
-                photo: 'imgs/prey.png',
-                skill: 'Aerial Assault: Dive-bombs with precision.',
-                special: 'Talon Dive: Strikes one enemy, ignoring their defenses.'
-            }
-        ];
-
-        // Initializing menu on DOM content load
-        document.addEventListener('DOMContentLoaded', () => {
-            // Loading saved settings
-            loadSettings();
-            // Populating hero selection modal
-            populateHeroSelect();
-            // Populating selected heroes grid
-            populateSelectedHeroes();
-            // Initializing event listeners
-            initializeEventListeners();
-        });
-
-        // Loading saved settings from localStorage
-        function loadSettings() {
-            // Retrieving stored settings or using defaults
-            const savedSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
-            window.settings = {
-                soundVolume: 50,
-                voiceSpeed: 1.2,
-                heroSkin: 'classic',
-                vibration: true,
-                theme: 'dark',
-                playerMode: 'single', // Default to single player
-                ...savedSettings
-            };
-            // Applying theme
-            document.body.classList.toggle('light-theme', window.settings.theme === 'light');
-            // Toggling player select visibility based on game mode
-            const isMultiplayer = window.settings.playerMode === 'multi';
-            document.getElementById('playerSelectGroup').style.display = isMultiplayer ? 'block' : 'none';
-        }
-
-        // Populating hero selection dropdown in modal
-        function populateHeroSelect() {
-            // Selecting hero dropdown
-            const heroSelect = document.getElementById('heroSelect');
-            heroSelect.innerHTML = ''; // Clearing existing options
-            // Adding each hero as an option using firstName and lastName
-            window.players.forEach(hero => {
-                const option = document.createElement('option');
-                option.value = hero.id; // Using id for unique identification
-                option.textContent = `${hero.firstName} ${hero.lastName}`.trim(); // Displaying combined name
-                heroSelect.appendChild(option);
-            });
-        }
-
-        // Populating selected heroes grid based on game mode
-        function populateSelectedHeroes() {
-            // Retrieving saved selections
-            const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-            const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-            // Selecting grid
-            const selectedGrid = document.getElementById('selectedHeroesGrid');
-            selectedGrid.innerHTML = ''; // Clearing existing content
-            // Adding Player 1 heroes
-            player1Heroes.forEach((hero, index) => {
-                const card = createHeroCard(hero, index, 'player1');
-                selectedGrid.appendChild(card);
-            });
-            // Adding Player 2 heroes if multiplayer
-            const isMultiplayer = JSON.parse(localStorage.getItem('gameSettings') || '{}').playerMode === 'multi';
-            if (isMultiplayer) {
-                player2Heroes.forEach((hero, index) => {
-                    const card = createHeroCard(hero, index, 'player2');
-                    selectedGrid.appendChild(card);
-                });
-            }
-        }
-
-        // Creating hero card for selected heroes grid
-        function createHeroCard(hero, index, player) {
-            // Creating card container
-            const card = document.createElement('div');
-            card.classList.add('character-card');
-            card.setAttribute('data-index', index);
-            card.setAttribute('data-player', player);
-            card.setAttribute('aria-label', `${hero.firstName} ${hero.lastName} card for ${player}`);
-
-            // Creating hero image
-            const img = document.createElement('img');
-            img.src = hero.photo;
-            img.alt = `${hero.firstName} ${hero.lastName}`;
-            img.classList.add('character-img');
-            if (window.settings.heroSkin === 'cosmic') img.classList.add('cosmic-skin');
-
-            // Creating stats modal
-            const statsModal = document.createElement('div');
-            statsModal.classList.add('stats-modal');
-            statsModal.innerHTML = `
-                <h6>${hero.firstName} ${hero.lastName} (${player === 'player1' ? 'Player 1' : 'Player 2'})</h6>
-                <p>Real Name: ${hero.realName}</p>
-                <p>Weapon: ${hero.weapon}</p>
-                <p>Skill: ${hero.skill}</p>
-                <p>Special: ${hero.special}</p>
-            `;
-
-            // Creating remove button
-            const button = document.createElement('button');
-            button.classList.add('btn', 'btn-remove');
-            button.textContent = 'Remove';
-            button.setAttribute('data-hero', JSON.stringify(hero));
-            button.setAttribute('data-player', player);
-            button.addEventListener('click', () => removeHero(hero, player));
-
-            // Appending elements
-            card.append(img, statsModal, button);
-            return card;
-        }
-
-        // Adding hero via modal
-        function addHero(heroId, player) {
-            // Finding hero data by id
-            const hero = window.players.find(h => h.id === heroId);
-            if (!hero) return;
-            // Retrieving current selections
-            let player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-            let player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-            // Checking if hero is already selected
-            if (player1Heroes.some(h => h.id === hero.id) || player2Heroes.some(h => h.id === hero.id)) {
-                alert('This hero is already selected!');
-                return;
-            }
-            // Adding hero to appropriate player
-            if (player === 'player1' && player1Heroes.length < 3) {
-                player1Heroes.push(hero);
-            } else if (player === 'player2' && player2Heroes.length < 3) {
-                player2Heroes.push(hero);
-            } else {
-                alert('Maximum of 3 heroes per player reached!');
-                return;
-            }
-            // Saving updated selections
-            localStorage.setItem('player1Heroes', JSON.stringify(player1Heroes));
-            localStorage.setItem('player2Heroes', JSON.stringify(player2Heroes));
-            // Refreshing grid
-            populateSelectedHeroes();
-            // Triggering vibration if enabled
-            if (window.settings.vibration && navigator.vibrate) {
-                navigator.vibrate(100);
-            }
-        }
-
-        // Removing hero from roster
-        function removeHero(hero, player) {
-            // Retrieving current selections
-            let player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-            let player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-            // Removing hero from appropriate player
-            if (player === 'player1') {
-                player1Heroes = player1Heroes.filter(h => h.id !== hero.id);
-            } else if (player === 'player2') {
-                player2Heroes = player2Heroes.filter(h => h.id !== hero.id);
-            }
-            // Saving updated selections
-            localStorage.setItem('player1Heroes', JSON.stringify(player1Heroes));
-            localStorage.setItem('player2Heroes', JSON.stringify(player2Heroes));
-            // Refreshing grid
-            populateSelectedHeroes();
-            // Triggering vibration if enabled
-            if (window.settings.vibration && navigator.vibrate) {
-                navigator.vibrate(100);
-            }
-        }
-
-        // Initializing event listeners
-        function initializeEventListeners() {
-            // Handling confirm selection button click
-            const confirmBtn = document.getElementById('confirmSelectionBtn');
-            confirmBtn.addEventListener('click', () => {
-                // Checking if Player 1 has selections
-                const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
-                const player2Heroes = JSON.parse(localStorage.getItem('player2Heroes') || '[]');
-                const isMultiplayer = JSON.parse(localStorage.getItem('gameSettings') || '{}').playerMode === 'multi';
-                if (player1Heroes.length === 0 || (isMultiplayer && player2Heroes.length === 0)) {
-                    alert('Please select at least one hero for Player 1' + (isMultiplayer ? ' and Player 2.' : '.'));
-                    return;
-                }
-                // Redirecting to game page
-                window.location.href = 'game.html';
-            });
-
-            // Handling add hero button click in modal
-            const confirmAddHeroBtn = document.getElementById('confirmAddHeroBtn');
-            confirmAddHeroBtn.addEventListener('click', () => {
-                // Getting selected hero and player
-                const heroId = document.getElementById('heroSelect').value;
-                const isMultiplayer = JSON.parse(localStorage.getItem('gameSettings') || '{}').playerMode === 'multi';
-                const player = isMultiplayer ? document.getElementById('playerSelect').value : 'player1';
-                // Adding hero
-                addHero(heroId, player);
-                // Closing modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addHeroModal'));
-                modal.hide();
-            });
-        }
-    </script>
+    <!-- JS: Include menu logic -->
+    <script src="menu.js" defer></script>
 </body>
 
 </html>
