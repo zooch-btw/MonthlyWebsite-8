@@ -1,96 +1,72 @@
 <!DOCTYPE html>
-<!-- HTML: Declare HTML5 document for Galaxy BattleForge hero selection -->
+<!-- HTML: Declare HTML5 document for Galaxy BattleForge -->
 <html lang="en">
 
 <head>
-    <!-- HTML: Set character encoding to UTF-8 for universal compatibility -->
+    <!-- Meta: Set character encoding -->
     <meta charset="UTF-8">
-    <!-- HTML: Ensure responsive viewport scaling for mobile and desktop -->
+    <!-- Meta: Responsive viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- HTML: Add SEO description for accessibility and search engines -->
-    <meta name="description" content="Select your warriors for Galaxy BattleForge single-player campaign">
-    <!-- HTML: Define keywords for search engine optimization -->
-    <meta name="keywords" content="Marvel, superhero, roster, galaxy battleforge, single-player">
-    <!-- HTML: Credit the creator of the application -->
+    <!-- Meta: SEO description -->
+    <meta name="description"
+        content="Play Galaxy BattleForge, a turn-based Marvel game with infinite, final boss, and mirror modes">
+    <!-- Meta: SEO keywords -->
+    <meta name="keywords" content="Marvel, superhero, galaxy battleforge, turn-based, game">
+    <!-- Meta: Author credit -->
     <meta name="author" content="Salvatore DiPalma">
-    <!-- HTML: Set page title for browser tab and accessibility -->
-    <title>Galaxy BattleForge | Warrior Selection</title>
-    <!-- CSS: Include Bootstrap 5.3.2 for responsive styling and components -->
+    <!-- HTML: Page title -->
+    <title>Galaxy BattleForge | Game</title>
+    <!-- CSS: Bootstrap 5.3.2 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- CSS: Import Google Fonts for custom typography -->
+    <!-- CSS: Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- CSS: Include Animate.css for UI animations -->
+    <!-- CSS: Animate.css -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-    <!-- CSS: Link to glow effects stylesheet (assumed to exist) -->
+    <!-- CSS: Glow effects (assumed) -->
     <link rel="stylesheet" href="glow.css">
-    <!-- CSS: Link to additional custom styles (assumed to exist) -->
+    <!-- CSS: Custom styles (assumed) -->
     <link rel="stylesheet" href="style.css">
-    <!-- CSS: Define inline styles for theming, layout, and modal behavior -->
+    <!-- CSS: Inline styles -->
     <style>
-        /* CSS: Define theme variables for consistent styling */
+        /* CSS: Theme variables */
         :root {
             --cosmic-blue: #1a2b5f;
-            /* Primary cosmic blue for buttons and accents */
             --vibrant-red: #e63946;
-            /* Action red for buttons */
             --glowing-gold: #f4d35e;
-            /* Highlight gold for borders and effects */
             --nebula-dark: #0a0f2b;
-            /* Dark background for cosmic theme */
             --star-white: #f1faee;
-            /* Light text color for readability */
             --tech-gray: #457b9d;
-            /* Secondary gray for UI elements */
             --pulse-purple: #7209b7;
-            /* Accent purple for selections */
             --light-bg: #e9ecef;
-            /* Light theme background */
             --light-text: #212529;
-            /* Light theme text */
             --hero-red: #ff2a44;
-            /* Button red for Marvel theme */
             --infinity-gold: #ffd700;
-            /* Gold borders for buttons */
             --marvel-dark: #0d1b2a;
-            /* Dark button base color */
         }
 
-        /* CSS: Style body with cosmic background and flexible layout */
+        /* CSS: Body styling */
         body {
             font-family: 'Nunito', 'Montserrat', sans-serif;
-            /* Use custom fonts */
             background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
-            /* Cosmic gradient */
             color: var(--star-white);
-            /* Light text for contrast */
             margin: 0;
-            /* Remove default margins */
             overflow-x: hidden;
-            /* Prevent horizontal scroll */
             display: flex;
-            /* Use flexbox for layout */
             flex-direction: column;
-            /* Stack content vertically */
             min-height: 100vh;
-            /* Ensure full viewport height */
             animation: nebulaGlow 15s infinite alternate;
-            /* Apply background animation */
-            transition: background 0.5s, color 0.5s;
-            /* Smooth theme transitions */
         }
 
-        /* CSS: Apply light theme styles when toggled */
+        /* CSS: Light theme */
         .light-theme {
             background: linear-gradient(135deg, var(--light-bg), #dee2e6);
-            /* Light gradient */
             color: var(--light-text);
-            /* Dark text for readability */
         }
 
-        /* CSS: Define cosmic background animation for visual effect */
+        /* CSS: Background animation */
         @keyframes nebulaGlow {
             from {
                 background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
@@ -101,632 +77,440 @@
             }
         }
 
-        /* CSS: Center main content container with flexible layout */
+        /* CSS: Main container */
         .container-fluid {
             flex: 1;
-            /* Grow to fill available space */
             display: flex;
-            /* Use flexbox for alignment */
             flex-direction: column;
-            /* Stack content vertically */
-            justify-content: center;
-            /* Center vertically */
-            align-items: center;
-            /* Center horizontally */
             padding: 20px;
-            /* Add padding for spacing */
             max-width: 1600px;
-            /* Limit maximum width */
             margin: auto;
-            /* Center container */
         }
 
-        /* CSS: Style navigation buttons container for layout */
-        .nav-buttons {
+        /* CSS: Game layout (horizontal) */
+        .game-layout {
             display: flex;
-            /* Use flexbox for button alignment */
-            gap: 1rem;
-            /* Space between buttons */
-            flex-wrap: wrap;
-            /* Allow wrapping on small screens */
-            justify-content: center;
-            /* Center buttons */
-            margin: 2rem 0;
-            /* Add vertical margin */
-            padding: 1rem;
-            /* Add padding */
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 20px;
+            flex: 1;
         }
 
-        /* CSS: Style Marvel-themed navigation buttons */
-        .btn-marvel {
-            background-color: var(--hero-red);
-            /* Red background */
-            border: 2px solid var(--infinity-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* White text */
-            font-family: 'Bebas Neue', sans-serif;
-            /* Bold font */
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            /* Responsive font size */
-            letter-spacing: 1.5px;
-            /* Add letter spacing */
-            text-transform: uppercase;
-            /* Uppercase text */
-            padding: 0.5rem 1.5rem;
-            /* Add padding */
-            border-radius: 5px;
-            /* Rounded corners */
-            transition: background-color 0.3s, box-shadow 0.3s;
-            /* Smooth transitions */
-            text-align: center;
-            /* Center text */
-            text-decoration: none;
-            /* Remove underline for links */
-            text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
-            /* Subtle glow */
-            cursor: pointer;
-            /* Indicate clickable */
+        /* CSS: Side panels (warriors, enemies) */
+        .side-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        /* CSS: Adjust Marvel buttons for light theme */
-        .light-theme .btn-marvel {
-            background-color: #e0233d;
-            /* Slightly darker red */
-            border-color: var(--cosmic-blue);
-            /* Blue border */
-            color: var(--light-text);
-            /* Dark text */
-            text-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
-            /* Blue glow */
+        /* CSS: Center panel (controls, log) */
+        .center-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 400px;
         }
 
-        /* CSS: Define hover effects for Marvel buttons */
-        .btn-marvel:hover {
-            background-color: #e0233d;
-            /* Darker red on hover */
-            box-shadow: 0 0 20px var(--infinity-gold);
-            /* Gold glow */
-        }
-
-        /* CSS: Highlight active state for buttons (e.g., remove hero) */
-        .btn-marvel.active {
-            background-color: var(--pulse-purple);
-            /* Purple background */
-            box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
-            text-shadow: 0 0 10px var(--pulse-purple);
-            /* Purple text glow */
-        }
-
-        /* CSS: Style character cards for warriors */
+        /* CSS: Character card */
         .character-card {
-            width: clamp(140px, 16vw, 200px);
-            /* Responsive width */
-            height: clamp(210px, 24vw, 300px);
-            /* Responsive height */
-            margin: 0.75rem;
-            /* Add margin */
+            width: 100%;
+            height: 300px;
             border: 4px solid var(--pulse-purple);
-            /* Purple border */
             border-radius: 12px;
-            /* Rounded corners */
             overflow: hidden;
-            /* Hide overflow */
-            transition: box-shadow 0.3s;
-            /* Smooth shadow transition */
             position: relative;
-            /* Position stats modal */
             cursor: pointer;
-            /* Indicate clickable */
             background: rgba(255, 255, 255, 0.05);
-            /* Semi-transparent background */
+            transition: box-shadow 0.3s;
         }
 
-        /* CSS: Highlight cards in removal mode */
-        .character-card.removal-mode {
-            border-color: var(--pulse-purple);
-            /* Purple border */
-            box-shadow: 0 0 10px var(--pulse-purple);
-            /* Purple glow */
-        }
-
-        /* CSS: Adjust card background for light theme */
+        /* CSS: Light theme card */
         .light-theme .character-card {
             background: rgba(0, 0, 0, 0.1);
-            /* Darker semi-transparent background */
         }
 
-        /* CSS: Add glow effect on card hover */
+        /* CSS: Card hover */
         .character-card:hover {
             box-shadow: 0 0 25px var(--glowing-gold);
-            /* Gold glow */
         }
 
-        /* CSS: Style warrior images within cards */
+        /* CSS: Character image */
         .character-img {
             width: 100%;
-            /* Fill card width */
-            height: 100%;
-            /* Fill card height */
+            height: 70%;
             object-fit: cover;
-            /* Cover card area */
-            border-radius: 8px;
-            /* Rounded corners */
+            border-radius: 8px 8px 0 0;
             filter: brightness(0.9);
-            /* Slightly dim image */
             transition: filter 0.3s;
-            /* Smooth brightness transition */
         }
 
-        /* CSS: Brighten image on card hover */
+        /* CSS: Image hover */
         .character-card:hover .character-img {
             filter: brightness(1.2);
-            /* Increase brightness */
         }
 
-        /* CSS: Style grid layout for cards */
-        .card-grid {
-            display: flex;
-            /* Use flexbox for grid */
-            flex-wrap: wrap;
-            /* Allow wrapping */
-            gap: 1.5rem;
-            /* Space between cards */
-            justify-content: center;
-            /* Center cards */
-            padding: 1rem;
-            /* Add padding */
-            width: 100%;
-            /* Full width */
+        /* CSS: Health/mana bars */
+        .status-bars {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            height: 30%;
         }
 
-        /* CSS: Style section titles for grids */
-        .section-title {
-            font-family: 'Nunito', sans-serif;
-            /* Use Nunito font */
-            font-size: clamp(1.8rem, 4.5vw, 2.5rem);
-            /* Responsive font size */
-            text-transform: uppercase;
-            /* Uppercase text */
-            color: var(--glowing-gold);
-            /* Gold color */
-            text-shadow: 0 0 12px var(--glowing-gold);
-            /* Gold glow */
-            margin-bottom: 2rem;
-            /* Add bottom margin */
-            text-align: center;
-            /* Center text */
-            animation: pulseGlow 2s infinite;
-            /* Apply glow animation */
-            width: 100%;
-            /* Full width */
-        }
-
-        /* CSS: Adjust section titles for light theme */
-        .light-theme .section-title {
-            color: var(--cosmic-blue);
-            /* Blue color */
-            text-shadow: 0 0 12px var(--cosmic-blue);
-            /* Blue glow */
-        }
-
-        /* CSS: Style select button for available warriors */
-        .btn-select {
+        .progress-bar-health {
             background-color: var(--vibrant-red);
-            /* Red background */
-            border: 2px solid var(--glowing-gold);
-            /* Gold border */
-            color: var(--star-white);
-            /* White text */
-            font-family: 'Nunito', sans-serif;
-            /* Nunito font */
-            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
-            /* Responsive padding */
-            border-radius: 5px;
-            /* Rounded corners */
-            margin: 0.3rem;
-            /* Add margin */
-            transition: all 0.3s;
-            /* Smooth transitions */
-            width: 100%;
-            /* Full width */
-            text-align: center;
-            /* Center text */
-            cursor: pointer;
-            /* Indicate clickable */
         }
 
-        /* CSS: Style selected state for select button */
-        .btn-select.selected {
-            background-color: var(--pulse-purple);
-            /* Purple background */
-            box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
-        }
-
-        /* CSS: Adjust select button for light theme */
-        .light-theme .btn-select {
+        .progress-bar-mana {
             background-color: var(--cosmic-blue);
-            /* Blue background */
-            border-color: var(--tech-gray);
-            /* Gray border */
+        }
+
+        /* CSS: Action buttons */
+        .action-buttons {
+            position: absolute;
+            bottom: 40px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            background-color: var(--hero-red);
+            border: 2px solid var(--infinity-gold);
             color: var(--star-white);
-            /* White text */
+            border-radius: 4px;
         }
 
-        /* CSS: Define hover effects for select button */
-        .btn-select:hover {
-            background-color: var(--pulse-purple);
-            /* Purple on hover */
-            box-shadow: 0 0 15px var(--pulse-purple);
-            /* Purple glow */
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        /* CSS: Style stats modal for warrior details */
+        /* CSS: Stats modal */
         .stats-modal {
             position: absolute;
-            /* Position over card */
             top: 50%;
-            /* Center vertically */
             left: 50%;
-            /* Center horizontally */
             transform: translate(-50%, -50%);
-            /* Offset to center */
-            min-width: clamp(180px, 20vw, 240px);
-            /* Responsive min width */
-            max-width: clamp(260px, 30vw, 360px);
-            /* Responsive max width */
-            max-height: 80vh;
-            /* Limit height */
+            min-width: 200px;
+            max-width: 300px;
             background: rgba(10, 15, 43, 0.95);
-            /* Dark semi-transparent background */
             border: 2px solid var(--glowing-gold);
-            /* Gold border */
             border-radius: 12px;
-            /* Rounded corners */
-            padding: 1rem;
-            /* Add padding */
+            padding: 10px;
             color: var(--star-white);
-            /* White text */
             z-index: 1500;
-            /* Ensure above other elements */
             display: none;
-            /* Hidden by default */
             animation: fadeIn 0.4s;
-            /* Fade-in animation */
             text-align: left;
-            /* Left-align text */
             overflow-y: auto;
-            /* Scroll if content overflows */
-            box-sizing: border-box;
-            /* Include padding in size */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            /* Subtle shadow */
-            overflow-wrap: break-word;
-            /* Wrap long text */
         }
 
-        /* CSS: Adjust stats modal for light theme */
         .light-theme .stats-modal {
             background: rgba(255, 255, 255, 0.95);
-            /* Light semi-transparent background */
             color: var(--light-text);
-            /* Dark text */
             border-color: var(--cosmic-blue);
-            /* Blue border */
         }
 
-        /* CSS: Show stats modal on card hover */
         .character-card:hover .stats-modal {
             display: block;
-            /* Show modal */
         }
 
-        /* CSS: Style stats modal heading */
-        .stats-modal h6 {
-            margin: 0.5rem 0;
-            /* Add margin */
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            /* Responsive font size */
-            font-weight: bold;
-            /* Bold text */
-            text-align: center;
-            /* Center text */
-        }
-
-        /* CSS: Style stats modal paragraphs */
-        .stats-modal p {
-            margin: 0.3rem 0;
-            /* Add margin */
-            font-size: clamp(0.8rem, 2vw, 0.95rem);
-            /* Responsive font size */
-            line-height: 1.4;
-            /* Improve readability */
-        }
-
-        /* CSS: Define modal fade-in animation */
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                /* Start invisible */
                 transform: translate(-50%, -60%);
-                /* Slide up slightly */
             }
 
             to {
                 opacity: 1;
-                /* Fully visible */
                 transform: translate(-50%, -50%);
-                /* Centered */
             }
         }
 
-        /* CSS: Style play button for starting the game */
-        .btn-cosmic {
-            background-color: var(--cosmic-blue);
-            /* Blue background */
-            border: 2px solid var(--glowing-gold);
-            /* Gold border */
+        /* CSS: Game log */
+        #gameLog {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--tech-gray);
             color: var(--star-white);
-            /* White text */
-            font-family: 'Nunito', sans-serif;
-            /* Nunito font */
+            font-size: 0.9rem;
+        }
+
+        /* CSS: HUD */
+        .game-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+        }
+
+        /* CSS: Navigation buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .btn-marvel {
+            background-color: var(--hero-red);
+            border: 2px solid var(--infinity-gold);
+            color: var(--star-white);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1rem, 2vw, 1.2rem);
             text-transform: uppercase;
-            /* Uppercase text */
-            padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.8rem, 2.5vw, 1.2rem);
-            /* Responsive padding */
-            border-radius: 6px;
-            /* Rounded corners */
-            transition: all 0.3s;
-            /* Smooth transitions */
-            margin: 1rem auto;
-            /* Center with margin */
-            display: block;
-            /* Block display */
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            text-decoration: none;
             cursor: pointer;
-            /* Indicate clickable */
         }
 
-        /* CSS: Adjust play button for light theme */
-        .light-theme .btn-cosmic {
-            background-color: var(--tech-gray);
-            /* Gray background */
+        .light-theme .btn-marvel {
+            background-color: #e0233d;
             border-color: var(--cosmic-blue);
-            /* Blue border */
             color: var(--light-text);
-            /* Dark text */
         }
 
-        /* CSS: Define hover effects for play button */
-        .btn-cosmic:hover {
+        .btn-marvel:hover {
+            background-color: #e0233d;
+            box-shadow: 0 0 15px var(--infinity-gold);
+        }
+
+        .btn-marvel.active {
             background-color: var(--pulse-purple);
-            /* Purple on hover */
-            box-shadow: 0 0 20px var(--pulse-purple);
-            /* Purple glow */
-            transform: translateY(-2px);
-            /* Slight lift */
+            box-shadow: 0 0 15px var(--pulse-purple);
         }
 
-        /* CSS: Define pulse glow animation for titles */
-        @keyframes pulseGlow {
-            0% {
-                text-shadow: 0 0 6px var(--glowing-gold);
-                /* Subtle glow */
-            }
-
-            50% {
-                text-shadow: 0 0 18px var(--glowing-gold);
-                /* Stronger glow */
-            }
-
-            100% {
-                text-shadow: 0 0 6px var(--glowing-gold);
-                /* Subtle glow */
-            }
+        /* CSS: Power-up modal */
+        #powerupModal .modal-content {
+            background: rgba(10, 15, 43, 0.95);
+            color: var(--star-white);
+            border: 2px solid var(--glowing-gold);
         }
 
-        /* CSS: Style hidden victory text (unused in selection) */
-        #VictoryTxt {
+        .light-theme #powerupModal .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--light-text);
+            border-color: var(--cosmic-blue);
+        }
+
+        /* CSS: Game over modal */
+        #gameOverModal .modal-content {
+            background: rgba(10, 15, 43, 0.95);
+            color: var(--star-white);
+            border: 2px solid var(--glowing-gold);
+        }
+
+        .light-theme #gameOverModal .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--light-text);
+            border-color: var(--cosmic-blue);
+        }
+
+        /* CSS: Victory/loss overlay */
+        .cinematic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            z-index: 2000;
+            text-transform: uppercase;
+        }
+
+        .VictoryTxt {
+            color: var(--glowing-gold);
             animation: glowVictory 1.5s infinite alternate;
-            /* Victory animation */
-            font-family: 'Bebas Neue', sans-serif;
-            /* Bold font */
-            font-size: 2rem;
-            /* Large text */
-            color: var(--star-white);
-            /* White text */
-            text-align: center;
-            /* Center text */
-            margin-top: 1rem;
-            /* Add margin */
-            display: none;
-            /* Hidden by default */
         }
 
-        /* CSS: Style hidden loss text (unused in selection) */
-        #LossTxt {
+        .LossTxt {
+            color: var(--vibrant-red);
             animation: glowLoss 1.5s infinite alternate;
-            /* Loss animation */
-            font-family: 'Bebas Neue', sans-serif;
-            /* Bold font */
-            font-size: 2rem;
-            /* Large text */
-            color: var(--star-white);
-            /* White text */
-            text-align: center;
-            /* Center text */
-            margin-top: 1rem;
-            /* Add margin */
-            display: none;
-            /* Hidden by default */
         }
 
-        /* CSS: Responsive styles for medium screens (tablets) */
-        @media (max-width: 992px) {
-            .container-fluid {
-                padding: 1.5rem;
-                /* Reduce padding */
+        @keyframes glowVictory {
+            from {
+                text-shadow: 0 0 10px var(--glowing-gold);
             }
 
-            .card-grid {
-                gap: 1rem;
-                /* Reduce gap */
-            }
-
-            .btn-select {
-                font-size: clamp(0.8rem, 2vw, 0.9rem);
-                /* Smaller font */
-            }
-
-            .nav-buttons {
-                gap: 0.75rem;
-                /* Reduce gap */
-            }
-
-            .section-title {
-                font-size: clamp(1.6rem, 4vw, 2.2rem);
-                /* Smaller title */
-            }
-
-            .stats-modal {
-                min-width: clamp(160px, 18vw, 220px);
-                /* Adjust modal width */
-                max-width: clamp(240px, 28vw, 320px);
-                padding: 0.8rem;
-                /* Reduce padding */
-            }
-
-            .stats-modal h6 {
-                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
-                /* Smaller heading */
-            }
-
-            .stats-modal p {
-                font-size: clamp(0.75rem, 1.8vw, 0.9rem);
-                /* Smaller text */
-            }
-
-            .btn-marvel {
-                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
-                /* Smaller font */
-                padding: 0.4rem 1.2rem;
-                /* Adjust padding */
+            to {
+                text-shadow: 0 0 20px var(--glowing-gold);
             }
         }
 
-        /* CSS: Responsive styles for small screens (phones) */
-        @media (max-width: 576px) {
-            .container-fluid {
-                padding: 1rem;
-                /* Minimal padding */
+        @keyframes glowLoss {
+            from {
+                text-shadow: 0 0 10px var(--vibrant-red);
+            }
+
+            to {
+                text-shadow: 0 0 20px var(--vibrant-red);
+            }
+        }
+
+        /* CSS: Responsive medium screens */
+        @media (max-width: 1200px) {
+            .side-panel {
+                flex: 0 0 250px;
+            }
+
+            .center-panel {
+                min-width: 300px;
             }
 
             .character-card {
-                width: clamp(120px, 20vw, 160px);
-                /* Smaller cards */
-                height: clamp(180px, 30vw, 240px);
+                height: 250px;
+            }
+        }
+
+        /* CSS: Responsive small screens */
+        @media (max-width: 768px) {
+            .game-layout {
+                flex-direction: column;
             }
 
-            .card-grid {
-                gap: 1rem;
-                /* Reduce gap */
+            .side-panel {
+                flex: 1;
             }
 
-            .section-title {
-                font-size: clamp(1.4rem, 3.5vw, 1.8rem);
-                /* Smaller title */
+            .center-panel {
+                flex: 1;
             }
 
-            .btn-select {
-                font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-                /* Smaller font */
+            .character-card {
+                height: 200px;
             }
 
-            .nav-buttons {
-                gap: 0.5rem;
-                /* Minimal gap */
-                margin: 1rem 0;
-                /* Reduce margin */
-                padding: 0.75rem;
-                /* Adjust padding */
+            .btn-action {
+                font-size: 0.7rem;
+                padding: 3px 6px;
             }
 
-            .btn-marvel {
-                font-size: clamp(0.8rem, 2vw, 1rem);
-                /* Smaller font */
-                padding: 0.4rem 1rem;
-                /* Adjust padding */
-            }
-
-            .btn-cosmic {
-                padding: 0.3rem 0.8rem;
-                /* Smaller padding */
-                font-size: clamp(0.8rem, 2vw, 0.9rem);
-                /* Smaller font */
-            }
-
-            .stats-modal {
-                min-width: clamp(140px, 16vw, 200px);
-                /* Smaller modal */
-                max-width: clamp(220px, 26vw, 300px);
-                padding: 0.6rem;
-                /* Minimal padding */
-            }
-
-            .stats-modal h6 {
-                font-size: clamp(0.85rem, 2.2vw, 1rem);
-                /* Smaller heading */
-            }
-
-            .stats-modal p {
-                font-size: clamp(0.7rem, 1.7vw, 0.85rem);
-                /* Smaller text */
+            #gameLog {
+                height: 200px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- HTML: Create main content container for warrior selection -->
+    <!-- HTML: Main container -->
     <div class="container-fluid">
-        <!-- HTML: Define warrior selection section -->
-        <main class="col text-center">
-            <!-- HTML: Display title for available warriors -->
-            <h2 class="section-title">Available Warriors</h2>
-            <!-- HTML: Grid for displaying all available warriors -->
-            <div id="allHeroesGrid" class="card-grid" role="grid" aria-label="Available warriors"></div>
-            <!-- HTML: Display title for selected warriors -->
-            <h2 class="section-title">Selected Warriors</h2>
-            <!-- HTML: Grid for displaying selected warriors -->
-            <div id="selectedHeroesGrid" class="card-grid" role="grid" aria-label="Selected warriors"></div>
-            <!-- HTML: Button to start single-player game -->
-            <button type="button" class="btn btn-cosmic" id="playModeBtn" aria-label="Start single-player game">Play
-                Singleplayer</button>
-            <!-- HTML: Navigation buttons for site navigation and hero removal -->
-            <div class="nav-buttons">
-                <a href="home.html" class="btn btn-marvel" role="button" aria-label="Go to Home page">Home</a>
-                <a href="roster.html" class="btn btn-marvel" role="button" aria-label="Go to Roster page">Roster</a>
-                <a href="game.html" class="btn btn-marvel active" role="button" aria-label="Current Game page">Game</a>
-                <button type="button" class="btn btn-marvel" id="removeHeroBtn"
-                    aria-label="Toggle warrior removal mode">Remove Warrior</button>
+        <!-- HTML: Game title -->
+        <h1 class="section-title animate__animated animate__pulse">Galaxy BattleForge</h1>
+        <!-- HTML: Game layout -->
+        <div class="game-layout">
+            <!-- HTML: Warriors panel -->
+            <div class="side-panel">
+                <h2 class="section-title">Your Warriors</h2>
+                <div id="playerHeroesGrid" class="card-grid"></div>
             </div>
-            <!-- HTML: Hidden victory text (unused in selection screen) -->
-            <div id="VictoryTxt" style="display: none;">Victory!</div>
-            <!-- HTML: Hidden loss text (unused in selection screen) -->
-            <div id="LossTxt" style="display: none;">Defeat!</div>
-        </main>
+            <!-- HTML: Center panel -->
+            <div class="center-panel">
+                <!-- HTML: HUD -->
+                <div class="game-hud">
+                    <div>Wave: <span id="waveDisplay">1</span></div>
+                    <div>Score: <span id="scoreDisplay">0</span></div>
+                    <div>Warriors: <span id="warriorsDisplay">0/0</span></div>
+                    <div>Mode: <span id="modeDisplay">Infinite</span></div>
+                </div>
+                <!-- HTML: Game controls -->
+                <div class="game-controls">
+                    <button id="saveGameBtn" class="btn btn-marvel">Save Game</button>
+                    <button id="restartGameBtn" class="btn btn-marvel">Restart</button>
+                    <button id="themeToggle" class="btn btn-marvel">Theme: Dark</button>
+                    <select id="modeSelect" class="form-select" style="width: auto; display: inline-block;">
+                        <option value="infinite">Infinite</option>
+                        <option value="final">Final Boss</option>
+                        <option value="mirror">Mirror Mode</option>
+                    </select>
+                </div>
+                <!-- HTML: Game log -->
+                <div id="gameLog"></div>
+            </div>
+            <!-- HTML: Enemies panel -->
+            <div class="side-panel">
+                <h2 class="section-title">Enemies</h2>
+                <div id="enemyGrid" class="card-grid"></div>
+            </div>
+        </div>
+        <!-- HTML: Navigation -->
+        <nav class="nav-buttons">
+            <a href="home.html" class="btn btn-marvel" role="button">Home</a>
+            <a href="roster.html" class="btn btn-marvel" role="button">Roster</a>
+            <a href="menu.html" class="btn btn-marvel" role="button">Select Warriors</a>
+            <a href="game.html" class="btn btn-marvel active" role="button">Game</a>
+        </nav>
     </div>
-    <!-- HTML: Footer with creator credit and copyright -->
-    <footer class="p-4 text-center">
+    <!-- HTML: Footer -->
+    <footer class="p-3 text-center">
         <p>Created by Salvatore DiPalma © 2025</p>
     </footer>
-    <!-- JS: Include Bootstrap 5.3.2 for modals and interactivity -->
+    <!-- HTML: Cinematic overlay -->
+    <div id="cinematicOverlay" class="cinematic-overlay"></div>
+    <!-- HTML: Powerup modal -->
+    <div class="modal fade" id="powerupModal" tabindex="-1" aria-labelledby="powerupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="powerupModalLabel">Choose a Powerup</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="powerupChoices">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HTML: Game over modal -->
+    <div class="game-over modal" id="gameOverModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Game Over</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="gameOverMessage"></p>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="Game.restartGame()">Restart</button>
+                    <a href="menu.html" class="btn btn-secondary">Select Warriors</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JS: Bootstrap 5 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"
         defer></script>
-    <!-- JS: Include menu logic for warrior selection -->
-    <script src="menu.js" defer></script>
+    <!-- JS: Game logic -->
+    <script src="game.js" defer></script>
 </body>
 
 </html>
