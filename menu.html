@@ -1,39 +1,33 @@
 <!DOCTYPE html>
-<!-- HTML: Declare HTML5 document with language set to English -->
+<!-- HTML: Galaxy BattleForge hero selection screen -->
 <html lang="en">
 
 <head>
-    <!-- HTML: Set character encoding to UTF-8 for proper text rendering -->
+    <!-- Meta: Character encoding and responsive viewport -->
     <meta charset="UTF-8">
-    <!-- HTML: Ensure responsive viewport scaling on all devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- HTML: Add SEO description for accessibility and search engines -->
-    <meta name="description" content="Select your heroes for Marvel Cosmic Arena!">
-    <!-- HTML: Define keywords for search engine optimization -->
-    <meta name="keywords" content="Marvel, superhero, roster, cosmic arena">
-    <!-- HTML: Credit the creator of the page -->
+    <!-- Meta: SEO for discoverability -->
+    <meta name="description" content="Select your Marvel heroes for Galaxy BattleForge, a cosmic turn-based game">
+    <meta name="keywords" content="Marvel, hero selection, galaxy battleforge, turn-based, game">
     <meta name="author" content="Salvatore DiPalma">
-    <!-- HTML: Set the page title displayed in the browser tab -->
-    <title>Marvel Cosmic Arena | Hero Selection</title>
-    <!-- CSS: Include Bootstrap 5.3.2 for responsive design and components -->
+    <!-- Page title -->
+    <title>Galaxy BattleForge | Hero Selection</title>
+    <!-- CSS: Bootstrap 5.3.2 for modals and utilities -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- CSS: Import Google Fonts for custom typography -->
+    <!-- CSS: Google Fonts for cinematic typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- CSS: Include Animate.css for animation effects -->
+    <!-- CSS: Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-    <!-- CSS: Link to glow effects stylesheet, located in root directory -->
-    <link rel="stylesheet" href="glow.css">
-    <!-- CSS: Link to additional custom styles, located in root directory -->
-    <link rel="stylesheet" href="style.css">
-    <!-- CSS: Define inline styles for theming, layout, and modal behavior -->
+    <!-- CSS: Custom styles for hero selection -->
     <style>
+        /* CSS: Theme variables for consistent styling */
         :root {
             --cosmic-blue: #1a2b5f;
             --vibrant-red: #e63946;
-            --glowing-gold: #f4d35e;
+            --glowing-gold: #ffd700;
             --nebula-dark: #0a0f2b;
             --star-white: #f1faee;
             --tech-gray: #457b9d;
@@ -42,27 +36,26 @@
             --light-text: #212529;
             --hero-red: #ff2a44;
             --infinity-gold: #ffd700;
-            --marvel-dark: #0d1b2a;
         }
 
+        /* CSS: Ensure body takes full viewport height and centers content */
         body {
             font-family: 'Nunito', 'Montserrat', sans-serif;
             background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             color: var(--star-white);
             margin: 0;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
+            padding: 0;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
             animation: nebulaGlow 15s infinite alternate;
-            transition: background 0.5s, color 0.5s;
+            overflow-x: hidden;
         }
 
-        .light-theme {
-            background: linear-gradient(135deg, var(--light-bg), #dee2e6);
-            color: var(--light-text);
-        }
-
+        /* CSS: Nebula background animation */
         @keyframes nebulaGlow {
             from {
                 background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
@@ -73,24 +66,113 @@
             }
         }
 
+        /* CSS: Main container with centered content and proper spacing */
         .container-fluid {
-            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* Center content vertically within container */
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* CSS: Hero selection title */
+        .selection-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--infinity-gold);
+            text-shadow: 0 0 10px var(--infinity-gold);
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        /* CSS: Hero grid layout, centered with proper spacing */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            justify-items: center;
+            /* Center grid items horizontally */
+        }
+
+        /* CSS: Hero card styling with hover effect restored */
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid var(--pulse-purple);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            /* Enable smooth transitions */
+            cursor: pointer;
+            height: 300px;
+            width: 100%;
+            max-width: 200px;
+            /* Ensure cards don't stretch too wide */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* CSS: Hover effect with yellow glow for all characters */
+        .hero-card:hover {
+            transform: scale(1.05);
+            /* Slight scale-up on hover */
+            box-shadow: 0 0 20px var(--glowing-gold);
+            /* Yellow glow effect */
+        }
+
+        /* CSS: Hero image */
+        .hero-img {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+            border-bottom: 2px solid var(--infinity-gold);
+        }
+
+        /* CSS: Hero name and stats */
+        .hero-info {
+            padding: 10px;
+            text-align: center;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
-            max-width: 1600px;
-            margin: auto;
         }
 
-        .nav-buttons {
+        .hero-name {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: bold;
+            color: var(--star-white);
+        }
+
+        .hero-stats {
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            color: var(--tech-gray);
+        }
+
+        /* CSS: Selected hero indicator */
+        .selected {
+            border-color: var(--glowing-gold) !important;
+            box-shadow: 0 0 15px var(--glowing-gold);
+        }
+
+        /* CSS: Action buttons, centered with proper spacing */
+        .action-buttons {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
             justify-content: center;
-            margin: 2rem 0;
-            padding: 1rem;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+            /* Ensure buttons wrap on smaller screens */
         }
 
         .btn-marvel {
@@ -98,376 +180,281 @@
             border: 2px solid var(--infinity-gold);
             color: var(--star-white);
             font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 0.5rem 1.5rem;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            padding: 0.5rem 1rem;
             border-radius: 5px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            text-align: center;
-            text-decoration: none;
-            text-shadow: 0 0 8px rgba(255, 42, 68, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
-        }
-
-        .light-theme .btn-marvel {
-            background-color: #e0233d;
-            border-color: var(--cosmic-blue);
-            color: var(--light-text);
-            text-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
         }
 
         .btn-marvel:hover {
-            background-color: #e0233d;
-            box-shadow: 0 0 20px var(--infinity-gold);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--infinity-gold);
         }
 
-        .btn-marvel.active {
-            background-color: var(--pulse-purple);
-            box-shadow: 0 0 15px var(--pulse-purple);
-            text-shadow: 0 0 10px var(--pulse-purple);
-        }
-
-        .character-card {
-            width: clamp(140px, 16vw, 200px);
-            height: clamp(210px, 24vw, 300px);
-            margin: 0.75rem;
-            border: 4px solid var(--pulse-purple);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: box-shadow 0.3s;
-            position: relative;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .character-card.removal-mode {
-            border-color: var(--pulse-purple);
-            box-shadow: 0 0 10px var(--pulse-purple);
-        }
-
-        .light-theme .character-card {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .character-card:hover {
-            box-shadow: 0 0 25px var(--glowing-gold);
-        }
-
-        .character-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            filter: brightness(0.9);
-            transition: filter 0.3s;
-        }
-
-        .character-card:hover .character-img {
-            filter: brightness(1.2);
-        }
-
-        .card-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-            padding: 1rem;
-            width: 100%;
-        }
-
-        .section-title {
-            font-family: 'Nunito', sans-serif;
-            font-size: clamp(1.8rem, 4.5vw, 2.5rem);
-            text-transform: uppercase;
-            color: var(--glowing-gold);
-            text-shadow: 0 0 12px var(--glowing-gold);
-            margin-bottom: 2rem;
-            text-align: center;
-            animation: pulseGlow 2s infinite;
-            width: 100%;
-        }
-
-        .light-theme .section-title {
-            color: var(--cosmic-blue);
-            text-shadow: 0 0 12px var(--cosmic-blue);
-        }
-
-        .btn-select {
-            background-color: var(--vibrant-red);
-            border: 2px solid var(--glowing-gold);
+        /* CSS: Error toast */
+        .error-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--vibrant-red);
             color: var(--star-white);
-            font-family: 'Nunito', sans-serif;
-            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.6rem, 2vw, 1rem);
+            padding: 10px 20px;
             border-radius: 5px;
-            margin: 0.3rem;
-            transition: all 0.3s;
-            width: 100%;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .btn-select.selected {
-            background-color: var(--pulse-purple);
-            box-shadow: 0 0 15px var(--pulse-purple);
-        }
-
-        .light-theme .btn-select {
-            background-color: var(--cosmic-blue);
-            border-color: var(--tech-gray);
-            color: var(--star-white);
-        }
-
-        .btn-select:hover {
-            background-color: var(--pulse-purple);
-            box-shadow: 0 0 15px var(--pulse-purple);
-        }
-
-        .stats-modal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: clamp(180px, 20vw, 240px);
-            max-width: clamp(260px, 30vw, 360px);
-            max-height: 80vh;
-            background: rgba(10, 15, 43, 0.95);
-            border: 2px solid var(--glowing-gold);
-            border-radius: 12px;
-            padding: 1rem;
-            color: var(--star-white);
-            z-index: 1500;
-            display: none;
-            animation: fadeIn 0.4s;
-            text-align: left;
-            overflow-y: auto;
-            box-sizing: border-box;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            overflow-wrap: break-word;
-        }
-
-        .light-theme .stats-modal {
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--light-text);
-            border-color: var(--cosmic-blue);
-        }
-
-        .character-card:hover .stats-modal {
-            display: block;
-        }
-
-        .stats-modal h6 {
-            margin: 0.5rem 0;
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .stats-modal p {
-            margin: 0.3rem 0;
-            font-size: clamp(0.8rem, 2vw, 0.95rem);
-            line-height: 1.4;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-
-        .btn-cosmic {
-            background-color: var(--cosmic-blue);
-            border: 2px solid var(--glowing-gold);
-            color: var(--star-white);
+            z-index: 1000;
             font-family: 'Nunito', sans-serif;
-            text-transform: uppercase;
-            padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.8rem, 2.5vw, 1.2rem);
-            border-radius: 6px;
-            transition: all 0.3s;
-            margin: 1rem auto;
-            display: block;
-            cursor: pointer;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .light-theme .btn-cosmic {
-            background-color: var(--tech-gray);
-            border-color: var(--cosmic-blue);
-            color: var(--light-text);
-        }
-
-        .btn-cosmic:hover {
-            background-color: var(--pulse-purple);
-            box-shadow: 0 0 20px var(--pulse-purple);
-            transform: translateY(-2px);
-        }
-
-        @keyframes pulseGlow {
-            0% {
-                text-shadow: 0 0 6px var(--glowing-gold);
+        /* CSS: Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
-            50% {
-                text-shadow: 0 0 18px var(--glowing-gold);
+            .hero-card {
+                height: 250px;
+                max-width: 150px;
             }
 
-            100% {
-                text-shadow: 0 0 6px var(--glowing-gold);
+            .hero-img {
+                height: 60%;
             }
-        }
 
-        #VictoryTxt,
-        #LossTxt {
-            animation: glowVictory 1.5s infinite alternate;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2rem;
-            color: var(--star-white);
-            text-align: center;
-            margin-top: 1rem;
-            display: none;
-        }
-
-        @media (max-width: 992px) {
             .container-fluid {
-                padding: 1.5rem;
-            }
-
-            .card-grid {
-                gap: 1rem;
-            }
-
-            .btn-select {
-                font-size: clamp(0.8rem, 2vw, 0.9rem);
-            }
-
-            .nav-buttons {
-                gap: 0.75rem;
-            }
-
-            .section-title {
-                font-size: clamp(1.6rem, 4vw, 2.2rem);
-            }
-
-            .stats-modal {
-                min-width: clamp(160px, 18vw, 220px);
-                max-width: clamp(240px, 28vw, 320px);
-                padding: 0.8rem;
-            }
-
-            .stats-modal h6 {
-                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
-            }
-
-            .stats-modal p {
-                font-size: clamp(0.75rem, 1.8vw, 0.9rem);
-            }
-
-            .btn-marvel {
-                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
-                padding: 0.4rem 1.2rem;
+                padding: 10px;
             }
         }
 
         @media (max-width: 576px) {
-            .container-fluid {
-                padding: 1rem;
-            }
-
-            .character-card {
-                width: clamp(120px, 20vw, 160px);
-                height: clamp(180px, 30vw, 240px);
-            }
-
-            .card-grid {
-                gap: 1rem;
-            }
-
-            .section-title {
-                font-size: clamp(1.4rem, 3.5vw, 1.8rem);
-            }
-
-            .btn-select {
-                font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-            }
-
-            .nav-buttons {
-                gap: 0.5rem;
-                margin: 1rem 0;
-                padding: 0.75rem;
+            .selection-title {
+                font-size: clamp(1.5rem, 4vw, 2rem);
             }
 
             .btn-marvel {
-                font-size: clamp(0.8rem, 2vw, 1rem);
-                padding: 0.4rem 1rem;
-            }
-
-            .btn-cosmic {
-                padding: 0.3rem 0.8rem;
-                font-size: clamp(0.8rem, 2vw, 0.9rem);
-            }
-
-            .stats-modal {
-                min-width: clamp(140px, 16vw, 200px);
-                max-width: clamp(220px, 26vw, 300px);
-                padding: 0.6rem;
-            }
-
-            .stats-modal h6 {
-                font-size: clamp(0.85rem, 2.2vw, 1rem);
-            }
-
-            .stats-modal p {
-                font-size: clamp(0.7rem, 1.7vw, 0.85rem);
+                font-size: clamp(0.8rem, 1.5vw, 1rem);
+                padding: 0.4rem 0.8rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- HTML: Main content container with flexible layout -->
+    <!-- HTML: Main container -->
     <div class="container-fluid">
-        <!-- HTML: Main section for hero selection interface -->
-        <main class="col text-center">
-            <!-- HTML: Title for available heroes section -->
-            <h2 class="section-title">Available Heroes</h2>
-            <!-- HTML: Grid container for displaying available heroes -->
-            <div id="allHeroesGrid" class="card-grid" role="grid" aria-label="Available heroes"></div>
-            <!-- HTML: Title for selected heroes section -->
-            <h2 class="section-title">Selected Heroes</h2>
-            <!-- HTML: Grid container for displaying selected heroes -->
-            <div id="selectedHeroesGrid" class="card-grid" role="grid" aria-label="Selected heroes"></div>
-<!-- HTML: Button to start single-player game and redirect to game.html in root directory -->
-<button type="button" class="btn btn-cosmic" id="playModeBtn" aria-label="Start singleplayer game">Play Singleplayer</button>
-            <!-- HTML: Navigation buttons including home, roster, game, and remove hero -->
-            <div class="nav-buttons">
-                <a href="home.html" class="btn btn-marvel" role="button" aria-label="Go to Home">Home</a>
-                <a href="roster.html" class="btn btn-marvel" role="button" aria-label="Go to Roster">Roster</a>
-                <a href="game.html" class="btn btn-marvel active" role="button" aria-label="Go to Game">Game</a>
-                <button type="button" class="btn btn-marvel" id="removeHeroBtn"
-                    aria-label="Toggle hero removal mode">Remove Hero</button>
-            </div>
-            <!-- HTML: Victory text with glow effect, hidden by default -->
-            <div id="VictoryTxt">Victory!</div>
-            <!-- HTML: Loss text with glow effect, hidden by default -->
-            <div id="LossTxt">Defeat!</div>
-        </main>
+        <!-- HTML: Selection title -->
+        <h1 class="selection-title animate__animated animate__pulse">Choose Your Heroes</h1>
+        <!-- HTML: Hero selection grid -->
+        <div class="hero-grid" id="heroGrid"></div>
+        <!-- HTML: Action buttons -->
+        <div class="action-buttons">
+            <button id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play Singleplayer</button>
+            <button id="clearSelectionBtn" class="btn btn-marvel" aria-label="Clear Selection">Clear Selection</button>
+        </div>
     </div>
-    <!-- HTML: Footer with creator credit -->
-    <footer class="p-4 text-center">
-        <p>Created by Salvatore DiPalma © 2025</p>
-    </footer>
-    <!-- JS: Include Bootstrap for interactive components -->
+    <!-- JS: Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-    <!-- JS: Include menu logic script, located in root directory, with deferred loading -->
-    <script src="menu.js" defer></script>
-    <script src="playSingleplayer.js"></script>
+    <!-- JS: Game logic -->
+    <script src="playSingleplayer.js" defer></script>
+    <script src="warriorAbilitiesAndStats.js" defer></script>
+    <script>
+        // JS: Clear selected heroes on page reload
+        window.addEventListener('load', () => {
+            localStorage.removeItem('player1Heroes');
+        });
+
+        // JS: Define realNameToHeroName mapping for hero selection
+        const realNameToHeroName = {
+            'Tony Stark': 'Iron Man',
+            'Steve Rogers': 'Captain America',
+            'Thor Odinson': 'Thor',
+            'Natasha Romanoff': 'Black Widow',
+            'Clint Barton': 'Hawkeye',
+            'Peter Parker': 'Spider-Man',
+            'Stephen Strange': 'Doctor Strange',
+            'T’Challa': 'Black Panther',
+            'Wanda Maximoff': 'Scarlet Witch',
+            'Scott Lang': 'Ant-Man',
+            'James Howlett': 'Wolverine',
+            'Ororo Munroe': 'Storm',
+            'Scott Summers': 'Cyclops',
+            'Jean Grey': 'Jean Grey',
+            'Henry McCoy': 'Beast',
+            'Remy LeBeau': 'Gambit',
+            'Anna Marie': 'Rogue',
+            'Wade Wilson': 'Deadpool',
+            'Eddie Brock': 'Venom',
+            'Max Eisenhardt': 'Magneto',
+            'Victor Von Doom': 'Doctor Doom',
+            'Thanos': 'Thanos',
+            'Loki Laufeyson': 'Loki',
+            'Ultron': 'Ultron',
+            'Johann Schmidt': 'Red Skull',
+            'Norman Osborn': 'Green Goblin',
+            'Wilson Fisk': 'Kingpin',
+            'Felicia Hardy': 'Black Cat',
+            'Quentin Beck': 'Mysterio',
+            'Aleksei Sytsevich': 'Rhino',
+            'Flint Marko': 'Sandman',
+            'Max Dillon': 'Electro',
+            'Otto Octavius': 'Doctor Octopus',
+            'Sergei Kravinoff': 'Kraven',
+            'Herman Schultz': 'Shocker',
+            'Mac Gargan': 'Scorpion',
+            'Adrian Toomes': 'Vulture'
+        };
+
+        // JS: Define unique stats for each hero
+        const heroStats = {
+            'Iron Man': { health: 120, attack: 25, mana: 60 },
+            'Captain America': { health: 150, attack: 20, mana: 40 },
+            'Thor': { health: 180, attack: 30, mana: 50 },
+            'Black Widow': { health: 90, attack: 15, mana: 70 },
+            'Hawkeye': { health: 100, attack: 18, mana: 60 },
+            'Spider-Man': { health: 110, attack: 22, mana: 55 },
+            'Doctor Strange': { health: 80, attack: 28, mana: 90 },
+            'Black Panther': { health: 140, attack: 24, mana: 45 },
+            'Scarlet Witch': { health: 85, attack: 26, mana: 85 },
+            'Ant-Man': { health: 95, attack: 16, mana: 65 },
+            'Wolverine': { health: 160, attack: 27, mana: 30 },
+            'Storm': { health: 90, attack: 23, mana: 80 },
+            'Cyclops': { health: 105, attack: 20, mana: 60 },
+            'Jean Grey': { health: 80, attack: 25, mana: 90 },
+            'Beast': { health: 130, attack: 22, mana: 50 },
+            'Gambit': { health: 100, attack: 19, mana: 70 },
+            'Rogue': { health: 120, attack: 21, mana: 55 },
+            'Deadpool': { health: 140, attack: 24, mana: 40 },
+            'Venom': { health: 150, attack: 28, mana: 35 },
+            'Magneto': { health: 90, attack: 27, mana: 80 },
+            'Doctor Doom': { health: 110, attack: 26, mana: 75 },
+            'Thanos': { health: 200, attack: 35, mana: 50 },
+            'Loki': { health: 85, attack: 22, mana: 85 },
+            'Ultron': { health: 130, attack: 25, mana: 60 },
+            'Red Skull': { health: 100, attack: 20, mana: 55 },
+            'Green Goblin': { health: 95, attack: 23, mana: 65 },
+            'Kingpin': { health: 160, attack: 20, mana: 40 },
+            'Black Cat': { health: 90, attack: 18, mana: 70 },
+            'Mysterio': { health: 80, attack: 21, mana: 80 },
+            'Rhino': { health: 170, attack: 25, mana: 30 },
+            'Sandman': { health: 140, attack: 22, mana: 45 },
+            'Electro': { health: 90, attack: 24, mana: 75 },
+            'Doctor Octopus': { health: 110, attack: 23, mana: 60 },
+            'Kraven': { health: 120, attack: 20, mana: 50 },
+            'Shocker': { health: 100, attack: 21, mana: 55 },
+            'Scorpion': { health: 130, attack: 22, mana: 45 },
+            'Vulture': { health: 95, attack: 19, mana: 65 }
+        };
+
+        // JS: Initialize hero selection on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            // JS: Clear selected heroes on page load
+            localStorage.removeItem('player1Heroes');
+
+            // JS: Get the hero grid element
+            const heroGrid = document.getElementById('heroGrid');
+            // JS: Define warrior images with a fallback if not loaded from warriorAbilitiesAndStats.js
+            const warriors = window.warriorImageMap || {
+                'Iron Man': 'imgs/iron man.png',
+                'Captain America': 'imgs/capam.png',
+                'Thor': 'imgs/thor.png',
+                'Black Widow': 'imgs/widow.png',
+                'Hawkeye': 'imgs/hawkeye.png',
+                'Spider-Man': 'imgs/spiderman.png',
+                'Doctor Strange': 'imgs/strange.png',
+                'Black Panther': 'imgs/panther.png',
+                'Scarlet Witch': 'imgs/witch.png',
+                'Ant-Man': 'imgs/antman.png',
+                'Wolverine': 'imgs/bub.png',
+                'Storm': 'imgs/storm.png',
+                'Cyclops': 'imgs/scott.png',
+                'Jean Grey': 'imgs/jean.png',
+                'Beast': 'imgs/beast.png',
+                'Gambit': 'imgs/gambit.png',
+                'Rogue': 'imgs/rogue.png',
+                'Deadpool': 'imgs/wade.png',
+                'Venom': 'imgs/venom.png',
+                'Magneto': 'imgs/max.png',
+                'Doctor Doom': 'imgs/doom.png',
+                'Thanos': 'imgs/thanos.png',
+                'Loki': 'imgs/loki.png',
+                'Ultron': 'imgs/ai.png',
+                'Red Skull': 'imgs/skull.png',
+                'Green Goblin': 'imgs/osborn.png',
+                'Kingpin': 'imgs/fisk.png',
+                'Black Cat': 'imgs/cat.png',
+                'Mysterio': 'imgs/illusion.png',
+                'Rhino': 'imgs/rhino.png',
+                'Sandman': 'imgs/sand.png',
+                'Electro': 'imgs/dillon.png',
+                'Doctor Octopus': 'imgs/ock.png',
+                'Kraven': 'imgs/hunt.png',
+                'Shocker': 'imgs/shock.png',
+                'Scorpion': 'imgs/sting.png',
+                'Vulture': 'imgs/prey.png'
+            };
+            // JS: Create hero objects with images and unique stats
+            const heroes = Object.keys(warriors).map(name => ({
+                name,
+                image: warriors[name],
+                stats: heroStats[name] || { health: 100, attack: 10, mana: 50 } // Fallback stats
+            }));
+            // JS: Load selected heroes from localStorage (will be empty due to clear on load)
+            let selectedHeroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+
+            // JS: Function to render hero cards
+            const renderHeroes = () => {
+                heroGrid.innerHTML = ''; // Clear the grid
+                heroes.forEach(hero => {
+                    const card = document.createElement('div');
+                    // JS: Check if the hero is selected by matching realName
+                    const isSelected = selectedHeroes.some(h => realNameToHeroName[h.realName] === hero.name);
+                    card.className = `hero-card ${isSelected ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <img class="hero-img" src="${hero.image}" alt="${hero.name}">
+                        <div class="hero-info">
+                            <div class="hero-name">${hero.name}</div>
+                            <div class="hero-stats">HP: ${hero.stats.health}, ATK: ${hero.stats.attack}, MANA: ${hero.stats.mana}</div>
+                        </div>
+                    `;
+                    // JS: Add click event to toggle selection
+                    card.addEventListener('click', () => {
+                        const index = selectedHeroes.findIndex(h => realNameToHeroName[h.realName] === hero.name);
+                        if (index > -1) {
+                            // JS: Deselect hero if already selected
+                            selectedHeroes.splice(index, 1);
+                        } else if (selectedHeroes.length < 3) {
+                            // JS: Add hero to selection if less than 3 are selected
+                            const realName = Object.keys(realNameToHeroName).find(key => realNameToHeroName[key] === hero.name);
+                            if (realName) {
+                                selectedHeroes.push({ realName });
+                            }
+                        }
+                        // JS: Update localStorage with selected heroes
+                        localStorage.setItem('player1Heroes', JSON.stringify(selectedHeroes));
+                        // JS: Re-render the grid to reflect selection changes
+                        renderHeroes();
+                    });
+                    heroGrid.appendChild(card);
+                });
+            };
+
+            // JS: Initial render of hero cards
+            renderHeroes();
+
+            // JS: Clear selection button logic
+            document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+                // JS: Reset selected heroes array
+                selectedHeroes = [];
+                // JS: Update localStorage
+                localStorage.setItem('player1Heroes', JSON.stringify(selectedHeroes));
+                // JS: Re-render the grid to reflect cleared selection
+                renderHeroes();
+            });
+        });
+    </script>
 </body>
 
 </html>

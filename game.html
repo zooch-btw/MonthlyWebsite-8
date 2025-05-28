@@ -22,11 +22,7 @@
         rel="stylesheet">
     <!-- CSS: Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-    <!-- CSS: Glow effects (assumed) -->
-    <link rel="stylesheet" href="glow.css">
-    <!-- CSS: Custom styles (assumed) -->
-    <link rel="stylesheet" href="style.css">
-    <!-- CSS: Inline styles -->
+    <!-- CSS: Inline styles for cosmic theme -->
     <style>
         /* CSS: Theme variables for consistent styling */
         :root {
@@ -266,9 +262,7 @@
         /* CSS: Action buttons, centered */
         .action-buttons {
             position: absolute;
-            bottom: 40px;
-            left: 10px;
-            right: 10px;
+            bottom: 10px;
             display: flex;
             gap: 4px;
             justify-content: center;
@@ -299,10 +293,10 @@
         /* CSS: Stats modal, centered */
         .stats-modal {
             position: absolute;
-            bottom: 71px;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            min-width: 200px;
+            min-width: clamp(150px, 20vw, 200px);
             max-width: 300px;
             background: rgba(10, 15, 43, 0.95);
             border: 2px solid var(--glowing-gold);
@@ -310,9 +304,9 @@
             border-radius: 8px;
             display: none;
             animation: fadeIn 0.4s;
-            text-align: left;
-            overflow-y: auto;
+            text-align: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
         }
 
         .light-theme .stats-modal {

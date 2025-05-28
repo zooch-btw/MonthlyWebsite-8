@@ -43,65 +43,23 @@ const warriorImageMap = {
 
 /* JS: Maps enemy names to image paths for UI display. */
 const enemyImageMap = {
-  'Overlord Zarkon': 'imgs/overlord_zarkon.png',
-  'Void Drone': 'imgs/void_drone.png',
-  'Abyssal Stalker': 'imgs/abyssal_stalker.png',
-  'Wave Invader': 'imgs/wave_invader.png'
+    'Overlord Zarkon': 'imgs/overlord_zarkon.png',
+    'Void Drone': 'imgs/void_drone.png',
+    'Abyssal Stalker': 'imgs/abyssal_stalker.png',
+    'Wave Invader': 'imgs/wave_invader.png',
+    'Cosmic Tyrant': 'imgs/cosmic_tyrant.png',
+    'Nebula Wraith': 'imgs/nebula_wraith.png'
 };
 
-/* Balanced special abilities for warriors */
-const specialAbilities = {
-  'Tony Stark': {
-    name: 'Repulsor Barrage', description: 'Fires a focused energy blast.', manaCost: 30, cooldown: 2,
-    effect: (target, warrior) => {
-      const damage = Math.round(warrior.attack * 1.5);
-      target.takeDamage(damage);
-      return damage;
-    }
-  },
-  'Steve Rogers': {
-    name: 'Shield Bash', description: 'Stuns an enemy for one turn.', manaCost: 25, cooldown: 3,
-    effect: (target, warrior) => {
-      const damage = warrior.attack;
-      target.takeDamage(damage);
-      target.stunTurns = 1;
-      return damage;
-    }
-  },
-  'Thor Odinson': {
-    name: 'Thunder Strike', description: 'Deals heavy lightning damage.', manaCost: 35, cooldown: 3,
-    effect: (target, warrior) => {
-      const damage = Math.round(warrior.attack * 1.8);
-      target.takeDamage(damage);
-      return damage;
-    }
-  },
-  'Natasha Romanoff': {
-    name: 'Stealth Strike', description: 'High critical chance attack.', manaCost: 20, cooldown: 2,
-    effect: (target, warrior) => {
-      const crit = Math.random() < 0.5;
-      const damage = Math.round(warrior.attack * (crit ? 2 : 1));
-      target.takeDamage(damage);
-      return damage;
-    }
-  },
-  'Clint Barton': {
-    name: 'Explosive Arrow', description: 'Damages all enemies.', manaCost: 30, cooldown: 3,
-    effect: (target, warrior, game) => {
-      const damage = Math.round(warrior.attack * 0.8);
-      game.enemies.filter(e => e.isAlive).forEach(e => e.takeDamage(damage));
-      return damage;
-    }
-  },
-  // ... (similarly balanced abilities for all 37 warriors, abbreviated for brevity)
-  'Adrian Toomes': {
-    name: 'Talon Dive', description: 'Strikes with high damage.', manaCost: 25, cooldown: 2,
-    effect: (target, warrior) => {
-      const damage = Math.round(warrior.attack * 1.5);
-      target.takeDamage(damage);
-      return damage;
-    }
-  }
+/* JS: Sound effects for game events (assumes assets exist). */
+const soundEffects = {
+    attack: new Audio('sounds/attack.mp3'),
+    special: new Audio('sounds/special.mp3'),
+    levelUp: new Audio('sounds/levelup.mp3'),
+    victory: new Audio('sounds/victory.mp3'),
+    defeat: new Audio('sounds/defeat.mp3'),
+    achievement: new Audio('sounds/achievement.mp3'),
+    background: new Audio('sounds/background.mp3')
 };
 
 /* JS: Warrior class representing a playable hero. */
@@ -162,7 +120,7 @@ class Warrior {
         target.takeDamage(damage);
         this.gainXP(15);
         this.logAction(`${this.name} attacks ${target.name} for ${damage} damage${crit ? ' (Critical Hit!)' : ''}!`);
-        soundEffects.attack.play().catch(() => {});
+        soundEffects.attack.play().catch(() => { });
         if (this.passive) this.passive.effect();
         window.Game.processEnemyTurn(); // Trigger enemy turn
         window.Game.checkWaveStatus(); // Check if wave is complete
@@ -181,7 +139,7 @@ class Warrior {
         this.cooldown = this.specialAbility.cooldown;
         this.gainXP(30);
         this.logAction(`${this.name} unleashes ${this.specialAbility.name} for ${damage} damage!`);
-        soundEffects.special.play().catch(() => {});
+        soundEffects.special.play().catch(() => { });
         game.achievements.useSpecials.count++;
         game.checkAchievements();
         if (this.passive) this.passive.effect();
@@ -253,7 +211,7 @@ class Warrior {
         this.mana = Math.min(this.mana + 15, this.maxMana);
         this.critChance += 0.02;
         this.logAction(`${this.name} leveled up to Level ${this.level}!`);
-        soundEffects.levelUp.play().catch(() => {});
+        soundEffects.levelUp.play().catch(() => { });
         window.Game.achievements.levelUp5.count++;
         window.Game.achievements.levelUp20.count++;
         if (this.level === 20) window.Game.achievements.maxLevel.count++;
@@ -311,7 +269,7 @@ class Enemy {
         const damage = Math.round(this.attack * (crit ? 2 : 1) * (0.8 + Math.random() * 0.4));
         const mitigatedDamage = target.takeDamage(damage);
         this.logAction(`${this.name} attacks ${target.name} for ${mitigatedDamage} damage${crit ? ' (Critical Hit!)' : ''}!`);
-        soundEffects.attack.play().catch(() => {});
+        soundEffects.attack.play().catch(() => { });
         return mitigatedDamage;
     }
 
@@ -325,7 +283,7 @@ class Enemy {
         const damage = this.specialAbility.effect(target, this, game);
         this.cooldown = this.specialAbility.cooldown;
         this.logAction(`${this.name} unleashes ${this.specialAbility.name} for ${damage} damage!`);
-        soundEffects.special.play().catch(() => {});
+        soundEffects.special.play().catch(() => { });
         return damage;
     }
 
@@ -544,7 +502,7 @@ window.Game = {
             this.startWave();
             this.updateUI();
             this.log('Galaxy BattleForge: Assemble your heroes!');
-            soundEffects.background.play().catch(() => {});
+            soundEffects.background.play().catch(() => { });
             soundEffects.background.loop = true;
         } catch (e) {
             console.error('Error initializing game:', e);
@@ -847,7 +805,7 @@ window.Game = {
                     this.warriors.forEach(w => { w.health += 30; w.attack += 5; w.buffTurns = 3; });
                     break;
             }
-            soundEffects.achievement.play().catch(() => {});
+            soundEffects.achievement.play().catch(() => { });
         } catch (e) {
             console.error('Error applying reward:', e);
             this.showError('Failed to apply achievement reward.');
@@ -1053,7 +1011,7 @@ window.Game = {
         try {
             if (this.warriors.every(w => !w.isAlive)) {
                 this.isGameOver = true;
-                soundEffects.defeat.play().catch(() => {});
+                soundEffects.defeat.play().catch(() => { });
                 const modal = document.getElementById('gameOverModal');
                 if (modal) new bootstrap.Modal(modal).show();
                 this.updateUI();
@@ -1067,7 +1025,7 @@ window.Game = {
     /* JS: Show victory modal for mode completion. */
     showVictory() {
         try {
-            soundEffects.victory.play().catch(() => {});
+            soundEffects.victory.play().catch(() => { });
             const modal = document.getElementById('victoryModal');
             if (modal) new bootstrap.Modal(modal).show();
             this.isGameOver = true;
