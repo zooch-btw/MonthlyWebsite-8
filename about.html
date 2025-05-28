@@ -50,8 +50,7 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
                 <div class="col-4">
                     <div class="card h-100" id="cds1">
-                        <img src="https://via.placeholder.com/300x200?text=1939" class="card-img-top"
-                            alt="1939 Founding">
+                        <img src="imgs/timely.png" class="card-img-top" alt="1939 Founding">
                         <div class="card-body">
                             <h5 class="card-title" id="VictoryTxt">1939: The Beginning</h5>
                             <p class="card-text">
@@ -63,8 +62,7 @@
                 </div>
                 <div class="col-4">
                     <div class="card h-100" id="cds2">
-                        <img src="https://via.placeholder.com/300x200?text=1961" class="card-img-top"
-                            alt="1961 Silver Age">
+                        <img src="imgs/four.png" class="card-img-top" alt="1961 Silver Age">
                         <div class="card-body">
                             <h5 class="card-title" id="VictoryTxt">1961: The Fantastic Four</h5>
                             <p class="card-text">
@@ -76,8 +74,7 @@
                 </div>
                 <div class="col-4">
                     <div class="card h-100" id="cds3">
-                        <img src="https://via.placeholder.com/300x200?text=2008" class="card-img-top"
-                            alt="2008 MCU Launch">
+                        <img src="imgs/MCU.png" class="card-img-top" alt="2008 MCU Launch">
                         <div class="card-body">
                             <h5 class="card-title" id="VictoryTxt">2008: The MCU Begins</h5>
                             <p class="card-text">
@@ -123,7 +120,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <script src="about.js"></script>
+    <script src="about.js" defer></script>
     <script>
         function checkGameAccess() {
             const selectedHeroes = JSON.parse(sessionStorage.getItem('selectedHeroes') || '[]');

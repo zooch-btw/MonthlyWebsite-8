@@ -19,10 +19,10 @@ const warriorImageMap = {
 
 /* Enemy image mappings */
 const enemyImageMap = {
-  'Overlord Zarkon': 'imgs/overlord_zarkon.png',
-  'Void Drone': 'imgs/void_drone.png',
-  'Abyssal Stalker': 'imgs/abyssal_stalker.png',
-  'Wave Invader': 'imgs/wave_invader.png'
+  'Overlord Zarkon': 'imgs/zarkon.png',
+  'Void Drone': 'imgs/drone.png',
+  'Abyssal Stalker': 'imgs/abyss.png',
+  'Wave Invader': 'imgs/wave.png'
 };
 
 /* Balanced special abilities for warriors */
