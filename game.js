@@ -2,51 +2,51 @@
 
 /* JS: Maps hero names to image paths for UI display. */
 const warriorImageMap = {
-    'Iron Man': 'imgs/iron_man.png',
-    'Captain America': 'imgs/captain_america.png',
+    'Iron Man': 'imgs/iron man.png',
+    'Captain America': 'imgs/capam.png',
     'Thor': 'imgs/thor.png',
-    'Black Widow': 'imgs/black_widow.png',
+    'Black Widow': 'imgs/widow.png',
     'Hawkeye': 'imgs/hawkeye.png',
     'Spider-Man': 'imgs/spiderman.png',
-    'Doctor Strange': 'imgs/doctor_strange.png',
-    'Black Panther': 'imgs/black_panther.png',
-    'Scarlet Witch': 'imgs/scarlet_witch.png',
+    'Doctor Strange': 'imgs/strange.png',
+    'Black Panther': 'imgs/panther.png',
+    'Scarlet Witch': 'imgs/witch.png',
     'Ant-Man': 'imgs/antman.png',
-    'Wolverine': 'imgs/wolverine.png',
+    'Wolverine': 'imgs/bub.png',
     'Storm': 'imgs/storm.png',
-    'Cyclops': 'imgs/cyclops.png',
-    'Jean Grey': 'imgs/jean_grey.png',
+    'Cyclops': 'imgs/scott.png',
+    'Jean Grey': 'imgs/jean.png',
     'Beast': 'imgs/beast.png',
     'Gambit': 'imgs/gambit.png',
     'Rogue': 'imgs/rogue.png',
-    'Deadpool': 'imgs/deadpool.png',
+    'Deadpool': 'imgs/wade.png',
     'Venom': 'imgs/venom.png',
-    'Magneto': 'imgs/magneto.png',
-    'Doctor Doom': 'imgs/doctor_doom.png',
+    'Magneto': 'imgs/max.png',
+    'Doctor Doom': 'imgs/doom.png',
     'Thanos': 'imgs/thanos.png',
     'Loki': 'imgs/loki.png',
-    'Ultron': 'imgs/ultron.png',
-    'Red Skull': 'imgs/red_skull.png',
-    'Green Goblin': 'imgs/green_goblin.png',
-    'Kingpin': 'imgs/kingpin.png',
-    'Black Cat': 'imgs/black_cat.png',
-    'Mysterio': 'imgs/mysterio.png',
+    'Ultron': 'imgs/ai.png',
+    'Red Skull': 'imgs/skull.png',
+    'Green Goblin': 'imgs/osborn.png',
+    'Kingpin': 'imgs/fisk.png',
+    'Black Cat': 'imgs/cat.png',
+    'Mysterio': 'imgs/illusion.png',
     'Rhino': 'imgs/rhino.png',
-    'Sandman': 'imgs/sandman.png',
-    'Electro': 'imgs/electro.png',
-    'Doctor Octopus': 'imgs/doctor_octopus.png',
-    'Kraven': 'imgs/kraven.png',
-    'Shocker': 'imgs/shocker.png',
-    'Scorpion': 'imgs/scorpion.png',
-    'Vulture': 'imgs/vulture.png'
+    'Sandman': 'imgs/sand.png',
+    'Electro': 'imgs/dillon.png',
+    'Doctor Octopus': 'imgs/ock.png',
+    'Kraven': 'imgs/hunt.png',
+    'Shocker': 'imgs/shock.png',
+    'Scorpion': 'imgs/sting.png',
+    'Vulture': 'imgs/prey.png'
 };
 
 /* JS: Maps enemy names to image paths for UI display. */
 const enemyImageMap = {
-    'Overlord Zarkon': 'imgs/overlord_zarkon.png',
-    'Void Drone': 'imgs/void_drone.png',
-    'Abyssal Stalker': 'imgs/abyssal_stalker.png',
-    'Wave Invader': 'imgs/wave_invader.png',
+    'Overlord Zarkon': 'imgs/zarkon.png',
+    'Void Drone': 'imgs/drone.png',
+    'Abyssal Stalker': 'imgs/abyss.png',
+    'Wave Invader': 'imgs/wave.png',
     'Cosmic Tyrant': 'imgs/cosmic_tyrant.png',
     'Nebula Wraith': 'imgs/nebula_wraith.png'
 };
@@ -1067,5 +1067,8 @@ window.Game = {
         } catch (e) {
             console.error('Error logging message:', e);
         }
+    },
+    loadSavedWarriors() {
+        console.log("loaded saved warriors!")
     }
 };

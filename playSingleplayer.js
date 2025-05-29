@@ -193,7 +193,7 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
             localStorage.setItem('player2Heroes', JSON.stringify([]));
             syncWarriorsToGame();
 
-            const gameUrl = './game.html?' + Date.now();
+            const gameUrl = 'game.html?' + Date.now();
             window.location.href = gameUrl;
             setTimeout(() => {
                 if (window.location.pathname.includes('menu.html')) {
@@ -225,3 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('[playSingleplayer.js] DOM loaded, initializing play button at ' + new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' }));
     setupPlayButton();
 });
+
+// playModeBtn to Menu.html via CLICK 
+document.getElementById('playModeBtn').addEventListener('click', () => {
+    window.location = 'game.html'
+})

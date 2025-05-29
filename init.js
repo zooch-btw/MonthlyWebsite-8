@@ -73,13 +73,14 @@ function loadSavedGames() {
 
 /* Initialize settings modal with saved or default values */
 function initSettings() {
+
     try {
         const settings = JSON.parse(localStorage.getItem('gameSettings')); // Get saved settings
         const soundVolumeInput = document.getElementById('soundVolume'); // Get volume slider
         const voiceSpeedInput = document.getElementById('voiceSpeed'); // Get voice speed slider
         const skinSelect = document.getElementById('skinSelect'); // Get skin dropdown
-        const vibrationCheckbox = document.getElementById('vibrationCheckbox'); // Get vibration toggle
-
+        const vibrationCheckbox = document.getElementById('vibrationCheckbox'); // Get vibration toggle\
+        console.log(soundVolumeInput, voiceSpeedInput, skinSelect, vibrationCheckbox)
         // Validate input elements
         if (!soundVolumeInput || !voiceSpeedInput || !skinSelect || !vibrationCheckbox) {
             throw new Error('Settings input elements not found');
@@ -132,7 +133,7 @@ function initSettings() {
 function initGameLog() {
     try {
         const gameLog = document.getElementById('gameLog'); // Get game log container
-        const sidebar = document.getElementById('gameLogSidebar'); // Get sidebar
+        const sidebar = document.querySelector(".side-panel"); // Get sidebar
         if (!gameLog || !sidebar) throw new Error('Game log or sidebar not found');
         gameLog.setAttribute('aria-live', 'polite'); // Set ARIA live region for screen readers
         sidebar.setAttribute('aria-expanded', 'true'); // Indicate sidebar is open

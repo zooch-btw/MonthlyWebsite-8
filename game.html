@@ -112,10 +112,12 @@
         /* CSS: Side panels (heroes, enemies) */
         .side-panel {
             flex: 0 0 clamp(250px, 20vw, 300px);
-            display: flex;
+            /* display: flex; */
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            padding: 0;
+
         }
 
         /* CSS: Center panel (battle log) */
@@ -141,7 +143,7 @@
 
         /* CSS: Character card, centered */
         .character-card {
-            width: 100%;
+            width: 200%;
             max-width: 300px;
             height: clamp(200px, 25vw, 300px);
             border: 4px solid var(--pulse-purple);
@@ -155,6 +157,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-right: -60px;
         }
 
         /* CSS: Level-based glow */
@@ -777,7 +780,8 @@
     <!-- JS: Game logic (loaded first to define Game) -->
     <script src="game.js" defer></script>
     <script src="playSingleplayer.js" defer></script>
-    <script src="warriorAbilitiesAndStats.js" defer></script>
+    <script src="abilities&stats.js" defer></script>
+    <script src="init.js" defer></script>
     <!-- JS: Initialize game after Game is defined -->
     <script>
         // JS: Wait for DOM to load before initializing

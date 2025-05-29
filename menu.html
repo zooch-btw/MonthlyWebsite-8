@@ -249,7 +249,8 @@
         <div class="hero-grid" id="heroGrid"></div>
         <!-- HTML: Action buttons -->
         <div class="action-buttons">
-            <button id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play Singleplayer</button>
+            <button onclick="ToGame()" id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play
+                Singleplayer</button>
             <button id="clearSelectionBtn" class="btn btn-marvel" aria-label="Clear Selection">Clear Selection</button>
         </div>
     </div>
@@ -259,7 +260,7 @@
         crossorigin="anonymous"></script>
     <!-- JS: Game logic -->
     <script src="playSingleplayer.js" defer></script>
-    <script src="warriorAbilitiesAndStats.js" defer></script>
+    <script src="abilities&stats.js" defer></script>
     <script>
         // JS: Clear selected heroes on page reload
         window.addEventListener('load', () => {
@@ -454,6 +455,9 @@
                 renderHeroes();
             });
         });
+        function ToGame() {
+            window.location.href = 'game.html';
+        }
     </script>
 </body>
 
