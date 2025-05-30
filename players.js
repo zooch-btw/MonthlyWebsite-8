@@ -405,5 +405,5 @@ window.players = [
 
 // Fallback for image loading issues
 window.players.forEach(player => {
-    player.photo = player.photo || 'https://via.placeholder.com/150?text=No+Image';
+    player.photo = player.photo || 'imgs/fallback.png';
 });

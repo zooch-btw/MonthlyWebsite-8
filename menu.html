@@ -58,6 +58,7 @@
             from {
                 background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             }
+
             to {
                 background: linear-gradient(135deg, #1d3557, var(--cosmic-blue));
             }
@@ -194,7 +195,7 @@
             z-index: 1000;
             font-family: 'Nunito', sans-serif;
             font-size: clamp(0.8rem, 1.5vw, 0.9em);
-            box-shadow: 0 0 4px rgba(0,0,0,0.2);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
         }
 
         /* CSS: Responsive adjustments */
@@ -239,7 +240,8 @@
         <div class="hero-grid" id="heroGrid"></div>
         <!-- HTML: Action buttons -->
         <div class="action-buttons">
-            <button id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play Singleplayer</button>
+            <button onclick="GoToPage()" id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play
+                Singleplayer</button>
             <button id="clearSelectionBtn" class="btn btn-marvel" aria-label="Clear Selection">Clear Selection</button>
             <button id="removeHeroBtn" class="btn btn-marvel" aria-label="Remove Hero">Remove Hero</button>
         </div>
@@ -479,6 +481,9 @@
                 console.log('[heroSelection.html] Hero selection cleared');
             });
         });
+        function GoToPage() {
+            window.location.href = 'game.html'
+        }
     </script>
 </body>
 

@@ -38,7 +38,10 @@ const warriorImageMap = {
     'Kraven': 'imgs/hunt.png',
     'Shocker': 'imgs/shock.png',
     'Scorpion': 'imgs/sting.png',
-    'Vulture': 'imgs/prey.png'
+    'Vulture': 'imgs/prey.png',
+    'Hulk': 'imgs/hulk.png',
+    'Bullseye': 'imgs/bullseye.png',
+    'Winter Soldier': 'imgs/winter.png'
 };
 
 /* JS: Maps enemy names to image paths for UI display. */
@@ -47,8 +50,8 @@ const enemyImageMap = {
     'Void Drone': 'imgs/drone.png',
     'Abyssal Stalker': 'imgs/abyss.png',
     'Wave Invader': 'imgs/wave.png',
-    'Cosmic Tyrant': 'imgs/cosmic_tyrant.png',
-    'Nebula Wraith': 'imgs/nebula_wraith.png'
+    'Cosmic Tyrant': 'imgs/cosmic.png',
+    'Nebula Wraith': 'imgs/wraith.png'
 };
 
 /* JS: Sound effects for game events (assumes assets exist). */
@@ -59,7 +62,7 @@ const soundEffects = {
     victory: new Audio('sounds/victory.mp3'),
     defeat: new Audio('sounds/defeat.mp3'),
     achievement: new Audio('sounds/achievement.mp3'),
-    background: new Audio('sounds/background.mp3')
+    c: new Audio('sounds/background.mp3')
 };
 
 /* JS: Warrior class representing a playable hero. */

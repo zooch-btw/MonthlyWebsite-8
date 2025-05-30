@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- HTML: Galaxy BattleForge game page for epic Marvel battles -->
+<!-- HTML: Galaxy BattleForge game page with Marvel turn-based battles -->
 <html lang="en">
 
 <head>
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Meta: SEO for discoverability -->
     <meta name="description"
-        content="Galaxy BattleForge: Ultimate Marvel turn-based game with 37 heroes, achievements, and cosmic battles">
+        content="Galaxy BattleForge: Marvel turn-based game with 37 heroes, achievements, and cosmic battles">
     <meta name="keywords" content="Marvel, superhero, galaxy battleforge, turn-based, game">
     <meta name="author" content="Salvatore DiPalma">
     <!-- Page title -->
@@ -41,9 +41,10 @@
             --achievement-green: #28a745;
             --xp-purple: #9b59b6;
             --energy-blue: #00b4d8;
+            --special-achievement-glow: #2ecc71;
         }
 
-        /* CSS: Body with centered cosmic background */
+        /* CSS: Body with cosmic background and flex layout */
         body {
             font-family: 'Nunito', 'Montserrat', sans-serif;
             background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
@@ -73,7 +74,7 @@
             }
         }
 
-        /* CSS: Main container, centered */
+        /* CSS: Main container for game content */
         .container-fluid {
             flex: 1;
             display: flex;
@@ -85,7 +86,7 @@
             margin: 0 auto;
         }
 
-        /* CSS: Navbar for controls, centered at top */
+        /* CSS: Navbar for game controls */
         .game-controls {
             width: 100%;
             background: rgba(0, 0, 0, 0.7);
@@ -109,18 +110,17 @@
             margin-top: 20px;
         }
 
-        /* CSS: Side panels (heroes, enemies) */
+        /* CSS: Side panels for heroes and enemies */
         .side-panel {
             flex: 0 0 clamp(250px, 20vw, 300px);
-            /* display: flex; */
+            display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
             padding: 0;
-
         }
 
-        /* CSS: Center panel (battle log) */
+        /* CSS: Center panel for battle log and HUD */
         .center-panel {
             flex: 1;
             display: flex;
@@ -130,7 +130,7 @@
             min-width: clamp(300px, 40vw, 400px);
         }
 
-        /* CSS: Section title, centered */
+        /* CSS: Section titles with cinematic styling */
         .section-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(1.5rem, 4vw, 2.5rem);
@@ -141,11 +141,10 @@
             width: 100%;
         }
 
-        /* CSS: Character card, centered */
+        /* CSS: Character card with flex layout */
         .character-card {
-            width: 200%;
-            max-width: 300px;
-            height: clamp(200px, 25vw, 300px);
+            width: 100%;
+            height: clamp(250px, 30vw, 350px);
             border: 4px solid var(--pulse-purple);
             border-radius: 12px;
             overflow: hidden;
@@ -157,10 +156,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: -60px;
         }
 
-        /* CSS: Level-based glow */
+        /* CSS: Level-based glow effects */
         .character-card.level-5 {
             border-color: var(--infinity-gold);
             box-shadow: 0 0 15px var(--infinity-gold);
@@ -192,6 +190,7 @@
             border-color: var(--energy-blue);
         }
 
+        /* CSS: Card entry animation */
         @keyframes cardEntry {
             from {
                 opacity: 0;
@@ -204,28 +203,30 @@
             }
         }
 
+        /* CSS: Hover effect for cards */
         .character-card:hover {
             box-shadow: 0 0 25px var(--glowing-gold);
             transform: scale(1.05);
         }
 
-        /* CSS: Character image, centered */
+        /* CSS: Character image with full visibility */
         .character-img {
             width: 100%;
-            height: 65%;
-            object-fit: cover;
-            border-radius: 8px 8px 0 0;
+            height: 60%;
+            object-fit: contain;
+            background-color: var(--marvel-dark);
             filter: brightness(0.9);
             transition: filter 0.3s, transform 0.3s;
         }
 
+        /* CSS: Hover effect for images */
         .character-card:hover .character-img {
             filter: brightness(1.2);
             transform: scale(1.02);
         }
 
+        /* CSS: Fallback for missing images */
         .character-img[src=""] {
-            background: var(--marvel-dark);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -234,11 +235,11 @@
             text-align: center;
         }
 
-        /* CSS: Status bars, centered */
+        /* CSS: Status bars container */
         .status-bars {
             padding: 8px;
             background: rgba(0, 0, 0, 0.5);
-            height: 35%;
+            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -247,6 +248,7 @@
             font-size: clamp(0.7rem, 1.2vw, 0.8rem);
         }
 
+        /* CSS: Progress bar styles */
         .progress-bar-health {
             background-color: var(--vibrant-red);
             transition: width 0.5s ease;
@@ -262,17 +264,18 @@
             transition: width 0.5s ease;
         }
 
-        /* CSS: Action buttons, centered */
+        /* CSS: Action buttons container */
         .action-buttons {
-            position: absolute;
-            bottom: 10px;
             display: flex;
             gap: 4px;
             justify-content: center;
             flex-wrap: wrap;
             width: 100%;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.5);
         }
 
+        /* CSS: Action button styling */
         .btn-action {
             font-size: clamp(0.7rem, 1.5vw, 0.8rem);
             padding: 4px 8px;
@@ -283,24 +286,25 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
+        /* CSS: Hover effect for action buttons */
         .btn-action:hover {
             transform: scale(1.1);
             box-shadow: 0 0 10px var(--infinity-gold);
         }
 
+        /* CSS: Disabled button state */
         .btn-action:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        /* CSS: Stats modal, centered */
+        /* CSS: Stats modal for hover details */
         .stats-modal {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             min-width: clamp(150px, 20vw, 200px);
-            max-width: 300px;
             background: rgba(10, 15, 43, 0.95);
             border: 2px solid var(--glowing-gold);
             padding: 10px;
@@ -312,16 +316,19 @@
             font-size: clamp(0.8rem, 1.5vw, 0.9rem);
         }
 
+        /* CSS: Light theme for stats modal */
         .light-theme .stats-modal {
             background: rgba(255, 255, 255, 0.95);
             color: var(--light-text);
             border-color: var(--cosmic-blue);
         }
 
+        /* CSS: Show stats modal on hover */
         .character-card:hover .stats-modal {
             display: block;
         }
 
+        /* CSS: Fade-in animation for modals */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -334,7 +341,7 @@
             }
         }
 
-        /* CSS: Game log, centered */
+        /* CSS: Game log styling */
         #gameLog {
             height: clamp(300px, 40vh, 500px);
             overflow-y: auto;
@@ -346,15 +353,16 @@
             font-size: clamp(0.8rem, 1.5vw, 0.9rem);
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
             width: 100%;
-            text-align: center;
+            text-align: left;
         }
 
+        /* CSS: Light theme for game log */
         .light-theme #gameLog {
             background: rgba(255, 255, 255, 0.2);
             color: var(--light-text);
         }
 
-        /* CSS: HUD, centered */
+        /* CSS: Game HUD styling */
         .game-hud {
             display: flex;
             justify-content: center;
@@ -369,11 +377,12 @@
             width: 100%;
         }
 
+        /* CSS: Light theme for HUD */
         .light-theme .game-hud {
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* CSS: Control buttons, centered */
+        /* CSS: Marvel-themed control buttons */
         .btn-marvel {
             background-color: var(--hero-red);
             border: 2px solid var(--infinity-gold);
@@ -387,35 +396,83 @@
             cursor: pointer;
         }
 
+        /* CSS: Special achievements button */
+        .btn-special-achievements {
+            background-color: var(--special-achievement-glow);
+            border: 3px solid var(--glowing-gold);
+            color: var(--star-white);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--special-achievement-glow);
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
+
+        /* CSS: Hover effect for special achievements button */
+        .btn-special-achievements:hover {
+            background-color: #27ae60;
+            box-shadow: 0 0 20px var(--glowing-gold);
+            transform: scale(1.1);
+        }
+
+        /* CSS: Light theme for buttons */
         .light-theme .btn-marvel {
             background-color: #e0233d;
             border-color: var(--cosmic-blue);
             color: var(--light-text);
         }
 
+        .light-theme .btn-special-achievements {
+            background-color: #27ae60;
+            border-color: var(--cosmic-blue);
+            color: var(--light-text);
+        }
+
+        /* CSS: Hover effect for buttons */
         .btn-marvel:hover {
             background-color: #e0233d;
             box-shadow: 0 0 15px var(--infinity-gold);
             transform: scale(1.1);
         }
 
-        /* CSS: Modal styling, centered */
+        /* CSS: Modal content styling */
         .modal-content {
             background: rgba(10, 15, 43, 0.95);
             color: var(--star-white);
-            border: 2px solid var(--glowing-gold);
+            border: 2px solid var(--infinity-gold);
             border-radius: 12px;
-            box-shadow: 0 0 20px var(--glowing-gold);
+            box-shadow: 0 0 20px var(--infinity-gold);
             text-align: center;
+            font-family: 'Nunito', sans-serif;
         }
 
+        /* CSS: Light theme for modals */
         .light-theme .modal-content {
             background: rgba(255, 255, 255, 0.95);
             color: var(--light-text);
             border-color: var(--cosmic-blue);
         }
 
-        /* CSS: Victory/loss overlay, centered */
+        /* CSS: Modal header and footer */
+        .modal-header,
+        .modal-footer {
+            border-color: var(--infinity-gold);
+        }
+
+        .light-theme .modal-header,
+        .light-theme .modal-footer {
+            border-color: var(--cosmic-blue);
+        }
+
+        /* CSS: Close button styling */
+        .btn-close-white {
+            filter: brightness(1.5);
+        }
+
+        /* CSS: Victory/loss overlay */
         .cinematic-overlay {
             position: fixed;
             top: 0;
@@ -432,16 +489,21 @@
             text-transform: uppercase;
         }
 
+        /* CSS: Victory and loss text styling */
+        #VictoryTxt,
+        #LossTxt {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
         #VictoryTxt {
             color: var(--glowing-gold);
-            animation: glow 1.5s ease-in-out infinite alternate;
         }
 
         #LossTxt {
             color: var(--vibrant-red);
-            animation: glow 1.5s ease-in-out infinite alternate;
         }
 
+        /* CSS: Glow animation for text */
         @keyframes glow {
             from {
                 text-shadow: 0 0 10px currentColor;
@@ -452,13 +514,12 @@
             }
         }
 
-        /* CSS: Achievement toast, centered */
+        /* CSS: Achievement toast notification */
         .achievement-toast {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(40, 167, 69, 0.9);
+            top: 20px;
+            right: 20px;
+            background: var(--achievement-green);
             color: var(--star-white);
             padding: 10px 20px;
             border-radius: 8px;
@@ -469,13 +530,16 @@
             text-align: center;
         }
 
+        /* CSS: Slide animations for toasts */
         @keyframes slideIn {
             from {
                 opacity: 0;
+                transform: translateY(-20px);
             }
 
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -508,7 +572,7 @@
             }
         }
 
-        /* CSS: Wave transition overlay, centered */
+        /* CSS: Wave transition overlay */
         .wave-transition {
             position: fixed;
             top: 0;
@@ -526,6 +590,7 @@
             animation: fadeInOut 2s forwards;
         }
 
+        /* CSS: Fade animation for wave transition */
         @keyframes fadeInOut {
             0% {
                 opacity: 0;
@@ -540,7 +605,27 @@
             }
         }
 
-        /* CSS: Responsive adjustments */
+        /* CSS: Selected enemy highlight */
+        .selected-enemy {
+            border: 2px solid var(--vibrant-red) !important;
+            box-shadow: 0 0 15px var(--vibrant-red);
+        }
+
+        /* CSS: Error toast notification */
+        .error-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--vibrant-red);
+            color: var(--star-white);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        /* CSS: Responsive adjustments for tablets */
         @media (max-width: 1200px) {
             .side-panel {
                 flex: 0 0 clamp(200px, 20vw, 250px);
@@ -551,10 +636,11 @@
             }
 
             .character-card {
-                height: clamp(180px, 20vw, 250px);
+                height: clamp(220px, 25vw, 300px);
             }
         }
 
+        /* CSS: Responsive adjustments for mobile */
         @media (max-width: 768px) {
             .game-layout {
                 flex-direction: column;
@@ -568,7 +654,7 @@
             }
 
             .character-card {
-                height: clamp(150px, 25vw, 200px);
+                height: clamp(200px, 25vw, 250px);
             }
 
             .btn-action {
@@ -581,84 +667,59 @@
             }
         }
 
+        /* CSS: Responsive adjustments for small screens */
         @media (max-width: 576px) {
             .game-controls {
                 flex-direction: column;
                 gap: 10px;
             }
 
-            .btn-marvel {
+            .btn-marvel,
+            .btn-special-achievements {
                 font-size: clamp(0.8rem, 2vw, 1rem);
+                padding: 0.4rem 0.8rem;
             }
 
             .section-title {
                 font-size: clamp(1.2rem, 3vw, 1.8rem);
             }
 
-            .action-buttons {
-                bottom: 5px;
-            }
-
             .character-img {
-                height: 60%;
+                height: 55%;
             }
 
             .status-bars {
                 padding: 5px;
             }
         }
-
-        /* CSS: Selected enemy highlight */
-        .selected-enemy {
-            border: 2px solid var(--vibrant-red) !important;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--vibrant-red);
-        }
-
-        /* CSS: Error and achievement toasts */
-        .error-toast,
-        .achievement-toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--vibrant-red);
-            color: var(--star-white);
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            font-family: 'Nunito', sans-serif;
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-        }
-
-        .achievement-toast {
-            background: var(--achievement-green);
-        }
     </style>
 </head>
 
 <body>
-    <!-- HTML: Main container -->
+    <!-- HTML: Main container for game content -->
     <div class="container-fluid">
-        <!-- HTML: Game controls at top -->
-        <nav class="game-controls" role="toolbar">
+        <!-- HTML: Game controls navigation -->
+        <nav class="game-controls" role="toolbar" aria-label="Game Controls">
             <button id="saveGameBtn" class="btn btn-marvel" aria-label="Save Game">Save Game</button>
             <button id="restartGameBtn" class="btn btn-marvel" aria-label="Restart Game">Restart</button>
             <button id="themeToggle" class="btn btn-marvel" aria-label="Toggle Theme">Theme: Dark</button>
             <button id="achievementsBtn" class="btn btn-marvel" aria-label="View Achievements">Achievements</button>
+            <button id="specialAchievementsBtn" class="btn btn-special-achievements"
+                aria-label="View Special Achievements">Special Achievements</button>
         </nav>
         <!-- HTML: Game title -->
         <h1 class="section-title animate__animated animate__pulse" aria-label="Galaxy BattleForge Title">Galaxy
             BattleForge</h1>
-        <!-- HTML: Game layout -->
+        <!-- HTML: Game layout container -->
         <div class="game-layout">
             <!-- HTML: Warriors panel (left) -->
             <div class="side-panel" aria-label="Player Warriors">
                 <h2 class="section-title">Your Warriors</h2>
                 <div id="playerHeroesGrid"></div>
             </div>
-            <!-- HTML: Center panel (battle log and HUD) -->
+            <!-- HTML: Center panel for HUD and battle log -->
             <div class="center-panel">
-                <!-- HTML: HUD -->
+                <!-- HTML: Game HUD -->
                 <div class="game-hud" aria-label="Game Status">
                     <div>Wave: <span id="waveDisplay">1</span></div>
                     <div>Score: <span id="scoreDisplay">0</span></div>
@@ -666,7 +727,7 @@
                     <div>Mode: <span id="modeDisplay">Infinite</span></div>
                     <div>Achievements: <span id="achievementCount">0</span></div>
                 </div>
-                <!-- HTML: Game log -->
+                <!-- HTML: Battle log -->
                 <div id="gameLog" aria-live="polite"></div>
             </div>
             <!-- HTML: Enemies panel (right) -->
@@ -680,11 +741,11 @@
     <footer class="p-3 text-center" aria-label="Footer">
         <p>Created by Salvatore DiPalma © 2025</p>
     </footer>
-    <!-- HTML: Cinematic overlay -->
+    <!-- HTML: Cinematic overlay for victory/loss -->
     <div id="cinematicOverlay" class="cinematic-overlay" aria-hidden="true"></div>
-    <!-- HTML: Wave transition -->
+    <!-- HTML: Wave transition overlay -->
     <div id="waveTransition" class="wave-transition" aria-hidden="true"></div>
-    <!-- HTML: Power-up modal -->
+    <!-- HTML: Power-up selection modal -->
     <div class="modal fade" id="powerupModal" tabindex="-1" aria-labelledby="powerupModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -694,10 +755,13 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="powerupChoices"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-    <!-- HTML: Game over modal (updated) -->
+    <!-- HTML: Game over modal -->
     <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -711,7 +775,28 @@
                     <p>Final Score: <span id="finalScore">0</span></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-marvel" onclick="window.Game.restartGame()">Restart</button>
+                    <button type="button" class="btn btn-marvel" onclick="window.Game.restart()">Restart</button>
+                    <a href="menu.html" class="btn btn-marvel">Select Warriors</a>
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HTML: Victory modal -->
+    <div class="modal fade" id="victoryModal" tabindex="-1" aria-labelledby="victoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="victoryModalLabel">Victory!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Congratulations! You've won in <span id="victoryMode">Infinite</span> mode!</p>
+                    <p>Score: <span id="victoryScore">0</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-marvel" onclick="window.Game.restart()">Play Again</button>
                     <a href="menu.html" class="btn btn-marvel">Select Warriors</a>
                     <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -729,31 +814,30 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="achievementList"></div>
-            </div>
-        </div>
-    </div>
-    <!-- HTML: Victory modal (new) -->
-    <div class="modal fade" id="victoryModal" tabindex="-1" aria-labelledby="victoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="victoryModalLabel">Victory!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Congratulations! You've won in <span id="victoryMode">Infinite</span> mode!</p>
-                    <p>Final Score: <span id="victoryScore">0</span></p>
-                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-marvel" onclick="window.Game.restartGame()">Play Again</button>
-                    <a href="menu.html" class="btn btn-marvel">Select Warriors</a>
                     <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- HTML: Game mode modal -->
+    <!-- HTML: Special Achievements modal -->
+    <div class="modal fade" id="specialAchievementsModal" tabindex="-1" aria-labelledby="specialAchievementsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="specialAchievementsModalLabel">Special Achievements</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="specialAchievementList"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HTML: Game mode selection modal -->
     <div class="modal fade" id="gameModeModal" tabindex="-1" aria-labelledby="gameModeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -763,65 +847,40 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.setGameMode('infinite')">Infinite
+                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('infinite')">Infinite
                         Mode</button>
-                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.setGameMode('final')">Final
+                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('final')">Final
                         Boss</button>
-                    <button class="btn btn-marvel w-100" onclick="window.Game.setGameMode('mirror')">Mirror
-                        Mode</button>
+                    <button class="btn btn-marvel w-100" onclick="window.Game.switchMode('mirror')">Mirror Mode</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- JS: Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <!-- JS: Game logic (loaded first to define Game) -->
+    <!-- HTML: Save game navigation modal -->
+    <div class="modal fade" id="saveGameModal" tabindex="-1" aria-labelledby="saveGameModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveGameModalLabel">Game Saved</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Game saved successfully! Where would you like to go?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="home.html" class="btn btn-marvel">Home</a>
+                    <a href="roster.html" class="btn btn-marvel">Roster</a>
+                    <a href="about.html" class="btn btn-marvel">About</a>
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Stay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JS: Bootstrap 5.3.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JS: Game logic -->
     <script src="game.js" defer></script>
-    <script src="playSingleplayer.js" defer></script>
-    <script src="abilities&stats.js" defer></script>
-    <script src="init.js" defer></script>
-    <!-- JS: Initialize game after Game is defined -->
-    <script>
-        // JS: Wait for DOM to load before initializing
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                // Check if game mode is set; if not, show modal
-                if (!localStorage.getItem('gameMode')) {
-                    const modal = new bootstrap.Modal(document.getElementById('gameModeModal'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    modal.show();
-                } else {
-                    // Initialize game if mode is set
-                    window.Game.init();
-                }
-                // Update final score and victory mode dynamically
-                const gameOverModal = document.getElementById('gameOverModal');
-                const victoryModal = document.getElementById('victoryModal');
-                if (gameOverModal) {
-                    gameOverModal.addEventListener('show.bs.modal', () => {
-                        const finalScore = document.getElementById('finalScore');
-                        if (finalScore) finalScore.textContent = window.Game.score || 0;
-                    });
-                }
-                if (victoryModal) {
-                    victoryModal.addEventListener('show.bs.modal', () => {
-                        const victoryMode = document.getElementById('victoryMode');
-                        const victoryScore = document.getElementById('victoryScore');
-                        if (victoryMode) victoryMode.textContent = window.Game.gameMode.charAt(0).toUpperCase() + window.Game.gameMode.slice(1);
-                        if (victoryScore) victoryScore.textContent = window.Game.score || 0;
-                    });
-                }
-            } catch (e) {
-                console.error('Error initializing game:', e);
-                const log = document.getElementById('gameLog');
-                if (log) log.innerHTML += '<p>Error starting game. Please reload.</p>';
-            }
-        });
-    </script>
 </body>
 
 </html>
