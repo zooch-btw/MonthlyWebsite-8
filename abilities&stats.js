@@ -1,4 +1,4 @@
-/* JS: Defines special abilities and base stats for all 37 heroes in Galaxy BattleForge using hero names. */
+/* JS: Defines special abilities and base stats for all 40 heroes in Galaxy BattleForge using hero names. */
 
 /* JS: Special abilities for each hero, reflecting their Marvel lore and role. */
 const specialAbilities = {
@@ -475,6 +475,45 @@ const specialAbilities = {
             warrior.buffTurns = 2;
             return damage;
         }
+    },
+    /* JS: Hulk - Tanky brawler with high damage and rage mechanics. */
+    'Hulk': {
+        name: 'Gamma Smash',
+        description: 'Smashes the ground, damaging all enemies and increasing own attack.',
+        manaCost: 35,
+        cooldown: 3,
+        effect: (target, warrior, game) => {
+            const damage = Math.round(warrior.attack * (1.3 + warrior.level * 0.03));
+            game.enemies.forEach(e => e.takeDamage(damage));
+            warrior.attack = Math.round(warrior.attack * 1.2);
+            warrior.buffTurns = 2;
+            return damage;
+        }
+    },
+    /* JS: Bullseye - Precise ranged DPS with deadly accuracy. */
+    'Bullseye': {
+        name: 'Deadly Throw',
+        description: 'Throws a precise projectile, dealing high damage to a single enemy.',
+        manaCost: 25,
+        cooldown: 2,
+        effect: (target, warrior) => {
+            const damage = Math.round(warrior.attack * (1.5 + warrior.level * 0.04));
+            target.takeDamage(damage);
+            return damage;
+        }
+    },
+    /* JS: Winter Soldier - Versatile DPS with stealth and precision. */
+    'Winter Soldier': {
+        name: 'Bionic Arm Strike',
+        description: 'Delivers a powerful strike with bionic arm, stunning the enemy.',
+        manaCost: 30,
+        cooldown: 3,
+        effect: (target, warrior) => {
+            const damage = Math.round(warrior.attack * (1.2 + warrior.level * 0.03));
+            target.takeDamage(damage);
+            target.stunTurns = 1;
+            return damage;
+        }
     }
 };
 
@@ -553,5 +592,11 @@ const warriorBaseStats = {
     /* JS: Scorpion - Poison DPS. */
     'Scorpion': { health: 100, attack: 20, mana: 30 },
     /* JS: Vulture - Mobile DPS. */
-    'Vulture': { health: 95, attack: 18, mana: 30 }
+    'Vulture': { health: 95, attack: 18, mana: 30 },
+    /* JS: Hulk - Tanky brawler with high health and damage. */
+    'Hulk': { health: 180, attack: 25, mana: 35 },
+    /* JS: Bullseye - Precise ranged DPS with high attack. */
+    'Bullseye': { health: 90, attack: 22, mana: 30 },
+    /* JS: Winter Soldier - Versatile DPS with balanced stats. */
+    'Winter Soldier': { health: 110, attack: 20, mana: 35 }
 };

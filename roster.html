@@ -1,62 +1,141 @@
 <!DOCTYPE html>
+<!-- HTML: Roster page for Marvel Cosmic Arena displaying hero details -->
 <html lang="en">
 
 <head>
-    <!-- Set character encoding and responsive viewport -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Meta: Character encoding and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta: SEO for discoverability -->
+    <meta name="description" content="Explore Marvel heroes in the Cosmic Arena roster">
+    <meta name="keywords" content="Marvel, hero roster, cosmic arena, game">
+    <meta name="author" content="Salvatore DiPalma">
     <!-- Page title -->
-    <title>Marvel Universe | Roster</title>
-    <!-- Bootstrap CSS for styling -->
+    <title>Marvel Cosmic Arena | Hero Roster</title>
+    <!-- CSS: Bootstrap 5.3.2 for layout and modals -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- Google Fonts for custom typography -->
+    <!-- CSS: Google Fonts for cinematic typography -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comic+Neue:wght@400;700&family=Nunito:wght@300;400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
         rel="stylesheet">
-    <!-- Custom CSS files -->
+    <!-- CSS: Custom styles (assuming glow.css and style.css exist) -->
     <link rel="stylesheet" href="glow.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Favicon for the page -->
+    <!-- Favicon for branding -->
     <link rel="icon" type="image/png" href="logo.png">
-    <!-- Inline styles for modal customization -->
+    <!-- Inline styles for modal and button customization -->
     <style>
+        /* CSS: Theme variables for consistency */
+        :root {
+            --hero-red: #ff2a44;
+            --cosmic-blue: #1e90ff;
+            --infinity-gold: #ffd700;
+            --nebula-dark: #0d1b2a;
+            --star-white: #f0f8ff;
+            --vibrant-purple: #6a0dad;
+        }
+
+        /* CSS: Modal styling with transparent background and gold border */
         .modal-content {
             background: rgba(13, 27, 42, 0.98);
-            border: 2px solid #ffd700;
-            color: #f0f8ff;
+            border: 2px solid var(--infinity-gold);
+            color: var(--star-white);
+            border-radius: 10px;
         }
 
         .modal-header,
         .modal-footer {
-            border-color: #ffd700;
+            border-color: var(--infinity-gold);
         }
 
         .btn-close-white {
             filter: brightness(1.5);
         }
 
+        /* CSS: Marvel-themed button */
         .btn-marvel-red {
-            background-color: #ff2a44;
-            border-color: #ff2a44;
+            background-color: var(--hero-red);
+            border-color: var(--hero-red);
+            color: var(--star-white);
+            font-family: 'Bebas Neue', sans-serif;
+            transition: background-color 0.2s, transform 0.2s;
         }
 
         .btn-marvel-red:hover {
             background-color: #e0233d;
             border-color: #e0233d;
+            transform: scale(1.05);
+        }
+
+        /* CSS: Hero card adjustments */
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--infinity-gold);
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .hero-card:hover {
+            box-shadow: 0 0 15px var(--cosmic-blue);
+            transform: scale(1.02);
+        }
+
+        /* CSS: Image container with fixed aspect ratio */
+        .card-img-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+        }
+
+        /* CSS: Hero image fills entire container */
+        .hero-img-fill {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .badge-role {
+            background-color: rgba(48, 148, 255, 0.8);
+            color: var(--star-white);
+            font-size: 0.9rem;
+        }
+
+        /* CSS: Navbar styling */
+        .bg-marvel-dark {
+            background: linear-gradient(180deg, var(--nebula-dark) 0%, rgba(13, 27, 42, 0.9) 100%) !important;
+            border-bottom: 2px solid var(--infinity-gold);
+        }
+
+        .navbar-logo {
+            max-width: 100px;
+            filter: drop-shadow(0 0 8px var(--cosmic-blue));
+        }
+
+        /* CSS: Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-img-container {
+                aspect-ratio: 4 / 3;
+            }
+
+            .navbar-logo {
+                max-width: 80px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Particle background effect -->
+    <!-- HTML: Particle background for cosmic effect -->
     <div id="particle-bg"><span></span><span></span><span></span></div>
-    <!-- Navigation bar -->
+    <!-- HTML: Navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-marvel-dark shadow">
         <div class="container-fluid">
             <!-- Brand logo/link -->
-            <a class="navbar-brand" href="index.html">Marvel Universe</a>
-            <!-- Navbar toggle button for mobile -->
+            <a class="navbar-brand" href="index.html">Marvel Cosmic Arena</a>
+            <!-- Navbar toggle for mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMarvel"
                 aria-controls="navbarMarvel" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -65,7 +144,8 @@
             <div class="collapse navbar-collapse" id="navbarMarvel">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="roster.html">Roster</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="roster.html">Roster</a>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About Marvel</a></li>
                     <li class="nav-item"><a class="nav-link" href="menu.html" onclick="checkGameAccess()">Game</a></li>
                 </ul>
@@ -74,20 +154,20 @@
             </div>
         </div>
     </nav>
-    <!-- Main content area -->
+    <!-- HTML: Main content area -->
     <main class="container py-4 text-center">
         <!-- Page heading -->
-        <h1 class="display-4 fw-bold mb-4">Hero Roster</h1>
+        <h1 class="display-4 fw-bold mb-4 text-white">Hero Roster</h1>
         <!-- Search and sort controls -->
         <div class="row mb-4 g-3 justify-content-center">
             <div class="col-12 col-md-6 col-lg-5">
-                <!-- Search input for filtering heroes -->
+                <!-- Search input -->
                 <input type="search" id="searchInput" class="form-control shadow-sm"
-                    placeholder="Search heroes by name…" aria-label="Search heroes">
+                    placeholder="Search heroes by name…" aria-label="Search heroes by name">
             </div>
             <div class="col-12 col-md-4 col-lg-3">
-                <!-- Sort dropdown for ordering heroes -->
-                <select id="sortSelect" class="form-select shadow-sm" aria-label="Sort options">
+                <!-- Sort dropdown -->
+                <select id="sortSelect" class="form-select shadow-sm" aria-label="Sort heroes">
                     <option value="firstName-asc">First Name (A→Z)</option>
                     <option value="firstName-desc">First Name (Z→A)</option>
                     <option value="realName-asc">Real Name (A→Z)</option>
@@ -96,17 +176,18 @@
             </div>
             <div class="col-12 col-md-2 col-lg-2">
                 <!-- Search button -->
-                <button id="searchButton" class="btn btn-marvel-red text-white w-100 shadow-sm">Search</button>
+                <button id="searchButton" class="btn btn-marvel-red text-white w-100 shadow-sm"
+                    aria-label="Search heroes">Search</button>
             </div>
         </div>
-        <!-- Grid for displaying hero cards -->
+        <!-- Hero grid -->
         <div id="rosterGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center"></div>
     </main>
-    <!-- Footer -->
-    <footer class="p-3 m-3">
+    <!-- HTML: Footer -->
+    <footer class="p-3 m-3 text-center text-white">
         Created by Salvatore DiPalma © 2025
     </footer>
-    <!-- Modal for maximum heroes selected -->
+    <!-- HTML: Modal for maximum heroes selected (kept for potential future use) -->
     <div class="modal fade" id="maxHeroesModal" tabindex="-1" aria-labelledby="maxHeroesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -124,22 +205,31 @@
             </div>
         </div>
     </div>
-    <!-- Audio elements for sound effects -->
-    <audio id="selectSound" src="https://example.com/select.mp3"></audio>
-    <audio id="moreInfoSound" src="https://example.com/moreinfo.mp3"></audio>
-    <!-- Bootstrap JavaScript bundle -->
+    <!-- HTML: Audio elements for sound effects -->
+    <audio id="selectSound" src="sounds/select.mp3"></audio>
+    <audio id="moreInfoSound" src="sounds/moreinfo.mp3"></audio>
+    <!-- JS: Bootstrap 5.3.2 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-    <!-- Custom JavaScript files -->
+    <!-- JS: Game scripts -->
     <script src="players.js"></script>
     <script src="roster.js"></script>
     <!-- Inline script for game access check -->
     <script>
-        // Check if the game can be accessed
+        /* JS: Check if game can be accessed */
         function checkGameAccess() {
-            // Removed logic related to checking selected heroes since selection is disabled
-            window.location.href = 'game.html';
+            try {
+                const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
+                if (player1Heroes.length === 0) {
+                    alert('Please select at least one hero in the Game menu before starting.');
+                    return;
+                }
+                window.location.href = 'game.html';
+            } catch (e) {
+                console.error('[roster.html] Error checking game access:', e);
+                alert('Error accessing game. Please try again.');
+            }
         }
     </script>
 </body>

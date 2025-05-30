@@ -1,6 +1,13 @@
-/* JS: Handles Play Singleplayer button in menu.html. Validates heroes, syncs settings, and redirects to game.html. */
+/* JS: Manages the Play Singleplayer button in menu.html. Validates selected heroes, synchronizes settings, and navigates to game.html. */
 
-/* JS: Maps real names to hero names for consistency with game.js and warriorAbilitiesAndStats.js. */
+/* JS: Configuration constants for retry logic and debouncing */
+const CONFIG = {
+    MAX_ATTEMPTS: 5, // Maximum retry attempts for DOM element lookup
+    BASE_RETRY_DELAY: 500, // Base delay for retries in milliseconds
+    DEBOUNCE_WAIT: 300 // Debounce delay for button clicks in milliseconds
+};
+
+/* JS: Maps real names to hero names for consistency across game.js, warriorAbilitiesAndStats.js, and players.js */
 const realNameToHeroName = {
     'Tony Stark': 'Iron Man',
     'Steve Rogers': 'Captain America',
@@ -38,87 +45,130 @@ const realNameToHeroName = {
     'Sergei Kravinoff': 'Kraven',
     'Herman Schultz': 'Shocker',
     'Mac Gargan': 'Scorpion',
-    'Adrian Toomes': 'Vulture'
+    'Adrian Toomes': 'Vulture',
+    'Bruce Banner': 'Hulk', // Added Hulk
+    'Lester': 'Bullseye', // Added Bullseye
+    'Bucky Barnes': 'Winter Soldier' // Added Winter Soldier
 };
 
-/* JS: Warrior image mappings, initialized with a fallback if not defined globally. */
+/* JS: Warrior image mappings with fallback to ensure all heroes have an image path */
 const warriorImageMap = window.warriorImageMap || {
-    'Iron Man': 'imgs/iron man.png', 'Captain America': 'imgs/capam.png', 'Thor': 'imgs/thor.png', 'Black Widow': 'imgs/widow.png', 'Hawkeye': 'imgs/hawkeye.png', 'Spider-Man': 'imgs/spiderman.png', 'Doctor Strange': 'imgs/strange.png', 'Black Panther': 'imgs/panther.png', 'Scarlet Witch': 'imgs/witch.png', 'Ant-Man': 'imgs/antman.png', 'Wolverine': 'imgs/bub.png', 'Storm': 'imgs/storm.png', 'Cyclops': 'imgs/scott.png', 'Jean Grey': 'imgs/jean.png', 'Beast': 'imgs/beast.png', 'Gambit': 'imgs/gambit.png', 'Rogue': 'imgs/rogue.png', 'Deadpool': 'imgs/wade.png', 'Venom': 'imgs/venom.png', 'Magneto': 'imgs/max.png', 'Doctor Doom': 'imgs/doom.png', 'Thanos': 'imgs/thanos.png', 'Loki': 'imgs/loki.png', 'Ultron': 'imgs/ai.png', 'Red Skull': 'imgs/skull.png', 'Green Goblin': 'imgs/osborn.png', 'Kingpin': 'imgs/fisk.png', 'Black Cat': 'imgs/cat.png', 'Mysterio': 'imgs/illusion.png', 'Rhino': 'imgs/rhino.png', 'Sandman': 'imgs/sand.png', 'Electro': 'imgs/dillon.png', 'Doctor Octopus': 'imgs/ock.png', 'Kraven': 'imgs/hunt.png', 'Shocker': 'imgs/shock.png', 'Scorpion': 'imgs/sting.png', 'Vulture': 'imgs/prey.png'
+    'Iron Man': 'imgs/iron man.png',
+    'Captain America': 'imgs/capam.png',
+    'Thor': 'imgs/thor.png',
+    'Black Widow': 'imgs/widow.png',
+    'Hawkeye': 'imgs/hawkeye.png',
+    'Spider-Man': 'imgs/spiderman.png',
+    'Doctor Strange': 'imgs/strange.png',
+    'Black Panther': 'imgs/panther.png',
+    'Scarlet Witch': 'imgs/witch.png',
+    'Ant-Man': 'imgs/antman.png',
+    'Wolverine': 'imgs/bub.png',
+    'Storm': 'imgs/storm.png',
+    'Cyclops': 'imgs/scott.png',
+    'Jean Grey': 'imgs/jean.png',
+    'Beast': 'imgs/beast.png',
+    'Gambit': 'imgs/gambit.png',
+    'Rogue': 'imgs/rogue.png',
+    'Deadpool': 'imgs/wade.png',
+    'Venom': 'imgs/venom.png',
+    'Magneto': 'imgs/max.png',
+    'Doctor Doom': 'imgs/doom.png',
+    'Thanos': 'imgs/thanos.png',
+    'Loki': 'imgs/loki.png',
+    'Ultron': 'imgs/ai.png',
+    'Red Skull': 'imgs/skull.png',
+    'Green Goblin': 'imgs/osborn.png',
+    'Kingpin': 'imgs/fisk.png',
+    'Black Cat': 'imgs/cat.png',
+    'Mysterio': 'imgs/illusion.png',
+    'Rhino': 'imgs/rhino.png',
+    'Sandman': 'imgs/sand.png',
+    'Electro': 'imgs/dillon.png',
+    'Doctor Octopus': 'imgs/ock.png',
+    'Kraven': 'imgs/hunt.png',
+    'Shocker': 'imgs/shock.png',
+    'Scorpion': 'imgs/sting.png',
+    'Vulture': 'imgs/prey.png',
+    'Hulk': 'imgs/hulk.png', // Added Hulk
+    'Bullseye': 'imgs/bullseye.png', // Added Bullseye
+    'Winter Soldier': 'imgs/winter.png' // Added Winter Soldier
 };
 
-/* JS: Mock getPlayerHeroes to retrieve selected heroes from localStorage */
-window.getPlayerHeroes = () => {
+/* JS: Retrieves selected heroes from localStorage with fallback to Iron Man */
+const getPlayerHeroes = () => {
     try {
         const heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
         if (!Array.isArray(heroes) || heroes.length === 0) {
-            return [{ realName: 'Tony Stark' }]; // Default to Iron Man
+            console.warn('[playSingleplayer.js] No valid heroes in localStorage, defaulting to Iron Man');
+            return [{ realName: 'Tony Stark' }];
         }
         return heroes;
     } catch (e) {
-        console.error('[playSingleplayer.js] getPlayerHeroes error:', e);
+        console.error('[playSingleplayer.js] Error parsing player1Heroes:', e);
         return [{ realName: 'Tony Stark' }]; // Fallback to Iron Man
     }
 };
 
-/* JS: Mock syncWarriorsToGame to save selected hero names to localStorage */
-window.syncWarriorsToGame = () => {
+/* JS: Synchronizes validated hero names to localStorage for game.js */
+const syncWarriorsToGame = () => {
     try {
         const heroes = getPlayerHeroes();
         const warriors = heroes
             .map(h => realNameToHeroName[h.realName] || h.name)
             .filter(w => w && warriorImageMap[w] && window.warriorBaseStats?.[w] && window.specialAbilities?.[w])
             .slice(0, 3); // Limit to 3 heroes
-        const selected = warriors.length > 0 ? warriors : ['Iron Man']; // Ensure at least one hero
+        const selected = warriors.length > 0 ? warriors : ['Iron Man'];
         localStorage.setItem('selectedWarriors', JSON.stringify(selected));
+        console.log('[playSingleplayer.js] Synced warriors:', selected);
     } catch (e) {
-        console.error('[playSingleplayer.js] syncWarriorsToGame error:', e);
+        console.error('[playSingleplayer.js] Error in syncWarriorsToGame:', e);
         localStorage.setItem('selectedWarriors', JSON.stringify(['Iron Man']));
     }
 };
 
-/* JS: Show error toast notification at bottom-right */
-function showError(message) {
+/* JS: Displays an error toast notification at bottom-right with accessibility */
+const showError = (message) => {
     try {
         const toast = document.createElement('div');
         toast.className = 'error-toast';
-        toast.style.position = 'fixed';
-        toast.style.bottom = '20px';
-        toast.style.right = '20px';
-        toast.style.background = 'var(--vibrant-red, #e63946)';
-        toast.style.color = 'var(--star-white, #f1faee)';
-        toast.style.padding = '10px 20px';
-        toast.style.borderRadius = '5px';
-        toast.style.zIndex = '1000';
-        toast.style.fontFamily = '"Nunito", sans-serif';
-        toast.style.fontSize = 'clamp(0.8rem, 1.5vw, 0.9rem)';
-        toast.style.textAlign = 'center';
-        toast.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+        Object.assign(toast.style, {
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            background: 'var(--vibrant-red, #e63946)',
+            color: 'var(--star-white, #f1faee)',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            zIndex: '1000',
+            fontFamily: '"Nunito", sans-serif',
+            fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
+            textAlign: 'center',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+        });
         toast.setAttribute('role', 'alert');
         toast.setAttribute('aria-live', 'assertive');
         toast.textContent = message;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     } catch (e) {
-        console.error('[playSingleplayer.js] Error showing toast:', e);
+        console.error('[playSingleplayer.js] Error displaying toast:', e);
     }
-}
+};
 
-/* JS: Debounce function to prevent rapid button clicks */
-function debounce(func, wait) {
+/* JS: Debounces a function to prevent rapid executions */
+const debounce = (func, wait) => {
     let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
+    return (...args) => {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(() => func(...args), wait);
     };
-}
+};
 
-/* JS: Setup Play Singleplayer button with hero validation and redirection */
-function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
-    console.log(`[playSingleplayer.js] Setting up Play Singleplayer button, attempt ${attempt}/${maxAttempts} at ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' })}.`);
+/* JS: Sets up the Play Singleplayer button with hero validation and navigation */
+const setupPlayButton = (attempt = 1, maxAttempts = CONFIG.MAX_ATTEMPTS, baseDelay = CONFIG.BASE_RETRY_DELAY) => {
+    const timestamp = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+    console.log(`[playSingleplayer.js] Setting up Play Singleplayer button, attempt ${attempt}/${maxAttempts} at ${timestamp}`);
     try {
         const playModeBtn = document.getElementById('playModeBtn');
         if (!playModeBtn) {
@@ -127,21 +177,24 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
                 setTimeout(() => setupPlayButton(attempt + 1, maxAttempts, baseDelay * 1.5), baseDelay);
                 return false;
             }
-            showError('Cosmic Error: Game button not found. Reload the page!');
+            showError('Cosmic Error: Game button not found. Please reload!');
             return false;
         }
 
+        // Initialize button state
         playModeBtn.disabled = true;
         playModeBtn.textContent = 'Loading...';
         playModeBtn.setAttribute('aria-busy', 'true');
 
+        // Check for required game data
         if (!window.warriorBaseStats || !window.specialAbilities) {
-            console.warn('[playSingleplayer.js] Game data not loaded, using Iron Man as default.');
+            console.warn('[playSingleplayer.js] Game data missing, defaulting to Iron Man');
             localStorage.setItem('selectedWarriors', JSON.stringify(['Iron Man']));
-            window.location.href = './game.html?' + Date.now();
-            return;
+            window.location.href = `./game.html?${Date.now()}`;
+            return true;
         }
 
+        // Debounced click handler
         const handleClick = debounce(() => {
             console.log('[playSingleplayer.js] Play button clicked, validating heroes...');
             playModeBtn.disabled = true;
@@ -150,13 +203,16 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
 
             const heroes = getPlayerHeroes();
             console.log('[playSingleplayer.js] Selected heroes:', heroes);
+
+            // Validate hero array
             if (!Array.isArray(heroes) || heroes.length === 0) {
                 showError('Cosmic Warning: No heroes selected. Defaulting to Iron Man!');
                 localStorage.setItem('selectedWarriors', JSON.stringify(['Iron Man']));
-                window.location.href = './game.html?' + Date.now();
+                window.location.href = `./game.html?${Date.now()}`;
                 return;
             }
 
+            // Check hero count
             if (heroes.length > 3) {
                 showError('Cosmic Error: Select up to 3 heroes only!');
                 playModeBtn.disabled = false;
@@ -165,6 +221,7 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
                 return;
             }
 
+            // Validate unique heroes
             const heroNames = heroes.map(h => realNameToHeroName[h.realName] || h.name).filter(Boolean);
             const uniqueHeroes = new Set(heroNames);
             if (uniqueHeroes.size !== heroNames.length) {
@@ -175,6 +232,7 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
                 return;
             }
 
+            // Validate hero data
             for (const heroName of heroNames) {
                 if (!heroName || !warriorImageMap[heroName] || !window.warriorBaseStats?.[heroName] || !window.specialAbilities?.[heroName]) {
                     showError(`Cosmic Error: ${heroName || 'Unknown'} is not a valid hero!`);
@@ -185,6 +243,7 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
                 }
             }
 
+            // Save settings and navigate
             console.log('[playSingleplayer.js] Validation passed, redirecting to game.html...');
             window.settings = { ...window.settings, playerMode: 'single' };
             const difficulty = document.getElementById('difficultySelect')?.value || 'normal';
@@ -193,7 +252,7 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
             localStorage.setItem('player2Heroes', JSON.stringify([]));
             syncWarriorsToGame();
 
-            const gameUrl = 'game.html?' + Date.now();
+            const gameUrl = `game.html?${Date.now()}`;
             window.location.href = gameUrl;
             setTimeout(() => {
                 if (window.location.pathname.includes('menu.html')) {
@@ -201,8 +260,9 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
                     window.location.assign(gameUrl);
                 }
             }, 1000);
-        }, 300);
+        }, CONFIG.DEBOUNCE_WAIT);
 
+        // Attach event listener
         playModeBtn.addEventListener('click', handleClick);
         playModeBtn.disabled = false;
         playModeBtn.textContent = 'Play Singleplayer';
@@ -215,18 +275,14 @@ function setupPlayButton(attempt = 1, maxAttempts = 5, baseDelay = 500) {
             setTimeout(() => setupPlayButton(attempt + 1, maxAttempts, baseDelay * 1.5), baseDelay * 1.5);
             return false;
         }
-        showError('Cosmic Error: Failed to initialize game button. Reload!');
+        showError('Cosmic Error: Failed to initialize game button. Please reload!');
         return false;
     }
-}
+};
 
-/* JS: Initialize the play button when DOM is fully loaded */
+/* JS: Initialize play button on DOM load */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[playSingleplayer.js] DOM loaded, initializing play button at ' + new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' }));
+    const timestamp = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+    console.log(`[playSingleplayer.js] DOM loaded, initializing play button at ${timestamp}`);
     setupPlayButton();
 });
-
-// playModeBtn to Menu.html via CLICK 
-document.getElementById('playModeBtn').addEventListener('click', () => {
-    window.location = 'game.html'
-})

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- HTML: Galaxy BattleForge hero selection screen -->
+<!-- HTML: Galaxy BattleForge hero selection screen for Marvel Cosmic Arena -->
 <html lang="en">
 
 <head>
@@ -48,9 +48,7 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            /* Center horizontally */
             align-items: center;
-            /* Center vertically */
             animation: nebulaGlow 15s infinite alternate;
             overflow-x: hidden;
         }
@@ -60,7 +58,6 @@
             from {
                 background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             }
-
             to {
                 background: linear-gradient(135deg, #1d3557, var(--cosmic-blue));
             }
@@ -72,7 +69,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            /* Center content vertically within container */
             padding: 20px;
             max-width: 1200px;
             width: 100%;
@@ -98,34 +94,29 @@
             width: 100%;
             max-width: 100%;
             justify-items: center;
-            /* Center grid items horizontally */
         }
 
-        /* CSS: Hero card styling with hover effect restored */
+        /* CSS: Hero card styling with hover effect */
         .hero-card {
             background: rgba(255, 255, 255, 0.1);
             border: 3px solid var(--pulse-purple);
             border-radius: 15px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
-            /* Enable smooth transitions */
             cursor: pointer;
             height: 300px;
             width: 100%;
             max-width: 200px;
-            /* Ensure cards don't stretch too wide */
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
         }
 
-        /* CSS: Hover effect with yellow glow for all characters */
+        /* CSS: Hover effect with yellow glow */
         .hero-card:hover {
             transform: scale(1.05);
-            /* Slight scale-up on hover */
             box-shadow: 0 0 20px var(--glowing-gold);
-            /* Yellow glow effect */
         }
 
         /* CSS: Hero image */
@@ -136,7 +127,7 @@
             border-bottom: 2px solid var(--infinity-gold);
         }
 
-        /* CSS: Hero name and stats */
+        /* CSS: Hero info */
         .hero-info {
             padding: 10px;
             text-align: center;
@@ -163,7 +154,7 @@
             box-shadow: 0 0 15px var(--glowing-gold);
         }
 
-        /* CSS: Action buttons, centered with proper spacing */
+        /* CSS: Action buttons */
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -172,7 +163,6 @@
             margin-top: 20px;
             width: 100%;
             flex-wrap: wrap;
-            /* Ensure buttons wrap on smaller screens */
         }
 
         .btn-marvel {
@@ -203,8 +193,8 @@
             border-radius: 5px;
             z-index: 1000;
             font-family: 'Nunito', sans-serif;
-            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-size: clamp(0.8rem, 1.5vw, 0.9em);
+            box-shadow: 0 0 4px rgba(0,0,0,0.2);
         }
 
         /* CSS: Responsive adjustments */
@@ -249,9 +239,9 @@
         <div class="hero-grid" id="heroGrid"></div>
         <!-- HTML: Action buttons -->
         <div class="action-buttons">
-            <button onclick="ToGame()" id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play
-                Singleplayer</button>
+            <button id="playModeBtn" class="btn btn-marvel" aria-label="Play Singleplayer">Play Singleplayer</button>
             <button id="clearSelectionBtn" class="btn btn-marvel" aria-label="Clear Selection">Clear Selection</button>
+            <button id="removeHeroBtn" class="btn btn-marvel" aria-label="Remove Hero">Remove Hero</button>
         </div>
     </div>
     <!-- JS: Bootstrap -->
@@ -261,13 +251,15 @@
     <!-- JS: Game logic -->
     <script src="playSingleplayer.js" defer></script>
     <script src="abilities&stats.js" defer></script>
+    <script src="menu.js" defer></script>
     <script>
-        // JS: Clear selected heroes on page reload
-        window.addEventListener('load', () => {
-            localStorage.removeItem('player1Heroes');
-        });
+        /* JS: Configuration constants */
+        const CONFIG = {
+            MAX_HEROES: 3, // Maximum selectable heroes
+            TOAST_DURATION: 3000 // Toast notification duration in milliseconds
+        };
 
-        // JS: Define realNameToHeroName mapping for hero selection
+        /* JS: Maps real names to hero names for consistency */
         const realNameToHeroName = {
             'Tony Stark': 'Iron Man',
             'Steve Rogers': 'Captain America',
@@ -305,10 +297,13 @@
             'Sergei Kravinoff': 'Kraven',
             'Herman Schultz': 'Shocker',
             'Mac Gargan': 'Scorpion',
-            'Adrian Toomes': 'Vulture'
+            'Adrian Toomes': 'Vulture',
+            'Bruce Banner': 'Hulk', // Added Hulk
+            'Lester': 'Bullseye', // Added Bullseye
+            'Bucky Barnes': 'Winter Soldier' // Added Winter Soldier
         };
 
-        // JS: Define unique stats for each hero
+        /* JS: Define unique stats for each hero */
         const heroStats = {
             'Iron Man': { health: 120, attack: 25, mana: 60 },
             'Captain America': { health: 150, attack: 20, mana: 40 },
@@ -346,17 +341,33 @@
             'Kraven': { health: 120, attack: 20, mana: 50 },
             'Shocker': { health: 100, attack: 21, mana: 55 },
             'Scorpion': { health: 130, attack: 22, mana: 45 },
-            'Vulture': { health: 95, attack: 19, mana: 65 }
+            'Vulture': { health: 95, attack: 19, mana: 65 },
+            'Hulk': { health: 190, attack: 32, mana: 20 }, // Added Hulk
+            'Bullseye': { health: 100, attack: 23, mana: 60 }, // Added Bullseye
+            'Winter Soldier': { health: 130, attack: 24, mana: 50 } // Added Winter Soldier
         };
 
-        // JS: Initialize hero selection on DOM load
+        /* JS: Show error toast notification */
+        const showError = (message) => {
+            try {
+                const toast = document.createElement('div');
+                toast.className = 'error-toast';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), CONFIG.TOAST_DURATION);
+            } catch (e) {
+                console.error('[heroSelection.html] Error showing toast:', e);
+            }
+        };
+
+        /* JS: Initialize hero selection on DOM load */
         document.addEventListener('DOMContentLoaded', () => {
-            // JS: Clear selected heroes on page load
+            console.log('[heroSelection.html] Initializing hero selection at', new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' }));
+            // Clear selected heroes on page load
             localStorage.removeItem('player1Heroes');
 
-            // JS: Get the hero grid element
             const heroGrid = document.getElementById('heroGrid');
-            // JS: Define warrior images with a fallback if not loaded from warriorAbilitiesAndStats.js
+            // Define warrior images with fallback
             const warriors = window.warriorImageMap || {
                 'Iron Man': 'imgs/iron man.png',
                 'Captain America': 'imgs/capam.png',
@@ -394,70 +405,80 @@
                 'Kraven': 'imgs/hunt.png',
                 'Shocker': 'imgs/shock.png',
                 'Scorpion': 'imgs/sting.png',
-                'Vulture': 'imgs/prey.png'
+                'Vulture': 'imgs/prey.png',
+                'Hulk': 'imgs/hulk.png', // Added Hulk
+                'Bullseye': 'imgs/bullseye.png', // Added Bullseye
+                'Winter Soldier': 'imgs/winter.png' // Added Winter Soldier
             };
-            // JS: Create hero objects with images and unique stats
+
+            // Create hero objects with images and stats
             const heroes = Object.keys(warriors).map(name => ({
                 name,
                 image: warriors[name],
-                stats: heroStats[name] || { health: 100, attack: 10, mana: 50 } // Fallback stats
+                stats: heroStats[name] || { health: 100, attack: 10, mana: 50 }
             }));
-            // JS: Load selected heroes from localStorage (will be empty due to clear on load)
+
+            // Load selected heroes
             let selectedHeroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
 
-            // JS: Function to render hero cards
+            // Render hero cards
             const renderHeroes = () => {
-                heroGrid.innerHTML = ''; // Clear the grid
+                heroGrid.innerHTML = '';
                 heroes.forEach(hero => {
-                    const card = document.createElement('div');
-                    // JS: Check if the hero is selected by matching realName
                     const isSelected = selectedHeroes.some(h => realNameToHeroName[h.realName] === hero.name);
+                    const card = document.createElement('div');
                     card.className = `hero-card ${isSelected ? 'selected' : ''}`;
                     card.innerHTML = `
-                        <img class="hero-img" src="${hero.image}" alt="${hero.name}">
+                        <img class="hero-img" src="${hero.image}" alt="${hero.name} portrait">
                         <div class="hero-info">
                             <div class="hero-name">${hero.name}</div>
                             <div class="hero-stats">HP: ${hero.stats.health}, ATK: ${hero.stats.attack}, MANA: ${hero.stats.mana}</div>
                         </div>
                     `;
-                    // JS: Add click event to toggle selection
+                    card.setAttribute('aria-label', `${hero.name} hero card`);
+                    card.setAttribute('tabindex', '0');
                     card.addEventListener('click', () => {
                         const index = selectedHeroes.findIndex(h => realNameToHeroName[h.realName] === hero.name);
                         if (index > -1) {
-                            // JS: Deselect hero if already selected
                             selectedHeroes.splice(index, 1);
-                        } else if (selectedHeroes.length < 3) {
-                            // JS: Add hero to selection if less than 3 are selected
+                        } else if (selectedHeroes.length < CONFIG.MAX_HEROES) {
                             const realName = Object.keys(realNameToHeroName).find(key => realNameToHeroName[key] === hero.name);
                             if (realName) {
                                 selectedHeroes.push({ realName });
+                            } else {
+                                showError(`Cannot select ${hero.name}: Invalid hero data`);
+                                return;
                             }
+                        } else {
+                            showError('Maximum 3 heroes can be selected!');
+                            return;
                         }
-                        // JS: Update localStorage with selected heroes
                         localStorage.setItem('player1Heroes', JSON.stringify(selectedHeroes));
-                        // JS: Re-render the grid to reflect selection changes
                         renderHeroes();
+                    });
+                    // Keyboard accessibility
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            card.click();
+                        }
                     });
                     heroGrid.appendChild(card);
                 });
             };
 
-            // JS: Initial render of hero cards
+            // Initial render
             renderHeroes();
 
-            // JS: Clear selection button logic
-            document.getElementById('clearSelectionBtn').addEventListener('click', () => {
-                // JS: Reset selected heroes array
+            // Clear selection button
+            const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+            clearSelectionBtn.addEventListener('click', () => {
                 selectedHeroes = [];
-                // JS: Update localStorage
                 localStorage.setItem('player1Heroes', JSON.stringify(selectedHeroes));
-                // JS: Re-render the grid to reflect cleared selection
                 renderHeroes();
+                console.log('[heroSelection.html] Hero selection cleared');
             });
         });
-        function ToGame() {
-            window.location.href = 'game.html';
-        }
     </script>
 </body>
 

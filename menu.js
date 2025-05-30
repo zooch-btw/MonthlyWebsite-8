@@ -1,18 +1,21 @@
 /* JS: Menu logic for Marvel Cosmic Arena hero selection screen.
  * Manages selection of up to 3 Marvel heroes for single-player campaign.
- * Saves selections in localStorage as 'selectedWarriors' for game.js compatibility.
- * Handles hero and image loading with fallback from imgs/ folder.
- * Updated to eliminate 'Failed to initialize buttons' error, ensure robust error handling,
- * and prevent execution halts that block playSingleplayer.js.
+ * Saves selections in localStorage as 'player1Heroes' and 'selectedWarriors'.
+ * Integrates with heroSelection.html, ensuring robust error handling and accessibility.
  */
 
-/* JS: Global flag to track removal mode for deselecting heroes */
+/* JS: Configuration constants */
+const CONFIG = {
+    MAX_HEROES: 3, // Maximum selectable heroes
+    VIBRATION_DURATION: 100, // Vibration feedback duration in milliseconds
+    TOAST_DURATION: 3000, // Toast notification duration in milliseconds
+    FALLBACK_IMAGE: 'imgs/fallback.png' // Fallback image path
+};
+
+/* JS: Global state for removal mode */
 let isRemovalMode = false;
 
-/* JS: Fallback image path for missing hero images in imgs/ folder */
-const FALLBACK_IMAGE = 'imgs/fallback.png';
-
-/* JS: Define hero data (37 Marvel heroes) with image paths in imgs/ folder */
+/* JS: Hero data with 40 Marvel heroes */
 window.players = [
     /* Hero 1: Iron Man */
     {
@@ -157,11 +160,11 @@ window.players = [
         skill: 'Energy Beam Precision: Adjusts blast intensity.',
         special: 'Optic Barrage: Hits all enemies with reduced damage.'
     },
-    /* Hero 14: Phoenix */
+    /* Hero 14: Jean Grey */
     {
         id: 'hero-14',
-        firstName: 'Phoenix',
-        lastName: '',
+        firstName: 'Jean',
+        lastName: 'Grey',
         realName: 'Jean Grey',
         weapon: 'Telepathy and Telekinesis',
         photo: 'imgs/jean.png',
@@ -349,7 +352,7 @@ window.players = [
         id: 'hero-31',
         firstName: 'Sand',
         lastName: 'Man',
-        realName: 'William Baker',
+        realName: 'Flint Marko',
         weapon: 'Sand Manipulation',
         photo: 'imgs/sand.png',
         skill: 'Sand Reformation: Rebuilds body from sand particles.',
@@ -362,7 +365,7 @@ window.players = [
         lastName: '',
         realName: 'Max Dillon',
         weapon: 'Electricity Manipulation',
-        photo: 'imgs/shock.png',
+        photo: 'imgs/dillon.png',
         skill: 'Power Surge: Overloads electrical systems.',
         special: 'Volt Surge: Chains lightning to hit multiple enemies.'
     },
@@ -377,7 +380,7 @@ window.players = [
         skill: 'Multitasking Mastery: Controls arms independently.',
         special: 'Tentacle Slam: Attacks up to three enemies at once.'
     },
-    /* Hero 34: Kraven the Hunter */
+    /* Hero 34: Kraven */
     {
         id: 'hero-34',
         firstName: 'Kraven',
@@ -395,7 +398,7 @@ window.players = [
         lastName: '',
         realName: 'Herman Schultz',
         weapon: 'Vibro-Gauntlets',
-        photo: 'imgs/dillon.png',
+        photo: 'imgs/shock.png',
         skill: 'Shockwave Burst: Emits area-wide vibrations.',
         special: 'Vibro-Pulse: Disrupts all enemies, delaying their actions.'
     },
@@ -420,51 +423,74 @@ window.players = [
         photo: 'imgs/prey.png',
         skill: 'Aerial Assault: Dive-bombs with precision.',
         special: 'Talon Dive: Strikes one enemy, ignoring their defenses.'
+    },
+    /* Hero 38: Hulk */
+    {
+        id: 'hero-38',
+        firstName: 'Hulk',
+        lastName: '',
+        realName: 'Bruce Banner',
+        weapon: 'Superhuman Strength',
+        photo: 'imgs/hulk.png',
+        skill: 'Gamma Rage: Strength increases with anger.',
+        special: 'Smash: Deals massive area damage to all enemies.'
+    },
+    /* Hero 39: Bullseye */
+    {
+        id: 'hero-39',
+        firstName: 'Bullseye',
+        lastName: '',
+        realName: 'Lester',
+        weapon: 'Precision Throwing Weapons',
+        photo: 'imgs/bullseye.png',
+        skill: 'Deadly Accuracy: Hits any target with pinpoint precision.',
+        special: 'Targeted Strike: Deals critical damage to one enemy.'
+    },
+    /* Hero 40: Winter Soldier */
+    {
+        id: 'hero-40',
+        firstName: 'Winter',
+        lastName: 'Soldier',
+        realName: 'Bucky Barnes',
+        weapon: 'Bionic Arm',
+        photo: 'imgs/winter.png',
+        skill: 'Covert Operations: Excels in stealth and sabotage.',
+        special: 'Bionic Bash: Delivers a powerful punch with stun effect.'
     }
 ];
 
-/* JS: Initialize selection screen when DOM is fully loaded */
+/* JS: Initialize selection screen on DOM load */
 document.addEventListener('DOMContentLoaded', () => {
-    /* JS: Log initialization start */
-    console.log('Initializing hero selection screen.');
+    console.log('[menu.js] Initializing hero selection at', new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' }));
     try {
-        /* JS: Reset localStorage for a clean state */
+        // Reset localStorage for clean state
         localStorage.setItem('player1Heroes', JSON.stringify([]));
         localStorage.setItem('selectedWarriors', JSON.stringify([]));
         localStorage.setItem('player2Heroes', JSON.stringify([]));
-        console.log('localStorage reset for heroes.');
-        /* JS: Validate hero data */
         if (!Array.isArray(window.players) || window.players.length === 0) {
-            console.error('Hero data is invalid or empty.');
-            return;
+            throw new Error('Hero data is invalid or empty');
         }
-        /* JS: Initialize UI components */
         loadSettings();
         populateAllHeroes();
-        populateSelectedHeroes();
         initializeEventListeners();
-        console.log('Selection screen initialized with %d heroes.', window.players.length);
+        console.log('[menu.js] Selection screen initialized with %d heroes', window.players.length);
     } catch (e) {
-        /* JS: Log initialization errors without halting execution */
-        console.error('Initialization error:', e);
+        console.error('[menu.js] Initialization error:', e);
+        showError('Failed to initialize hero selection. Please reload.');
     }
 });
 
 /* JS: Load settings from localStorage or apply defaults */
-function loadSettings() {
-    /* JS: Log settings load attempt */
-    console.log('Loading game settings.');
+const loadSettings = () => {
+    console.log('[menu.js] Loading game settings');
     try {
-        /* JS: Parse saved settings safely */
         let savedSettings = {};
         try {
             const settingsData = localStorage.getItem('gameSettings');
             if (settingsData) savedSettings = JSON.parse(settingsData);
-            console.log('Parsed saved settings:', savedSettings);
         } catch (e) {
-            console.warn('Corrupted gameSettings in localStorage:', e);
+            console.warn('[menu.js] Corrupted gameSettings:', e);
         }
-        /* JS: Apply settings with defaults */
         window.settings = {
             soundVolume: savedSettings.soundVolume || 50,
             voiceSpeed: savedSettings.voiceSpeed || 1,
@@ -473,12 +499,10 @@ function loadSettings() {
             theme: savedSettings.theme || 'dark',
             playerMode: 'single'
         };
-        /* JS: Apply theme to body */
         document.body.classList.toggle('light-theme', window.settings.theme === 'light');
-        console.log('Settings applied:', window.settings);
+        console.log('[menu.js] Settings applied:', window.settings);
     } catch (e) {
-        /* JS: Fallback to default settings on error */
-        console.error('Error loading settings:', e);
+        console.error('[menu.js] Error loading settings:', e);
         window.settings = {
             soundVolume: 50,
             voiceSpeed: 1,
@@ -488,101 +512,59 @@ function loadSettings() {
             playerMode: 'single'
         };
         document.body.classList.remove('light-theme');
-        console.log('Applied default settings due to error.');
+        showError('Failed to apply settings');
     }
-}
+};
 
-/* JS: Populate grid with all available heroes */
-function populateAllHeroes() {
-    /* JS: Log population attempt */
-    console.log('Populating all heroes grid.');
+/* JS: Populate hero grid with all available heroes */
+const populateAllHeroes = () => {
+    console.log('[menu.js] Populating hero grid');
     try {
-        /* JS: Get all heroes grid container */
-        const allHeroesGrid = document.getElementById('allHeroesGrid');
-        if (!allHeroesGrid) {
-            console.error('allHeroesGrid element not found.');
-            return;
-        }
-        allHeroesGrid.innerHTML = ''; // Clear existing cards
-        /* JS: Get selected heroes */
+        const heroGrid = document.getElementById('heroGrid');
+        if (!heroGrid) throw new Error('heroGrid element not found');
+        heroGrid.innerHTML = '';
         const player1Heroes = getPlayerHeroes('player1');
-        /* JS: Create cards for each hero */
         let validHeroes = 0;
         window.players.forEach((hero, index) => {
             if (!isValidHero(hero)) {
-                console.warn('Invalid hero at index %d:', index, hero);
+                console.warn('[menu.js] Invalid hero at index %d:', index, hero);
                 return;
             }
-            const isSelected = player1Heroes.some(h => h.id === hero.id);
+            const isSelected = player1Heroes.some(h => h.realName === hero.realName);
             const card = createHeroCard(hero, index, null, isSelected);
-            allHeroesGrid.appendChild(card);
+            heroGrid.appendChild(card);
             validHeroes++;
         });
-        if (validHeroes === 0) {
-            console.error('No valid heroes to display.');
-            return;
-        }
-        console.log('Rendered %d available heroes.', validHeroes);
+        if (validHeroes === 0) throw new Error('No valid heroes to display');
+        console.log('[menu.js] Rendered %d heroes', validHeroes);
     } catch (e) {
-        console.error('Error rendering available heroes:', e);
+        console.error('[menu.js] Error rendering heroes:', e);
+        showError('Failed to load heroes');
     }
-}
-
-/* JS: Populate grid with selected heroes */
-function populateSelectedHeroes() {
-    /* JS: Log population attempt */
-    console.log('Populating selected heroes grid.');
-    try {
-        /* JS: Get selected heroes grid container */
-        const selectedGrid = document.getElementById('selectedHeroesGrid');
-        if (!selectedGrid) {
-            console.error('selectedHeroesGrid element not found.');
-            return;
-        }
-        selectedGrid.innerHTML = ''; // Clear existing cards
-        /* JS: Get selected heroes */
-        const player1Heroes = getPlayerHeroes('player1');
-        /* JS: Create cards for selected heroes */
-        player1Heroes.forEach((hero, index) => {
-            if (!isValidHero(hero)) {
-                console.warn('Invalid selected hero:', hero);
-                return;
-            }
-            const card = createHeroCard(hero, index, 'player1');
-            if (isRemovalMode) card.classList.add('removal-mode');
-            selectedGrid.appendChild(card);
-        });
-        console.log('Rendered %d selected heroes.', player1Heroes.length);
-    } catch (e) {
-        console.error('Error rendering selected heroes:', e);
-    }
-}
+};
 
 /* JS: Retrieve player heroes from localStorage */
-function getPlayerHeroes(player) {
-    /* JS: Log retrieval attempt */
-    console.log(`Retrieving ${player} heroes from localStorage.`);
+const getPlayerHeroes = (player) => {
+    console.log('[menu.js] Retrieving %s heroes', player);
     try {
         const heroes = JSON.parse(localStorage.getItem(`${player}Heroes`) || '[]');
         if (!Array.isArray(heroes)) {
-            console.warn(`Invalid ${player}Heroes data in localStorage.`);
+            console.warn('[menu.js] Invalid %sHeroes data', player);
             localStorage.setItem(`${player}Heroes`, JSON.stringify([]));
             return [];
         }
-        console.log(`Retrieved ${heroes.length} heroes for ${player}.`);
+        console.log('[menu.js] Retrieved %d heroes for %s', heroes.length, player);
         return heroes;
     } catch (e) {
-        console.warn(`Error retrieving ${player}Heroes:`, e);
+        console.error('[menu.js] Error retrieving %sHeroes:', player, e);
         localStorage.setItem(`${player}Heroes`, JSON.stringify([]));
-        console.log(`Reset ${player}Heroes due to error.`);
         return [];
     }
-}
+};
 
 /* JS: Validate hero object */
-function isValidHero(hero) {
-    /* JS: Log validation attempt */
-    console.log('Validating hero:', hero?.realName || 'Unknown');
+const isValidHero = (hero) => {
+    console.log('[menu.js] Validating hero:', hero?.realName || 'Unknown');
     try {
         const isValid = hero &&
             typeof hero === 'object' &&
@@ -590,77 +572,69 @@ function isValidHero(hero) {
             typeof hero.firstName === 'string' &&
             typeof hero.realName === 'string' &&
             typeof hero.photo === 'string' && hero.photo.length > 0 &&
-            (hero.photo.startsWith('imgs/') || hero.photo === FALLBACK_IMAGE) &&
+            (hero.photo.startsWith('imgs/') || hero.photo === CONFIG.FALLBACK_IMAGE) &&
             typeof hero.weapon === 'string' &&
             typeof hero.skill === 'string' &&
             typeof hero.special === 'string';
-        if (!isValid) console.warn('Hero validation failed:', hero);
+        if (!isValid) console.warn('[menu.js] Hero validation failed:', hero);
         return isValid;
     } catch (e) {
-        console.error('Error validating hero:', e);
+        console.error('[menu.js] Error validating hero:', e);
         return false;
     }
-}
+};
 
-/* JS: Create a hero card for grids */
-function createHeroCard(hero, index, player, isSelected = false) {
-    /* JS: Log card creation attempt */
-    console.log(`Creating card for ${hero.realName}, index ${index}.`);
+/* JS: Create hero card for grid */
+const createHeroCard = (hero, index, player, isSelected = false) => {
+    console.log('[menu.js] Creating card for %s, index %d', hero.realName, index);
     try {
-        /* JS: Create card container */
         const card = document.createElement('div');
-        card.classList.add('character-card');
+        card.classList.add('hero-card');
         card.setAttribute('data-index', index);
         if (player) card.setAttribute('data-player', player);
         card.setAttribute('data-hero-id', hero.id);
         card.setAttribute('aria-label', `${hero.firstName} ${hero.lastName || ''} hero card`.trim());
+        card.tabIndex = 0;
 
-        /* JS: Create hero image */
         const img = document.createElement('img');
-        img.src = isValidHero(hero) ? hero.photo : FALLBACK_IMAGE;
+        img.src = isValidHero(hero) ? hero.photo : CONFIG.FALLBACK_IMAGE;
         img.alt = `${hero.firstName} ${hero.lastName || ''} portrait`.trim();
-        img.classList.add('character-img');
+        img.classList.add('hero-img');
         if (window.settings.heroSkin === 'cosmic') img.classList.add('cosmic-skin');
-        /* JS: Handle image load errors */
         img.onerror = () => {
-            console.warn(`Image load failed for ${hero.realName}: ${img.src}. Using fallback.`);
-            img.src = FALLBACK_IMAGE;
-            img.alt = `${hero.firstName} ${hero.lastName || ''} fallback portrait`.trim();
+            console.warn('[menu.js] Image load failed for %s: %s', hero.realName, img.src);
+            img.src = CONFIG.FALLBACK_IMAGE;
+            img.alt = 'Fallback hero portrait';
         };
 
-        /* JS: Create stats modal */
-        const statsModal = document.createElement('div');
-        statsModal.classList.add('stats-modal');
-        statsModal.setAttribute('role', 'dialog');
-        statsModal.setAttribute('aria-labelledby', `stats-${hero.id}`);
+        const info = document.createElement('div');
+        info.className = 'hero-info';
         const displayName = `${hero.firstName} ${hero.lastName || ''}`.trim();
-        statsModal.innerHTML = `
-            <h6 id="stats-${hero.id}">${displayName}</h6>
-            <p>Real Name: ${hero.realName}</p>
-            <p>Weapon: ${hero.weapon}</p>
-            <p>Skill: ${hero.skill}</p>
-            <p>Special: ${hero.special}</p>
+        info.innerHTML = `
+            <div class="hero-name">${displayName}</div>
+            <div class="hero-stats">
+                <p>Real Name: ${hero.realName}</p>
+                <p>Weapon: ${hero.weapon}</p>
+                <p>Skill: ${hero.skill}</p>
+                <p>Special: ${hero.special}</p>
+            </div>
         `;
 
-        /* JS: Add click event for selection/removal */
         card.addEventListener('click', () => {
-            console.log(`Card clicked for ${hero.realName}.`);
+            console.log('[menu.js] Card clicked for %s', hero.realName);
             try {
                 if (isRemovalMode && player) {
                     removeHero(hero, player);
                     toggleRemovalMode();
-                } else if (player && !isRemovalMode) {
-                    removeHero(hero, player);
-                } else if (!isRemovalMode && !isSelected) {
+                } else if (!isSelected) {
                     addHero(hero);
                 }
             } catch (e) {
-                console.error(`Error handling card click for ${hero.realName}:`, e);
+                console.error('[menu.js] Error handling click for %s:', hero.realName, e);
+                showError('Error processing hero selection');
             }
         });
 
-        /* JS: Add keyboard accessibility */
-        card.setAttribute('tabindex', '0');
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -668,10 +642,9 @@ function createHeroCard(hero, index, player, isSelected = false) {
             }
         });
 
-        /* JS: Add select button for available heroes */
         if (!player) {
             const button = document.createElement('button');
-            button.classList.add('btn', 'btn-select');
+            button.classList.add('btn', 'btn-marvel');
             button.textContent = isSelected ? 'Selected' : 'Select';
             button.disabled = isSelected;
             button.setAttribute('aria-label', `Select ${displayName}`);
@@ -679,149 +652,161 @@ function createHeroCard(hero, index, player, isSelected = false) {
                 e.stopPropagation();
                 if (!isRemovalMode) addHero(hero);
             });
-            card.append(img, statsModal, button);
+            card.append(img, info, button);
         } else {
-            card.append(img, statsModal);
+            card.append(img, info);
         }
 
-        console.log(`Card created for ${hero.realName}.`);
+        console.log('[menu.js] Card created for %s', hero.realName);
         return card;
     } catch (e) {
-        console.error(`Error creating card for ${hero.realName}:`, e);
+        console.error('[menu.js] Error creating card for %s:', hero.realName, e);
         return document.createElement('div');
     }
-}
+};
 
-/* JS: Add a hero to Player 1's roster */
-function addHero(hero) {
-    /* JS: Log addition attempt */
-    console.log(`Adding hero: ${hero.realName}`);
+/* JS: Add hero to Player 1's roster */
+const addHero = (hero) => {
+    console.log('[menu.js] Adding hero: %s', hero.realName);
     try {
-        /* JS: Get current heroes */
         const player1Heroes = getPlayerHeroes('player1');
-        /* JS: Prevent duplicates */
-        if (player1Heroes.some(h => h.id === hero.id)) {
-            console.log(`Hero ${hero.realName} already selected.`);
+        if (player1Heroes.some(h => h.realName === hero.realName)) {
+            showError(`${hero.realName} is already selected`);
             return;
         }
-        /* JS: Enforce max 3 heroes */
-        const maxHeroes = 3;
-        if (player1Heroes.length >= maxHeroes) {
-            console.log('Maximum of 3 heroes reached.');
+        if (player1Heroes.length >= CONFIG.MAX_HEROES) {
+            showError('Maximum 3 heroes can be selected');
             return;
         }
-        /* JS: Add hero and update storage */
         player1Heroes.push(hero);
         localStorage.setItem('player1Heroes', JSON.stringify(player1Heroes));
-        /* JS: Sync and refresh UI */
         syncWarriorsToGame();
         populateAllHeroes();
-        populateSelectedHeroes();
-        /* JS: Trigger vibration */
         triggerVibration();
-        console.log(`Hero added: ${hero.realName}`);
+        console.log('[menu.js] Hero added: %s', hero.realName);
     } catch (e) {
-        console.error(`Error adding hero ${hero.realName}:`, e);
+        console.error('[menu.js] Error adding hero %s:', hero.realName, e);
+        showError('Failed to add hero');
     }
-}
+};
 
-/* JS: Remove a hero from Player 1's roster */
-function removeHero(hero, player) {
-    /* JS: Log removal attempt */
-    console.log(`Removing hero: ${hero.realName}`);
+/* JS: Remove hero from Player 1's roster */
+const removeHero = (hero, player) => {
+    console.log('[menu.js] Removing hero: %s', hero.realName);
     try {
-        /* JS: Filter out hero */
         const heroes = getPlayerHeroes(player);
-        const updatedHeroes = heroes.filter(h => h.id !== hero.id);
+        const updatedHeroes = heroes.filter(h => h.realName !== hero.realName);
         localStorage.setItem(`${player}Heroes`, JSON.stringify(updatedHeroes));
-        /* JS: Sync and refresh UI */
         syncWarriorsToGame();
         populateAllHeroes();
-        populateSelectedHeroes();
-        /* JS: Trigger vibration */
         triggerVibration();
-        console.log(`Hero removed: ${hero.realName}`);
+        console.log('[menu.js] Hero removed: %s', hero.realName);
     } catch (e) {
-        console.error(`Error removing hero ${hero.realName}:`, e);
+        console.error('[menu.js] Error removing hero %s:', hero.realName, e);
+        showError('Failed to remove hero');
     }
-}
+};
 
 /* JS: Sync selected heroes to game.js format */
-function syncWarriorsToGame() {
-    /* JS: Log sync attempt */
-    console.log('Syncing heroes to game.js.');
+const syncWarriorsToGame = () => {
+    console.log('[menu.js] Syncing heroes to game.js');
     try {
-        /* JS: Get selected heroes */
         const player1Heroes = getPlayerHeroes('player1');
-        /* JS: Map to real names */
         const selectedWarriors = player1Heroes.map(hero => hero.realName);
         localStorage.setItem('selectedWarriors', JSON.stringify(selectedWarriors));
-        console.log('Synced %d heroes:', selectedWarriors.length, selectedWarriors);
+        console.log('[menu.js] Synced %d heroes:', selectedWarriors.length, selectedWarriors);
     } catch (e) {
-        console.error('Error syncing heroes:', e);
+        console.error('[menu.js] Error syncing heroes:', e);
+        showError('Failed to sync heroes');
     }
-}
+};
 
 /* JS: Toggle removal mode */
-function toggleRemovalMode() {
-    /* JS: Log toggle attempt */
-    console.log('Toggling removal mode.');
+const toggleRemovalMode = () => {
+    console.log('[menu.js] Toggling removal mode');
     try {
-        /* JS: Flip removal mode state */
         isRemovalMode = !isRemovalMode;
-        /* JS: Update remove button */
         const removeButton = document.getElementById('removeHeroBtn');
         if (removeButton) {
             removeButton.classList.toggle('active', isRemovalMode);
             removeButton.textContent = isRemovalMode ? 'Cancel Removal' : 'Remove Hero';
             removeButton.setAttribute('aria-pressed', isRemovalMode.toString());
-            console.log(`Removal mode set to ${isRemovalMode}.`);
-        } else {
-            console.warn('removeHeroBtn not found.');
+            console.log('[menu.js] Removal mode set to %s', isRemovalMode);
         }
-        /* JS: Refresh selected heroes grid */
-        populateSelectedHeroes();
+        populateAllHeroes();
     } catch (e) {
-        console.error('Error toggling removal mode:', e);
+        console.error('[menu.js] Error toggling removal mode:', e);
+        showError('Failed to toggle removal mode');
     }
-}
+};
 
 /* JS: Trigger vibration feedback */
-function triggerVibration() {
-    /* JS: Log vibration attempt */
-    console.log('Triggering vibration.');
+const triggerVibration = () => {
+    console.log('[menu.js] Triggering vibration');
     try {
-        if (window.settings.vibration && navigator.vibrate && typeof navigator.vibrate === 'function') {
-            navigator.vibrate(100);
-            console.log('Vibration triggered.');
+        if (window.settings.vibration && navigator.vibrate) {
+            navigator.vibrate(CONFIG.VIBRATION_DURATION);
+            console.log('[menu.js] Vibration triggered');
         }
     } catch (e) {
-        console.warn('Error triggering vibration:', e);
+        console.warn('[menu.js] Error triggering vibration:', e);
     }
-}
+};
+
+/* JS: Show error toast notification */
+const showError = (message) => {
+    console.log('[menu.js] Showing error toast: %s', message);
+    try {
+        const toast = document.createElement('div');
+        toast.className = 'error-toast';
+        toast.textContent = message;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), CONFIG.TOAST_DURATION);
+    } catch (e) {
+        console.error('[menu.js] Error displaying toast:', e);
+    }
+};
 
 /* JS: Initialize event listeners */
-function initializeEventListeners() {
-    /* JS: Log initialization attempt */
-    console.log('Initializing event listeners.');
-    /* JS: Set up Remove Hero button */
-    const removeButton = document.getElementById('removeHeroBtn');
-    if (removeButton) {
-        removeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Remove Hero button clicked.');
-            try {
+const initializeEventListeners = () => {
+    console.log('[menu.js] Initializing event listeners');
+    try {
+        // Remove Hero button
+        const removeButton = document.getElementById('removeHeroBtn');
+        if (removeButton) {
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('[menu.js] Remove Hero button clicked');
                 const player1Heroes = getPlayerHeroes('player1');
                 if (isRemovalMode || player1Heroes.length > 0) {
                     toggleRemovalMode();
                 }
-            } catch (e) {
-                console.error('Error handling Remove Hero click:', e);
-            }
-        });
-        console.log('Remove Hero button listener attached.');
-    } else {
-        console.warn('removeHeroBtn not found in DOM.');
+            });
+        } else {
+            console.warn('[menu.js] removeHeroBtn not found');
+        }
+
+        // Play Singleplayer button
+        const playButton = document.getElementById('playModeBtn');
+        if (playButton) {
+            playButton.addEventListener('click', () => {
+                console.log('[menu.js] Play Singleplayer button clicked');
+                const player1Heroes = getPlayerHeroes('player1');
+                if (player1Heroes.length === 0) {
+                    showError('Please select at least one hero');
+                    return;
+                }
+                window.location.href = 'game.html';
+            });
+        } else {
+            console.warn('[menu.js] playModeBtn not found');
+        }
+
+        console.log('[menu.js] Event listeners initialized');
+    } catch (e) {
+        console.error('[menu.js] Error initializing listeners:', e);
+        showError('Failed to initialize buttons');
     }
-    console.log('Event listeners initialized.');
-}
+};

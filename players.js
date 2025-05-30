@@ -370,6 +370,36 @@ window.players = [
         photo: 'imgs/prey.png',
         skill: 'Aerial Assault: Dive-bombs with precision.',
         special: 'Talon Dive: Strikes one enemy, ignoring their defenses.'
+    },
+    {
+        id: 'hero-38',
+        firstName: 'Hulk',
+        lastName: '',
+        realName: 'Bruce Banner',
+        weapon: 'Superhuman Strength and Gamma Radiation',
+        photo: 'imgs/hulk.png',
+        skill: 'Rage Empowerment: Strength increases with anger.',
+        special: 'Gamma Smash: Damages all enemies and boosts own attack.'
+    },
+    {
+        id: 'hero-39',
+        firstName: 'Bullseye',
+        lastName: '',
+        realName: 'Lester',
+        weapon: 'Precision Projectiles',
+        photo: 'imgs/bullseye.png',
+        skill: 'Perfect Aim: Hits any target with deadly accuracy.',
+        special: 'Deadly Throw: Targets a single enemy for massive damage.'
+    },
+    {
+        id: 'hero-40',
+        firstName: 'Winter',
+        lastName: 'Soldier',
+        realName: 'Bucky Barnes',
+        weapon: 'Bionic Arm and Firearms',
+        photo: 'imgs/winter.png',
+        skill: 'Stealth Operations: Executes covert strikes.',
+        special: 'Bionic Arm Strike: Delivers a powerful blow, stunning the enemy.'
     }
 ];
 
