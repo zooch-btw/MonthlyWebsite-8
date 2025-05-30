@@ -220,7 +220,6 @@
             try {
                 const player1Heroes = JSON.parse(localStorage.getItem('player1Heroes') || '[]');
                 if (player1Heroes.length === 0) {
-                    alert('Please select at least one hero in the Game menu before starting.');
                     return;
                 }
                 window.location.href = 'game.html';
