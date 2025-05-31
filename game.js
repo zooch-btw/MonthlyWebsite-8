@@ -1,1077 +1,1130 @@
-/* JS: Core logic for Galaxy BattleForge, a Marvel turn-based game. Manages heroes, enemies, game modes, UI, and achievements. */
+/* Galaxy BattleForge - Enhanced Marvel turn-based strategy game */
+/* Dependencies: Bootstrap 5.3.2, Animate.css, game.html */
+/* Integrates with menu.js for hero selection via localStorage */
+/* Uses sounds: achievement, attack, background, defeat, levelUp, moreinfo, select, special, victory */
 
-/* JS: Maps hero names to image paths for UI display. */
-const warriorImageMap = {
-    'Iron Man': 'imgs/iron man.png',
-    'Captain America': 'imgs/capam.png',
-    'Thor': 'imgs/thor.png',
-    'Black Widow': 'imgs/widow.png',
-    'Hawkeye': 'imgs/hawkeye.png',
-    'Spider-Man': 'imgs/spiderman.png',
-    'Doctor Strange': 'imgs/strange.png',
-    'Black Panther': 'imgs/panther.png',
-    'Scarlet Witch': 'imgs/witch.png',
-    'Ant-Man': 'imgs/antman.png',
-    'Wolverine': 'imgs/bub.png',
-    'Storm': 'imgs/storm.png',
-    'Cyclops': 'imgs/scott.png',
-    'Jean Grey': 'imgs/jean.png',
-    'Beast': 'imgs/beast.png',
-    'Gambit': 'imgs/gambit.png',
-    'Rogue': 'imgs/rogue.png',
-    'Deadpool': 'imgs/wade.png',
-    'Venom': 'imgs/venom.png',
-    'Magneto': 'imgs/max.png',
-    'Doctor Doom': 'imgs/doom.png',
-    'Thanos': 'imgs/thanos.png',
-    'Loki': 'imgs/loki.png',
-    'Ultron': 'imgs/ai.png',
-    'Red Skull': 'imgs/skull.png',
-    'Green Goblin': 'imgs/osborn.png',
-    'Kingpin': 'imgs/fisk.png',
-    'Black Cat': 'imgs/cat.png',
-    'Mysterio': 'imgs/illusion.png',
-    'Rhino': 'imgs/rhino.png',
-    'Sandman': 'imgs/sand.png',
-    'Electro': 'imgs/dillon.png',
-    'Doctor Octopus': 'imgs/ock.png',
-    'Kraven': 'imgs/hunt.png',
-    'Shocker': 'imgs/shock.png',
-    'Scorpion': 'imgs/sting.png',
-    'Vulture': 'imgs/prey.png',
-    'Hulk': 'imgs/hulk.png',
-    'Bullseye': 'imgs/bullseye.png',
-    'Winter Soldier': 'imgs/winter.png'
-};
+// Asset mappings for warrior and enemy images with fallback
+const warriorImageMap = new Map(window.players.map(p => [p.realName, p.photo]));
+const enemyImageMap = new Map([
+    ['Overlord Zarkon', 'imgs/zarkon.png'], ['Void Drone', 'imgs/drone.png'], ['Abyssal Stalker', 'imgs/abyss.png'],
+    ['Wave Invader', 'imgs/wave.png'], ['Cosmic Phantom', 'imgs/cosmic.png'], ['Nebula Phantom', 'imgs/phantom.png'],
+    ['Thanos', 'imgs/thanos.png']
+]);
+const placeholderImage = 'imgs/fallback.png';
 
-/* JS: Maps enemy names to image paths for UI display. */
-const enemyImageMap = {
-    'Overlord Zarkon': 'imgs/zarkon.png',
-    'Void Drone': 'imgs/drone.png',
-    'Abyssal Stalker': 'imgs/abyss.png',
-    'Wave Invader': 'imgs/wave.png',
-    'Cosmic Tyrant': 'imgs/cosmic.png',
-    'Nebula Wraith': 'imgs/wraith.png'
-};
-
-/* JS: Sound effects for game events (assumes assets exist). */
+// Sound effects manager with lazy loading and error handling
 const soundEffects = {
-    attack: new Audio('sounds/attack.mp3'),
-    special: new Audio('sounds/special.mp3'),
-    levelUp: new Audio('sounds/levelup.mp3'),
-    victory: new Audio('sounds/victory.mp3'),
-    defeat: new Audio('sounds/defeat.mp3'),
-    achievement: new Audio('sounds/achievement.mp3'),
-    c: new Audio('sounds/background.mp3')
+    achievement: null, attack: null, background: null, defeat: null, levelUp: null,
+    moreinfo: null, select: null, special: null, victory: null,
+    async load() {
+        try {
+            this.achievement = await loadSound('achievement', 'sounds/achievement.mp3');
+            this.attack = await loadSound('attack', 'sounds/attack.mp3');
+            this.background = await loadSound('background', 'sounds/background.mp3');
+            this.defeat = await loadSound('defeat', 'sounds/defeat.mp3');
+            this.levelUp = await loadSound('levelUp', 'sounds/levelup.mp3');
+            this.moreinfo = await loadSound('moreinfo', 'sounds/moreinfo.mp3');
+            this.select = await loadSound('select', 'sounds/select.mp3');
+            this.special = await loadSound('special', 'sounds/special.mp3');
+            this.victory = await loadSound('victory', 'sounds/victory.mp3');
+            this.background.loop = true;
+            this.background.volume = parseFloat(localStorage.getItem('soundVolume') || '50') / 100 * 0.5;
+            this.background.play().catch(() => console.warn('[soundEffects] Background playback failed'));
+        } catch (e) {
+            console.warn('[soundEffects.load] Failed to load sounds:', e);
+        }
+    }
 };
 
-/* JS: Warrior class representing a playable hero. */
+async function loadSound(key, src) {
+    if (!soundEffects[key]) {
+        const audio = new Audio(src);
+        audio.onerror = () => console.warn(`[loadSound] Failed to load sound: ${src}`);
+        audio.volume = parseFloat(localStorage.getItem('soundVolume') || '50') / 100;
+        audio.preload = 'auto';
+        return audio;
+    }
+    return soundEffects[key];
+}
+
+// Base stats for warriors based on character traits
+const warriorBaseStats = Object.fromEntries(window.players.map(p => {
+    const stats = {
+        'Tony Stark': { health: 100, attack: 20, mana: 50 }, 'Steve Rogers': { health: 120, attack: 18, mana: 45 },
+        'Thor Odinson': { health: 130, attack: 25, mana: 40 }, 'Natasha Romanoff': { health: 80, attack: 15, mana: 60 },
+        'Clint Barton': { health: 90, attack: 17, mana: 55 }, 'Peter Parker': { health: 95, attack: 16, mana: 50 },
+        'Stephen Strange': { health: 85, attack: 14, mana: 70 }, 'T’Challa': { health: 110, attack: 20, mana: 45 },
+        'Wanda Maximoff': { health: 90, attack: 18, mana: 65 }, 'Scott Lang': { health: 85, attack: 15, mana: 50 },
+        'James Howlett/Logan': { health: 140, attack: 22, mana: 30 }, 'Ororo Munroe': { health: 95, attack: 16, mana: 60 },
+        'Scott Summers': { health: 100, attack: 18, mana: 50 }, 'Jean Grey Summers': { health: 90, attack: 17, mana: 65 },
+        'Henry McCoy': { health: 120, attack: 19, mana: 40 }, 'Remy LeBeau': { health: 95, attack: 16, mana: 55 },
+        'Anna Marie': { health: 110, attack: 18, mana: 45 }, 'Wade Wilson': { health: 100, attack: 20, mana: 50 },
+        'Eddie Brock': { health: 130, attack: 22, mana: 40 }, 'Max Eisenhardt': { health: 100, attack: 20, mana: 60 },
+        'Victor Von Doom': { health: 110, attack: 21, mana: 55 }, 'Thanos': { health: 150, attack: 25, mana: 50 },
+        'Loki Laufeyson': { health: 90, attack: 17, mana: 65 }, 'Ultron': { health: 120, attack: 20, mana: 50 },
+        'Johann Schmidt': { health: 100, attack: 18, mana: 45 }, 'Norman Osborn': { health: 95, attack: 19, mana: 50 },
+        'Wilson Fisk': { health: 130, attack: 20, mana: 40 }, 'Felicia Hardy': { health: 85, attack: 16, mana: 55 },
+        'Quentin Beck': { health: 90, attack: 15, mana: 60 }, 'Aleksei Sytsevich': { health: 140, attack: 22, mana: 30 },
+        'Flint Marko': { health: 120, attack: 18, mana: 40 }, 'Max Dillon': { health: 95, attack: 17, mana: 55 },
+        'Otto Octavius': { health: 100, attack: 19, mana: 50 }, 'Sergei Kravinoff': { health: 110, attack: 20, mana: 45 },
+        'Herman Schultz': { health: 95, attack: 16, mana: 50 }, 'Mac Gargan': { health: 100, attack: 18, mana: 45 },
+        'Adrian Toomes': { health: 90, attack: 17, mana: 50 }, 'Bruce Banner': { health: 150, attack: 30, mana: 30 },
+        'Lester': { health: 90, attack: 18, mana: 50 }, 'Bucky Barnes': { health: 100, attack: 19, mana: 50 }
+    };
+    return [p.realName, stats[p.realName] || { health: 100, attack: 15, mana: 50 }];
+}));
+
+// Special abilities based on player specials
+const specialAbilities = Object.fromEntries(window.players.map(p => [p.realName, {
+    name: p.special.split(':')[0].trim(),
+    manaCost: 30,
+    cooldown: 3,
+    effect: (target, warrior, game) => {
+        let damage = 40;
+        let tempCritChance = warrior.critChance;
+        switch (p.realName) {
+            case 'Tony Stark': target.takeDamage(damage); break;
+            case 'Steve Rogers': target.takeDamage(damage); target.addStatusEffect('stun', 1); break;
+            case 'Thor Odinson': damage = 50; target.takeDamage(damage); break;
+            case 'Natasha Romanoff': tempCritChance += 0.2; warrior.critChance = tempCritChance; target.takeDamage(damage); warrior.critChance = tempCritChance - 0.2; break;
+            case 'Clint Barton': game.enemies.forEach(e => e.takeDamage(damage * 0.5)); break;
+            case 'Peter Parker': target.takeDamage(damage); target.addStatusEffect('freeze', 1); break;
+            case 'Stephen Strange': warrior.health = warrior.maxHealth; break;
+            case 'T’Challa': target.takeDamage(damage); warrior.health = Math.min(warrior.maxHealth, warrior.health + 20); break;
+            case 'Wanda Maximoff': target.attack = Math.round(target.attack * 0.8); target.takeDamage(damage); break;
+            case 'Scott Lang': damage = 60; target.takeDamage(damage); break;
+            case 'James Howlett/Logan': target.takeDamage(damage); target.takeDamage(damage * 0.5); break;
+            case 'Ororo Munroe': game.enemies.forEach(e => e.addStatusEffect('stun', 1)); break;
+            case 'Scott Summers': game.enemies.forEach(e => e.takeDamage(damage * 0.6)); break;
+            case 'Jean Grey Summers': damage = target.health * 0.3; target.takeDamage(damage); break;
+            case 'Henry McCoy': target.takeDamage(damage); warrior.dodgeChance = Math.min(0.3, warrior.dodgeChance + 0.1); break;
+            case 'Remy LeBeau': damage = 50; target.takeDamage(damage); break;
+            case 'Anna Marie': target.takeDamage(damage); warrior.health = Math.min(warrior.maxHealth, warrior.health + 20); break;
+            case 'Wade Wilson': target.takeDamage(damage); if (Math.random() < 0.3) target.addStatusEffect('burn', 2); break;
+            case 'Eddie Brock': game.enemies.forEach(e => e.takeDamage(damage * 0.7)); break;
+            case 'Max Eisenhardt': damage = 50; target.takeDamage(damage); break;
+            case 'Victor Von Doom': target.addStatusEffect('burn', 3); break;
+            case 'Thanos': if (target.health < target.maxHealth * 0.2) target.health = 0; else target.takeDamage(damage); break;
+            case 'Loki Laufeyson': warrior.dodgeChance += 0.5; setTimeout(() => warrior.dodgeChance -= 0.5, 1000); break;
+            case 'Ultron': target.attack = Math.round(target.attack * 0.9); target.takeDamage(damage); break;
+            case 'Johann Schmidt': game.warriors.forEach(w => w.attack = Math.round(w.attack * 1.1)); break;
+            case 'Norman Osborn': game.enemies.forEach(e => e.takeDamage(damage * 0.4)); break;
+            case 'Wilson Fisk': damage = 50; target.takeDamage(damage); break;
+            case 'Felicia Hardy': tempCritChance += 0.3; warrior.critChance = tempCritChance; target.takeDamage(damage); warrior.critChance = tempCritChance - 0.3; break;
+            case 'Quentin Beck': game.enemies.forEach(e => e.attack = Math.round(e.attack * 0.8)); break;
+            case 'Aleksei Sytsevich': game.enemies.slice(0, 2).forEach(e => e.takeDamage(damage)); break;
+            case 'Flint Marko': game.enemies.forEach(e => e.attack = Math.round(e.attack * 0.7)); break;
+            case 'Max Dillon': game.enemies.slice(0, 2).forEach(e => e.takeDamage(damage * 0.6)); break;
+            case 'Otto Octavius': game.enemies.slice(0, 3).forEach(e => e.takeDamage(damage * 0.5)); break;
+            case 'Sergei Kravinoff': target.takeDamage(damage); target.addStatusEffect('freeze', 2); break;
+            case 'Herman Schultz': game.enemies.forEach(e => e.addStatusEffect('stun', 1)); break;
+            case 'Mac Gargan': target.takeDamage(damage); target.addStatusEffect('poison', 3); break;
+            case 'Adrian Toomes': damage = 50; target.takeDamage(damage); break;
+            case 'Bruce Banner': game.enemies.forEach(e => e.takeDamage(damage)); warrior.attack = Math.round(warrior.attack * 1.2); break;
+            case 'Lester': damage = 60; target.takeDamage(damage); break;
+            case 'Bucky Barnes': target.takeDamage(damage); target.addStatusEffect('stun', 1); break;
+        }
+        game.log(`${warrior.name} used ${p.special.split(':')[0].trim()}!`);
+        return damage;
+    }
+}]));
+
+// Team-up abilities
+const teamUpAbilities = {
+    'Avengers Assemble': {
+        heroes: ['Tony Stark', 'Steve Rogers', 'Thor Odinson', 'Bruce Banner'],
+        name: 'Avengers Assemble',
+        manaCost: 50,
+        cooldown: 4,
+        effect: (target, game) => {
+            const damage = 70;
+            game.enemies.forEach(e => e.takeDamage(damage));
+            game.log('Avengers Assemble! All enemies take 70 damage!');
+            return damage;
+        }
+    },
+    'X-Men Unity': {
+        heroes: ['James Howlett/Logan', 'Ororo Munroe', 'Scott Summers', 'Jean Grey Summers'],
+        name: 'X-Men Unity',
+        manaCost: 60,
+        cooldown: 5,
+        effect: (target, game) => {
+            const damage = 80;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.health = Math.min(w.maxHealth, w.health + 20));
+            game.log('X-Men Unity! Target takes 80 damage and team heals 20 health!');
+            return damage;
+        }
+    },
+    'Spider-Verse Strike': {
+        heroes: ['Peter Parker', 'Eddie Brock'],
+        name: 'Spider-Verse Strike',
+        manaCost: 40,
+        cooldown: 3,
+        effect: (target, game) => {
+            const damage = 50;
+            target.takeDamage(damage);
+            if (Math.random() < 0.5) target.addStatusEffect('freeze', 2);
+            game.log('Spider-Verse Strike! Target takes 50 damage and may be frozen!');
+            return damage;
+        }
+    },
+    'Masters of Magic': {
+        heroes: ['Stephen Strange', 'Wanda Maximoff'],
+        name: 'Masters of Magic',
+        manaCost: 55,
+        cooldown: 4,
+        effect: (target, game) => {
+            const damage = 60;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.mana = Math.min(w.maxMana, w.mana + 20));
+            game.log('Masters of Magic! Target takes 60 damage and team restores 20 mana!');
+            return damage;
+        }
+    },
+    'Asgardian Might': {
+        heroes: ['Thor Odinson', 'Loki Laufeyson'],
+        name: 'Asgardian Might',
+        manaCost: 45,
+        cooldown: 3,
+        effect: (target, game) => {
+            const damage = 55;
+            target.takeDamage(damage);
+            if (Math.random() < 0.4) target.addStatusEffect('stun', 2);
+            game.log('Asgardian Might! Target takes 55 damage and may be stunned!');
+            return damage;
+        }
+    },
+    'Tech Titans': {
+        heroes: ['Tony Stark', 'Victor Von Doom'],
+        name: 'Tech Titans',
+        manaCost: 50,
+        cooldown: 4,
+        effect: (target, game) => {
+            const damage = 65;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.attack = Math.round(w.baseAttack * 1.15));
+            game.log('Tech Titans! Target takes 65 damage and team attack boosted by 15%!');
+            return damage;
+        }
+    },
+    'Street Enforcers': {
+        heroes: ['Wade Wilson', 'Wilson Fisk'],
+        name: 'Street Enforcers',
+        manaCost: 45,
+        cooldown: 3,
+        effect: (target, game) => {
+            const damage = 50;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.health = Math.min(w.maxHealth, w.health + 15));
+            game.log('Street Enforcers! Target takes 50 damage and team heals 15 health!');
+            return damage;
+        }
+    },
+    'Sinister Syndicate': {
+        heroes: ['Norman Osborn', 'Otto Octavius', 'Max Dillon'],
+        name: 'Sinister Syndicate',
+        manaCost: 60,
+        cooldown: 5,
+        effect: (target, game) => {
+            const damage = 75;
+            game.enemies.forEach(e => e.takeDamage(damage));
+            if (Math.random() < 0.3) game.enemies.forEach(e => e.addStatusEffect('burn', 2));
+            game.log('Sinister Syndicate! All enemies take 75 damage and may be burned!');
+            return damage;
+        }
+    },
+    'Pym Particle Power': {
+        heroes: ['Scott Lang', 'Henry McCoy'],
+        name: 'Pym Particle Power',
+        manaCost: 40,
+        cooldown: 3,
+        effect: (target, game) => {
+            const damage = 50;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.dodgeChance = Math.min(0.3, w.dodgeChance + 0.1));
+            game.log('Pym Particle Power! Target takes 50 damage and team dodge chance increased!');
+            return damage;
+        }
+    },
+    'S.H.I.E.L.D. Strategy': {
+        heroes: ['Natasha Romanoff', 'Clint Barton', 'Bucky Barnes'],
+        name: 'S.H.I.E.L.D. Strategy',
+        manaCost: 50,
+        cooldown: 4,
+        effect: (target, game) => {
+            const damage = 60;
+            target.takeDamage(damage);
+            game.warriors.forEach(w => w.mana = Math.min(w.maxMana, w.mana + 15));
+            game.log('S.H.I.E.L.D. Strategy! Target takes 60 damage and team restores 15 mana!');
+            return damage;
+        }
+    },
+    'Cosmic Surge': {
+        heroes: ['Thanos', 'Loki Laufeyson'],
+        name: 'Cosmic Surge',
+        manaCost: 55,
+        cooldown: 4,
+        effect: (target, game) => {
+            const damage = 65;
+            game.enemies.forEach(e => e.takeDamage(damage));
+            game.log('Cosmic Surge! All enemies take 65 damage!');
+            return damage;
+        }
+    }
+};
+
+// Synergies
+const synergies = {
+    'Avengers': {
+        heroes: ['Tony Stark', 'Steve Rogers', 'Thor Odinson', 'Natasha Romanoff', 'Clint Barton', 'Bruce Banner'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.attack = Math.round(w.baseAttack * 1.1);
+                    w.health = Math.min(w.maxHealth, w.health + 10);
+                }
+            });
+            game.log('Avengers Synergy: +10% attack and +10 health for Avengers!');
+        }
+    },
+    'X-Men': {
+        heroes: ['James Howlett/Logan', 'Ororo Munroe', 'Scott Summers', 'Jean Grey Summers', 'Henry McCoy', 'Remy LeBeau', 'Anna Marie'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.mana = Math.min(w.maxMana, w.mana + 15);
+                    w.critChance = Math.min(0.3, w.critChance + 0.05);
+                }
+            });
+            game.log('X-Men Synergy: +15 mana and +5% crit chance for X-Men!');
+        }
+    },
+    'Spider-Verse': {
+        heroes: ['Peter Parker', 'Eddie Brock', 'Felicia Hardy'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.dodgeChance = Math.min(0.25, w.dodgeChance + 0.1);
+                }
+            });
+            game.log('Spider-Verse Synergy: +10% dodge chance for Spider-Verse heroes!');
+        }
+    },
+    'Mystic Masters': {
+        heroes: ['Stephen Strange', 'Wanda Maximoff'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.maxMana += 20;
+                    w.mana = Math.min(w.maxMana, w.mana + 20);
+                }
+            });
+            game.log('Mystic Masters Synergy: +20 max mana for Mystic Masters!');
+        }
+    },
+    'Asgardians': {
+        heroes: ['Thor Odinson', 'Loki Laufeyson'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.health = Math.min(w.maxHealth, w.health + 20);
+                    w.shield = Math.max(0.85, w.shield * 0.85);
+                }
+            });
+            game.log('Asgardians Synergy: +20 health and 15% damage reduction!');
+        }
+    },
+    'Tech Geniuses': {
+        heroes: ['Tony Stark', 'Victor Von Doom', 'Ultron'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.attack = Math.round(w.baseAttack * 1.15);
+                }
+            });
+            game.log('Tech Geniuses Synergy: +15% attack for Tech Geniuses!');
+        }
+    },
+    'Street Fighters': {
+        heroes: ['Wade Wilson', 'Wilson Fisk', 'Felicia Hardy'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.health = Math.min(w.maxHealth, w.health + 15);
+                    w.critChance = Math.min(0.3, w.critChance + 0.05);
+                }
+            });
+            game.log('Street Fighters Synergy: +15 health and +5% crit chance!');
+        }
+    },
+    'Sinister Six': {
+        heroes: ['Norman Osborn', 'Otto Octavius', 'Max Dillon', 'Aleksei Sytsevich', 'Flint Marko', 'Adrian Toomes'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.attack = Math.round(w.baseAttack * 1.1);
+                    if (Math.random() < 0.2) game.enemies.forEach(e => e.addStatusEffect('burn', 1));
+                }
+            });
+            game.log('Sinister Six Synergy: +10% attack and 20% chance to burn enemies!');
+        }
+    },
+    'S.H.I.E.L.D.': {
+        heroes: ['Natasha Romanoff', 'Clint Barton', 'Bucky Barnes'],
+        effect: (game) => {
+            game.warriors.forEach(w => {
+                if (this.heroes.includes(w.name)) {
+                    w.mana = Math.min(w.maxMana, w.mana + 10);
+                    w.critChance = Math.min(0.3, w.critChance + 0.05);
+                }
+            });
+            game.log('S.H.I.E.L.D. Synergy: +10 mana and +5% crit chance!');
+        }
+    }
+};
+
+// Warrior class
 class Warrior {
-    /* JS: Initialize warrior with stats and abilities.
-     * @param {string} name - Hero name (e.g., 'Iron Man').
-     * @param {number} health - Base health points.
-     * @param {number} attack - Base attack damage.
-     * @param {number} mana - Base mana points.
-     * @param {object} specialAbility - Special ability object from warriorAbilitiesAndStats.js.
-     * @param {string} image - Path to hero image.
-     */
     constructor(name, health, attack, mana, specialAbility, image) {
         this.name = name || 'Unknown';
-        this.health = health || 100;
-        this.maxHealth = health || 100;
-        this.attack = attack || 10;
-        this.baseAttack = attack || 10;
-        this.mana = mana || 50;
-        this.maxMana = mana || 50;
+        this.maxHealth = parseInt(health) || 100;
+        this.health = this.maxHealth;
+        this.baseAttack = parseInt(attack) || 10;
+        this.attack = this.baseAttack;
+        this.maxMana = parseInt(mana) || 50;
+        this.mana = this.maxMana;
         this.specialAbility = specialAbility || { name: 'None', manaCost: 0, cooldown: 0, effect: () => 0 };
-        this.image = image || '';
+        this.image = image || placeholderImage;
         this.isAlive = true;
         this.cooldown = 0;
-        this.stunTurns = 0;
-        this.buffTurns = 0;
-        this.debuffTurns = 0;
+        this.stunTimer = 0;
+        this.buffTimer = 0;
         this.level = 1;
         this.xp = 0;
         this.xpToNextLevel = 100;
         this.critChance = 0.1;
         this.dodgeChance = 0.05;
         this.shield = 1;
+        this.statusEffects = [];
+        this.comboCount = 0;
         this.passive = this.getPassive();
+        this.teamUpCooldown = 0;
     }
 
-    /* JS: Assign passive abilities based on hero name.
-     * @returns {object|null} Passive ability object or null.
-     */
     getPassive() {
-        if (this.name === 'Iron Man') {
-            return { name: 'Arc Reactor', effect: () => { if (Math.random() < 0.1) this.mana = Math.min(this.maxMana, this.mana + 10); } };
-        }
-        if (this.name === 'Wolverine') {
-            return { name: 'Regeneration', effect: () => { this.health = Math.min(this.maxHealth, this.health + 5); } };
-        }
-        return null;
+        const player = window.players.find(p => p.realName === this.name);
+        if (!player) return { name: 'None', description: 'No passive', effect: () => {} };
+        const passives = {
+            'Tony Stark': { name: 'Genius Inventor', description: '10% chance to regen 10 mana', effect: () => { if (Math.random() < 0.1) { this.mana = Math.min(this.maxMana, this.mana + 10); window.Game.log(`${this.name}'s Genius Inventor regenerates 10 mana!`); } } },
+            'Steve Rogers': { name: 'Tactical Leadership', description: 'Boosts team attack by 5%', effect: () => { window.Game.warriors.forEach(w => w.attack = Math.round(w.baseAttack * 1.05)); window.Game.log(`${this.name}'s Leadership boosts team attack!`); } },
+            'Thor Odinson': { name: 'Storm Summoning', description: '10% chance to stun enemy', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('stun', 1)); } },
+            'Natasha Romanoff': { name: 'Master Espionage', description: 'Increases dodge chance by 15%', effect: () => { this.dodgeChance = Math.min(0.2, this.dodgeChance + 0.15); } },
+            'Clint Barton': { name: 'Precision Aim', description: 'Increases crit chance by 5%', effect: () => { this.critChance = Math.min(0.3, this.critChance + 0.05); } },
+            'Peter Parker': { name: 'Spider-Sense', description: 'Increases dodge chance by 15%', effect: () => { this.dodgeChance = Math.min(0.2, this.dodgeChance + 0.15); } },
+            'Stephen Strange': { name: 'Dimensional Manipulation', description: '10% chance to reduce damage by 20%', effect: () => { if (Math.random() < 0.1) this.shield = Math.max(0.8, this.shield * 0.8); } },
+            'T’Challa': { name: 'Kinetic Energy Absorption', description: 'Reduces damage by 10%', effect: () => { this.shield = Math.max(0.9, this.shield * 0.9); } },
+            'Wanda Maximoff': { name: 'Reality Warping', description: '10% chance to restore 10 mana', effect: () => { if (Math.random() < 0.1) this.mana = Math.min(this.maxMana, this.mana + 10); } },
+            'Scott Lang': { name: 'Size Manipulation', description: 'Increases dodge chance by 10%', effect: () => { this.dodgeChance = Math.min(0.15, this.dodgeChance + 0.1); } },
+            'James Howlett/Logan': { name: 'Berserker Rage', description: 'Regenerates 5 health per turn', effect: () => { this.health = Math.min(this.maxHealth, this.health + 5); } },
+            'Ororo Munroe': { name: 'Atmospheric Control', description: '10% chance to stun enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('stun', 1)); } },
+            'Scott Summers': { name: 'Energy Beam Precision', description: 'Increases crit chance by 5%', effect: () => { this.critChance = Math.min(0.3, this.critChance + 0.05); } },
+            'Jean Grey Summers': { name: 'Psychic Overload', description: '10% chance to restore team mana', effect: () => { if (Math.random() < 0.1) window.Game.warriors.forEach(w => w.mana = Math.min(w.maxMana, w.mana + 10)); } },
+            'Henry McCoy': { name: 'Scientific Expertise', description: 'Increases attack by 5%', effect: () => { this.attack = Math.round(this.baseAttack * 1.05); } },
+            'Remy LeBeau': { name: 'Kinetic Charge', description: '10% chance to add burn effect', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('burn', 2)); } },
+            'Anna Marie': { name: 'Memory Assimilation', description: '10% chance to heal 10 health', effect: () => { if (Math.random() < 0.1) this.health = Math.min(this.maxHealth, this.health + 10); } },
+            'Wade Wilson': { name: 'Fourth Wall Break', description: 'Regenerates 5 health per turn', effect: () => { this.health = Math.min(this.maxHealth, this.health + 5); } },
+            'Eddie Brock': { name: 'Symbiote Morph', description: 'Increases attack by 5%', effect: () => { this.attack = Math.round(this.baseAttack * 1.05); } },
+            'Max Eisenhardt': { name: 'Electromagnetic Pulse', description: '10% chance to reduce damage by 15%', effect: () => { if (Math.random() < 0.1) this.shield = Math.max(0.85, this.shield * 0.85); } },
+            'Victor Von Doom': { name: 'Mystic-Tech Fusion', description: 'Reduces damage by 25%', effect: () => { this.shield = Math.max(0.75, this.shield * 0.75); } },
+            'Thanos': { name: 'Cosmic Domination', description: '10% chance to deal 10% extra damage', effect: () => { if (Math.random() < 0.1) this.attack = Math.round(this.baseAttack * 1.1); } },
+            'Loki Laufeyson': { name: 'Shape-shifting', description: 'Increases dodge chance by 15%', effect: () => { this.dodgeChance = Math.min(0.2, this.dodgeChance + 0.15); } },
+            'Ultron': { name: 'Network Hijacking', description: '10% chance to stun enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('stun', 1)); } },
+            'Johann Schmidt': { name: 'Strategic Manipulation', description: 'Increases team attack by 10%', effect: () => { window.Game.warriors.forEach(w => w.attack = Math.round(w.baseAttack * 1.1)); } },
+            'Norman Osborn': { name: 'Insanity Inducing Gas', description: '10% chance to burn enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('burn', 2)); } },
+            'Wilson Fisk': { name: 'Criminal Overlord', description: 'Increases attack by 10%', effect: () => { this.attack = Math.round(this.baseAttack * 1.1); } },
+            'Felicia Hardy': { name: 'Probability Shift', description: 'Increases crit chance by 10%', effect: () => { this.critChance = Math.min(0.3, this.critChance + 0.1); } },
+            'Quentin Beck': { name: 'Holographic Deception', description: 'Increases dodge chance by 5%', effect: () => { this.dodgeChance = Math.min(0.15, this.dodgeChance + 0.05); } },
+            'Aleksei Sytsevich': { name: 'Unstoppable Charge', description: 'Reduces damage by 10%', effect: () => { this.shield = Math.max(0.9, this.shield * 0.9); } },
+            'Flint Marko': { name: 'Sand Reformation', description: 'Increases dodge chance by 5%', effect: () => { this.dodgeChance = Math.min(0.15, this.dodgeChance + 0.05); } },
+            'Max Dillon': { name: 'Power Surge', description: '10% chance to stun enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('stun', 1)); } },
+            'Otto Octavius': { name: 'Multitasking Mastery', description: 'Increases crit chance by 5%', effect: () => { this.critChance = Math.min(0.3, this.critChance + 0.05); } },
+            'Sergei Kravinoff': { name: 'Predator Instinct', description: 'Increases attack by 5%', effect: () => { this.attack = Math.round(this.baseAttack * 1.05); } },
+            'Herman Schultz': { name: 'Shockwave Burst', description: '10% chance to burn enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('burn', 2)); } },
+            'Mac Gargan': { name: 'Venomous Sting', description: '10% chance to poison enemies', effect: () => { if (Math.random() < 0.1) window.Game.enemies.forEach(e => e.addStatusEffect('poison', 2)); } },
+            'Adrian Toomes': { name: 'Aerial Assault', description: 'Increases dodge chance by 5%', effect: () => { this.dodgeChance = Math.min(0.15, this.dodgeChance + 0.05); } },
+            'Bruce Banner': { name: 'Rage Empowerment', description: 'Regenerates 5 health per turn', effect: () => { this.health = Math.min(this.maxHealth, this.health + 5); } },
+            'Lester': { name: 'Perfect Aim', description: 'Increases crit chance by 5%', effect: () => { this.critChance = Math.min(0.3, this.critChance + 0.05); } },
+            'Bucky Barnes': { name: 'Stealth Operations', description: 'Increases dodge chance by 10%', effect: () => { this.dodgeChance = Math.min(0.15, this.dodgeChance + 0.1); } }
+        };
+        return passives[player.realName] || { name: 'None', description: 'No passive ability', effect: () => {} };
     }
 
-    /* JS: Perform basic attack on a target.
-     * @param {Enemy} target - Enemy to attack.
-     * @returns {number} Damage dealt.
-     */
-    attackTarget(target) {
-        if (!this.isAlive || this.stunTurns > 0) return 0;
-        const crit = Math.random() < this.critChance;
-        const damage = Math.round(this.attack * (crit ? 2 : 1) * (0.8 + Math.random() * 0.4));
-        target.takeDamage(damage);
-        this.gainXP(15);
-        this.logAction(`${this.name} attacks ${target.name} for ${damage} damage${crit ? ' (Critical Hit!)' : ''}!`);
-        soundEffects.attack.play().catch(() => { });
-        if (this.passive) this.passive.effect();
-        window.Game.processEnemyTurn(); // Trigger enemy turn
-        window.Game.checkWaveStatus(); // Check if wave is complete
-        return damage;
-    }
-
-    /* JS: Use special ability on a target.
-     * @param {Enemy} target - Enemy to target.
-     * @param {object} game - Game manager instance.
-     * @returns {number|boolean} Damage dealt or false if unusable.
-     */
-    useSpecial(target, game) {
-        if (!this.isAlive || this.mana < this.specialAbility.manaCost || this.cooldown > 0 || this.stunTurns > 0) return false;
-        const damage = this.specialAbility.effect(target, this, game);
-        this.mana -= this.specialAbility.manaCost;
-        this.cooldown = this.specialAbility.cooldown;
-        this.gainXP(30);
-        this.logAction(`${this.name} unleashes ${this.specialAbility.name} for ${damage} damage!`);
-        soundEffects.special.play().catch(() => { });
-        game.achievements.useSpecials.count++;
-        game.checkAchievements();
-        if (this.passive) this.passive.effect();
-        game.processEnemyTurn(); // Trigger enemy turn
-        game.checkWaveStatus(); // Check if wave is complete
-        return damage;
-    }
-
-    /* JS: Take damage from an attack.
-     * @param {number} damage - Raw damage value.
-     * @returns {number} Mitigated damage dealt.
-     */
     takeDamage(damage) {
         if (Math.random() < this.dodgeChance) {
-            this.logAction(`${this.name} dodges the attack!`);
+            window.Game.log(`${this.name} dodged the attack!`);
+            window.Game.dodges++;
+            window.Game.achievements.dodgeMaster.count++;
+            window.Game.checkAchievements();
             return 0;
         }
-        const mitigatedDamage = Math.round(damage * this.shield);
-        this.health = Math.max(0, this.health - mitigatedDamage);
-        if (this.health === 0) {
-            this.isAlive = false;
-            this.logAction(`${this.name} has been defeated!`);
-            window.Game.checkGameOver();
-        }
-        return mitigatedDamage;
+        const actualDamage = Math.round(damage * this.shield);
+        this.health = Math.max(0, this.health - actualDamage);
+        this.isAlive = this.health > 0;
+        window.Game.log(`${this.name} took ${actualDamage} damage! Health: ${this.health}`);
+        if (!this.isAlive) window.Game.log(`${this.name} has been defeated!`);
+        return actualDamage;
     }
 
-    /* JS: Regenerate mana and update status effects each turn. */
+    addStatusEffect(type, turns) {
+        this.statusEffects.push({ type, turns });
+        window.Game.log(`${this.name} is ${type} for ${turns} turn(s)!`);
+        window.Game.statusEffectsApplied++;
+        window.Game.achievements.statusMaster.count++;
+        window.Game.checkAchievements();
+    }
+
     regenerateMana() {
-        this.mana = Math.min(this.maxMana, this.mana + 10 + this.level);
-        if (this.cooldown > 0) this.cooldown--;
-        if (this.stunTurns > 0) this.stunTurns--;
-        if (this.buffTurns > 0) {
-            this.buffTurns--;
-            if (this.buffTurns === 0) {
-                this.attack = this.baseAttack;
-                this.critChance = 0.1;
-                this.dodgeChance = 0.05;
-                this.shield = 1;
-            }
-        }
-        if (this.debuffTurns > 0) {
-            this.debuffTurns--;
-            if (this.debuffTurns === 0) this.attack = this.baseAttack;
-        }
-        if (this.passive) this.passive.effect();
+        this.mana = Math.min(this.maxMana, this.mana + 10);
     }
 
-    /* JS: Gain experience points.
-     * @param {number} amount - XP to gain.
-     */
-    gainXP(amount) {
-        this.xp += amount;
-        while (this.xp >= this.xpToNextLevel && this.level < 20) {
+    gainXP(xp) {
+        this.xp += xp;
+        window.Game.log(`${this.name} gained ${xp} XP!`);
+        while (this.xp >= this.xpToNextLevel) {
             this.levelUp();
         }
     }
 
-    /* JS: Level up the warrior, increasing stats. */
     levelUp() {
         this.level++;
         this.xp -= this.xpToNextLevel;
-        this.xpToNextLevel = Math.round(this.xpToNextLevel * 1.4);
-        this.maxHealth += 15;
-        this.health = Math.min(this.health + 30, this.maxHealth);
-        this.baseAttack += 3;
+        this.xpToNextLevel = Math.round(this.xpToNextLevel * 1.2);
+        this.maxHealth = Math.round(this.maxHealth * 1.1);
+        this.health = this.maxHealth;
+        this.baseAttack = Math.round(this.baseAttack * 1.05);
         this.attack = this.baseAttack;
-        this.maxMana += 5;
-        this.mana = Math.min(this.mana + 15, this.maxMana);
-        this.critChance += 0.02;
-        this.logAction(`${this.name} leveled up to Level ${this.level}!`);
-        soundEffects.levelUp.play().catch(() => { });
-        window.Game.achievements.levelUp5.count++;
-        window.Game.achievements.levelUp20.count++;
-        if (this.level === 20) window.Game.achievements.maxLevel.count++;
+        this.maxMana = Math.round(this.maxMana * 1.1);
+        this.mana = this.maxMana;
+        window.Game.log(`${this.name} leveled up to ${this.level}! Stats improved!`);
+        window.Game.achievements.levelFive.count = Math.max(window.Game.achievements.levelFive.count, this.level >= 5 ? 1 : 0);
+        window.Game.achievements.levelTen.count = Math.max(window.Game.achievements.levelTen.count, this.level >= 10 ? 1 : 0);
+        window.Game.checkAchievements();
+        soundEffects.levelUp?.play()?.catch(() => {});
+        const card = document.querySelector(`[data-warrior-id="${window.players.find(p => p.realName === this.name).id}"]`);
+        if (card) {
+            card.classList.add('animate__pulse');
+            setTimeout(() => card.classList.remove('animate__pulse'), 1000);
+        }
+    }
+
+    updateStatusEffects() {
+        this.statusEffects = this.statusEffects.filter(e => {
+            e.turns--;
+            if (e.type === 'burn') {
+                this.takeDamage(5);
+            } else if (e.type === 'poison') {
+                this.takeDamage(3);
+            } else if (e.type === 'stun' || e.type === 'freeze') {
+                this.stunTimer = e.turns;
+            }
+            return e.turns > 0;
+        });
+        this.cooldown = Math.max(0, this.cooldown - 1);
+        this.teamUpCooldown = Math.max(0, this.teamUpCooldown - 1);
+        this.buffTimer = Math.max(0, this.buffTimer - 1);
+        if (this.buffTimer === 0) {
+            this.attack = this.baseAttack;
+        }
+        this.passive.effect?.();
+    }
+}
+
+// Enemy class
+class Enemy {
+    constructor(name, health, attack, image, difficultyMultiplier = 1.0) {
+        this.name = name || 'Unknown';
+        this.maxHealth = Math.round(health * difficultyMultiplier) || 100;
+        this.health = this.maxHealth;
+        this.attack = Math.round(attack * difficultyMultiplier) || 10;
+        this.image = image || placeholderImage;
+        this.isAlive = true;
+        this.stunTimer = 0;
+        this.statusEffects = [];
+    }
+
+    takeDamage(damage) {
+        const actualDamage = Math.round(damage);
+        this.health = Math.max(0, this.health - actualDamage);
+        this.isAlive = this.health > 0;
+        window.Game.log(`${this.name} took ${actualDamage} damage! Health: ${this.health}`);
+        if (!this.isAlive) {
+            window.Game.log(`${this.name} has been defeated!`);
+            window.Game.enemiesDefeated++;
+            window.Game.achievements.firstBlood.count = Math.min(1, window.Game.achievements.firstBlood.count + 1);
+            window.Game.checkAchievements();
+        }
+        return actualDamage;
+    }
+
+    addStatusEffect(type, turns) {
+        this.statusEffects.push({ type, turns });
+        window.Game.log(`${this.name} is ${type} for ${turns} turn(s)!`);
+        window.Game.statusEffectsApplied++;
+        window.Game.achievements.statusMaster.count++;
         window.Game.checkAchievements();
     }
 
-    /* JS: Log action to battle log UI.
-     * @param {string} message - Message to display.
-     */
-    logAction(message) {
-        const log = document.getElementById('gameLog');
-        if (log) {
-            const entry = document.createElement('p');
-            entry.textContent = message;
-            entry.className = 'animate__animated animate__fadeIn';
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
+    updateStatusEffects() {
+        this.statusEffects = this.statusEffects.filter(e => {
+            e.turns--;
+            if (e.type === 'burn') {
+                this.takeDamage(5);
+            } else if (e.type === 'poison') {
+                this.takeDamage(3);
+            } else if (e.type === 'stun' || e.type === 'freeze') {
+                this.stunTimer = e.turns;
+            }
+            return e.turns > 0;
+        });
+        this.stunTimer = Math.max(0, this.stunTimer - 1);
+    }
+
+    attackTarget(warriors) {
+        if (this.stunTimer > 0 || !this.isAlive) return;
+        const aliveWarriors = warriors.filter(w => w.isAlive);
+        if (aliveWarriors.length === 0) return;
+        const target = aliveWarriors[Math.floor(Math.random() * aliveWarriors.length)];
+        const damage = this.attack;
+        target.takeDamage(damage);
+        window.Game.log(`${this.name} attacks ${target.name} for ${damage} damage!`);
     }
 }
 
-/* JS: Enemy class representing a non-playable opponent. */
-class Enemy {
-    /* JS: Initialize enemy with stats and abilities.
-     * @param {string} name - Enemy name (e.g., 'Void Drone').
-     * @param {number} health - Base health points.
-     * @param {number} attack - Base attack damage.
-     * @param {string} image - Path to enemy image.
-     * @param {object|null} specialAbility - Special ability object or null.
-     */
-    constructor(name, health, attack, image, specialAbility = null) {
-        this.name = name || 'Unknown';
-        this.health = health || 50;
-        this.maxHealth = health || 50;
-        this.attack = attack || 10;
-        this.baseAttack = attack || 10;
-        this.image = image || '';
-        this.specialAbility = specialAbility;
-        this.isAlive = true;
-        this.stunTurns = 0;
-        this.debuffTurns = 0;
-        this.cooldown = 0;
-        this.critChance = 0.1;
-        this.dodgeChance = 0.05;
-        this.shield = 1;
-    }
-
-    /* JS: Perform basic attack on a target.
-     * @param {Warrior} target - Warrior to attack.
-     * @returns {number} Damage dealt.
-     */
-    attackTarget(target) {
-        if (!this.isAlive || this.stunTurns > 0) return 0;
-        const crit = Math.random() < this.critChance;
-        const damage = Math.round(this.attack * (crit ? 2 : 1) * (0.8 + Math.random() * 0.4));
-        const mitigatedDamage = target.takeDamage(damage);
-        this.logAction(`${this.name} attacks ${target.name} for ${mitigatedDamage} damage${crit ? ' (Critical Hit!)' : ''}!`);
-        soundEffects.attack.play().catch(() => { });
-        return mitigatedDamage;
-    }
-
-    /* JS: Use special ability on a target.
-     * @param {Warrior} target - Warrior to target.
-     * @param {object} game - Game manager instance.
-     * @returns {number|boolean} Damage dealt or false if unusable.
-     */
-    useSpecial(target, game) {
-        if (!this.specialAbility || this.cooldown > 0 || this.stunTurns > 0) return false;
-        const damage = this.specialAbility.effect(target, this, game);
-        this.cooldown = this.specialAbility.cooldown;
-        this.logAction(`${this.name} unleashes ${this.specialAbility.name} for ${damage} damage!`);
-        soundEffects.special.play().catch(() => { });
-        return damage;
-    }
-
-    /* JS: Take damage from an attack.
-     * @param {number} damage - Raw damage value.
-     * @returns {number} Mitigated damage dealt.
-     */
-    takeDamage(damage) {
-        if (Math.random() < this.dodgeChance) {
-            this.logAction(`${this.name} dodges the attack!`);
-            return 0;
-        }
-        const mitigatedDamage = Math.round(damage * this.shield);
-        this.health = Math.max(0, this.health - mitigatedDamage);
-        if (this.health === 0) {
-            this.isAlive = false;
-            this.logAction(`${this.name} has been defeated!`);
-            window.Game.addScore(50);
-            window.Game.achievements.defeatEnemies10.count++;
-            window.Game.achievements.defeatEnemies50.count++;
-            window.Game.checkAchievements();
-            window.Game.checkWaveStatus();
-        }
-        return mitigatedDamage;
-    }
-
-    /* JS: Update status effects each turn. */
-    updateStatus() {
-        if (this.stunTurns > 0) this.stunTurns--;
-        if (this.debuffTurns > 0) {
-            this.debuffTurns--;
-            if (this.debuffTurns === 0) {
-                this.attack = this.baseAttack;
-                this.critChance = 0.1;
-                this.dodgeChance = 0.05;
-                this.shield = 1;
-            }
-        }
-        if (this.cooldown > 0) this.cooldown--;
-    }
-
-    /* JS: Log action to battle log UI.
-     * @param {string} message - Message to display.
-     */
-    logAction(message) {
-        const log = document.getElementById('gameLog');
-        if (log) {
-            const entry = document.createElement('p');
-            entry.textContent = message;
-            entry.className = 'animate__animated animate__fadeIn';
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
+// Item class
+class Item {
+    constructor(name, description, effect, target = 'warrior') {
+        this.name = name;
+        this.description = description;
+        this.effect = effect;
+        this.target = target;
     }
 }
 
-/* JS: Game manager handling game state and logic (exposed globally). */
-window.Game = {
-    /* JS: Game state properties. */
-    wave: 1, // Current wave number
-    score: 0, // Player score
-    warriors: [], // Array of Warrior instances
-    enemies: [], // Array of Enemy instances
-    gameMode: 'infinite', // Game mode: 'infinite', 'final', or 'mirror'
-    isGameOver: false, // Game over state
-    selectedEnemyIndex: 0, // Index of currently targeted enemy
-
-    /* JS: Achievements tracking player progress. */
-    achievements: {
-        defeatEnemies10: {
-            count: 0,
-            goal: 10,
-            name: 'Enemy Slayer',
-            description: 'Defeat 10 enemies',
-            reward: '50 XP',
-            unlocked: false
-        },
-        defeatEnemies50: {
-            count: 0,
-            goal: 50,
-            name: 'Cosmic Conqueror',
-            description: 'Defeat 50 enemies',
-            reward: 'Health Surge',
-            unlocked: false
-        },
-        highScore1000: {
-            count: 0,
-            goal: 1000,
-            name: 'High Roller',
-            description: 'Reach 1000 points',
-            reward: '100 points',
-            unlocked: false
-        },
-        highScore5000: {
-            count: 0,
-            goal: 5000,
-            name: 'Legendary Score',
-            description: 'Reach 5000 points',
-            reward: 'Mana Surge',
-            unlocked: false
-        },
-        levelUp5: {
-            count: 0,
-            goal: 5,
-            name: 'Hero Ascendant',
-            description: 'Level up 5 times',
-            reward: 'Attack Overdrive',
-            unlocked: false
-        },
-        levelUp20: {
-            count: 0,
-            goal: 20,
-            name: 'God of Heroes',
-            description: 'Level up 20 times',
-            reward: 'Shield Aura',
-            unlocked: false
-        },
-        finalBoss: {
-            count: 0,
-            goal: 1,
-            name: 'Boss Conqueror',
-            description: 'Defeat Final Boss',
-            reward: 'Revive',
-            unlocked: false
-        },
-        mirrorWin: {
-            count: 0,
-            goal: 1,
-            name: 'Mirror Master',
-            description: 'Win Mirror Mode',
-            reward: 'Critical Boost',
-            unlocked: false
-        },
-        useSpecials: {
-            count: 0,
-            goal: 25,
-            name: 'Specialist',
-            description: 'Use 25 specials',
-            reward: 'Mana reduction',
-            unlocked: false
-        },
-        surviveWaves: {
-            count: 0,
-            goal: 10,
-            name: 'Wave Survivor',
-            description: 'Survive 10 waves',
-            reward: 'XP multiplier',
-            unlocked: false
-        },
-        teamSynergy: {
-            count: 0,
-            goal: 1,
-            name: 'Team Player',
-            description: 'Use synergistic heroes',
-            reward: 'Team Heal',
-            unlocked: false
-        },
-        perfectWave: {
-            count: 0,
-            goal: 1,
-            name: 'Flawless Victory',
-            description: 'Clear wave without damage',
-            reward: 'Shield',
-            unlocked: false
-        },
-        quickWin: {
-            count: 0,
-            goal: 5,
-            name: 'Speed Demon',
-            description: 'Clear 5 waves fast',
-            reward: 'Speed Boost',
-            unlocked: false
-        },
-        maxLevel: {
-            count: 0,
-            goal: 1,
-            name: 'Ultimate Hero',
-            description: 'Reach level 20',
-            reward: 'Legendary Power-Up',
-            unlocked: false
-        },
-        powerUpCombo: {
-            count: 0,
-            goal: 3,
-            name: 'Combo Master',
-            description: 'Use 3 power-ups',
-            reward: 'Combo Power-Up',
-            unlocked: false
-        }
-    },
-
-    /* JS: Set game mode and initialize game.
-     * @param {string} mode - Game mode ('infinite', 'final', 'mirror').
-     */
-    setGameMode(mode) {
-        try {
-            this.gameMode = ['infinite', 'final', 'mirror'].includes(mode) ? mode : 'infinite';
-            localStorage.setItem('gameMode', this.gameMode);
-            const modal = document.getElementById('gameModeModal');
-            if (modal) bootstrap.Modal.getInstance(modal)?.hide();
-            this.init();
-        } catch (e) {
-            console.error('Error setting game mode:', e);
-            this.showError('Failed to set game mode. Defaulting to Infinite.');
-            this.gameMode = 'infinite';
-            this.init();
-        }
-    },
-
-    /* JS: Initialize game state and UI. */
-    init() {
-        try {
-            this.gameMode = localStorage.getItem('gameMode') || 'infinite';
-            this.loadWarriors();
-            this.bindEvents();
-            this.startWave();
-            this.updateUI();
-            this.log('Galaxy BattleForge: Assemble your heroes!');
-            soundEffects.background.play().catch(() => { });
-            soundEffects.background.loop = true;
-        } catch (e) {
-            console.error('Error initializing game:', e);
-            this.showError('Failed to initialize game. Please reload.');
-            this.log('Error starting game. Default team deployed.');
-            this.warriors = [new Warrior('Iron Man', 100, 20, 50, specialAbilities['Iron Man'], warriorImageMap['Iron Man'])];
-            this.startWave();
-        }
-    },
-
-    /* JS: Bind event listeners to control buttons. */
-    bindEvents() {
-        try {
-            const buttons = [
-                { id: 'saveGameBtn', handler: () => this.saveGame() },
-                { id: 'restartGameBtn', handler: () => this.restartGame() },
-                { id: 'themeToggle', handler: () => this.toggleTheme() },
-                { id: 'achievementsBtn', handler: () => this.showAchievements() }
-            ];
-            buttons.forEach(({ id, handler }) => {
-                const btn = document.getElementById(id);
-                if (btn) btn.addEventListener('click', handler);
-            });
-        } catch (e) {
-            console.error('Error binding events:', e);
-            this.showError('Failed to bind controls.');
-        }
-    },
-
-    /* JS: Load selected warriors from localStorage. */
-    loadWarriors() {
-        try {
-            let selectedWarriors = JSON.parse(localStorage.getItem('selectedWarriors') || '[]');
-            if (!Array.isArray(selectedWarriors) || selectedWarriors.length === 0) {
-                selectedWarriors = ['Iron Man'];
-                this.log('No warriors selected. Defaulting to Iron Man.');
-            }
-            this.warriors = selectedWarriors.map(name => {
-                if (!warriorBaseStats[name] || !specialAbilities[name] || !warriorImageMap[name]) {
-                    this.log(`Invalid warrior: ${name}. Using default.`);
-                    return new Warrior('Iron Man', 100, 20, 50, specialAbilities['Iron Man'], warriorImageMap['Iron Man']);
+// Game class
+class Game {
+    constructor() {
+        this.warriors = [];
+        this.enemies = [];
+        this.wave = 1;
+        this.score = 0;
+        this.gameMode = 'infinite';
+        this.isGameOver = false;
+        this.selectedWarrior = null;
+        this.selectedEnemy = null;
+        this.selectedAction = 'none';
+        this.selectedItem = null;
+        this.consecutiveKills = 0;
+        this.itemsUsed = [];
+        this.teamUpsUsed = [];
+        this.inventory = [
+            new Item('Health Potion', 'Restores 50 health to a warrior', (target) => {
+                if (target?.isAlive) {
+                    target.health = Math.min(target.maxHealth, target.health + 50);
+                    this.log(`${target.name} restored 50 health!`);
                 }
+            }),
+            new Item('Mana Potion', 'Restores 30 mana to a warrior', (target) => {
+                if (target?.isAlive) {
+                    target.mana = Math.min(target.maxMana, target.mana + 30);
+                    this.log(`${target.name} restored 30 mana!`);
+                }
+            }),
+            new Item('Attack Boost', 'Increases attack by 20% for 3 turns', (target) => {
+                if (target?.isAlive) {
+                    target.attack = Math.round(target.baseAttack * 1.2);
+                    target.buffTimer = 3;
+                    this.log(`${target.name} gained 20% attack for 3 turns!`);
+                }
+            }),
+            new Item('Synergy Boost', 'Activates a random synergy effect', (target, game) => {
+                const synergyKeys = Object.keys(synergies);
+                const randomSynergy = synergies[synergyKeys[Math.floor(Math.random() * synergyKeys.length)]];
+                randomSynergy.effect(game);
+                this.log(`Synergy Boost activated: ${randomSynergy.name}!`);
+            })
+        ];
+        this.achievements = {
+            firstBlood: { name: 'First Blood', description: 'Defeat an enemy', count: 0, target: 1, reward: () => { this.score += 100; }, rewarded: false },
+            waveMaster: { name: 'Wave Master', description: 'Complete 5 waves', count: 0, target: 5, reward: () => { this.score += 500; }, rewarded: false },
+            levelFive: { name: 'Rising Star', description: 'Reach level 5 with a hero', count: 0, target: 1, reward: () => { this.score += 200; }, rewarded: false },
+            levelTen: { name: 'Elite Warrior', description: 'Reach level 10 with a hero', count: 0, target: 1, reward: () => { this.score += 400; }, rewarded: false },
+            comboKing: { name: 'Combo King', description: 'Perform 5 combo attacks', count: 0, target: 5, reward: () => { this.score += 300; }, rewarded: false },
+            statusMaster: { name: 'Status Master', description: 'Apply 10 status effects', count: 0, target: 10, reward: () => { this.score += 350; }, rewarded: false },
+            dodgeMaster: { name: 'Dodge Master', description: 'Dodge 5 attacks', count: 0, target: 5, reward: () => { this.score += 250; }, rewarded: false },
+            teamUpMaster: { name: 'Team-Up Titan', description: 'Use 5 team-up abilities', count: 0, target: 5, reward: () => { this.score += 400; }, rewarded: false },
+            synergySavant: { name: 'Synergy Savant', description: 'Activate 5 different synergies', count: 0, target: 5, reward: () => { this.score += 500; }, rewarded: false },
+            thanosSnap: { name: 'Infinity Slayer', description: 'Use Thanos\' Infinity Snap', count: 0, target: 1, reward: () => { this.score += 1000; }, rewarded: false }
+        };
+        this.difficulty = localStorage.getItem('difficulty') || 'normal';
+        this.difficultyMultipliers = { easy: 0.8, normal: 1, hard: 1.2 };
+        this.powerUps = [
+            { name: 'Health Boost', effect: () => { this.warriors.forEach(w => { w.maxHealth += 20; w.health = w.maxHealth; }); this.log('All warriors gained +20 max health!'); } },
+            { name: 'Attack Boost', effect: () => { this.warriors.forEach(w => { w.attack += 5; }); this.log('All warriors gained +5 attack!'); } },
+            { name: 'Mana Boost', effect: () => { this.warriors.forEach(w => { w.maxMana += 10; w.mana = w.maxMana; }); this.log('All warriors gained +10 max mana!'); } }
+        ];
+        this.startTime = Date.now();
+        this.criticalHits = 0;
+        this.dodges = 0;
+        this.statusEffectsApplied = 0;
+        this.enemiesDefeated = 0;
+        this.activeSynergies = new Set();
+        this.teamUpsPerformed = new Set();
+        window.Game = this;
+    }
+
+    async initialize() {
+        try {
+            await soundEffects.load();
+            this.loadSettings();
+            this.loadGame();
+            this.setupEventListeners();
+            this.loadWarriors();
+            this.applySynergies();
+            this.startWave();
+            this.updateHUD();
+            this.updateInventory();
+            this.updateAchievements();
+        } catch (e) {
+            this.showErrorToast('Failed to initialize game! Please check console for details or try refreshing.');
+            console.error('[Game.initialize]', e);
+        }
+    }
+
+    applySynergies() {
+        Object.entries(synergies).forEach(([name, synergy]) => {
+            const hasSynergy = synergy.heroes.every(hero => this.warriors.some(w => w.name === hero && w.isAlive));
+            if (hasSynergy) {
+                synergy.effect(this);
+                this.activeSynergies.add(name);
+                this.achievements.synergySavant.count = this.activeSynergies.size;
+                this.checkAchievements();
+            }
+        });
+    }
+
+    loadSettings() {
+        const soundVolume = localStorage.getItem('soundVolume') || '50';
+        const soundVolumeInput = document.getElementById('soundVolume');
+        if (soundVolumeInput) soundVolumeInput.value = soundVolume;
+        this.difficulty = localStorage.getItem('difficulty') || 'normal';
+        const difficultySelect = document.getElementById('difficultySelect');
+        if (difficultySelect) difficultySelect.value = this.difficulty;
+        Object.values(soundEffects).forEach(sound => { if (sound) sound.volume = parseFloat(soundVolume) / 100; });
+        if (soundEffects.background) soundEffects.background.volume *= 0.5;
+    }
+
+    saveSettings() {
+        const soundVolumeInput = document.getElementById('soundVolume');
+        const difficultySelect = document.getElementById('difficultySelect');
+        if (!soundVolumeInput || !difficultySelect) return;
+        const soundVolume = soundVolumeInput.value;
+        const difficulty = difficultySelect.value;
+        localStorage.setItem('soundVolume', soundVolume);
+        localStorage.setItem('difficulty', difficulty);
+        this.difficulty = difficulty;
+        Object.values(soundEffects).forEach(sound => { if (sound) sound.volume = parseFloat(soundVolume) / 100; });
+        if (soundEffects.background) soundEffects.background.volume *= 0.5;
+        this.log('Settings saved!');
+        const settingsModal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+        if (settingsModal) settingsModal.hide();
+    }
+
+    loadWarriors() {
+        const selectedWarriors = JSON.parse(localStorage.getItem('selectedWarriors')) || ['Tony Stark', 'Steve Rogers', 'Thor Odinson'];
+        this.warriors = selectedWarriors
+            .filter(w => w !== 'none')
+            .map(name => {
+                const stats = warriorBaseStats[name] || { health: 100, attack: 20, mana: 50 };
                 return new Warrior(
                     name,
-                    warriorBaseStats[name].health,
-                    warriorBaseStats[name].attack,
-                    warriorBaseStats[name].mana,
+                    stats.health,
+                    stats.attack,
+                    stats.mana,
                     specialAbilities[name],
-                    warriorImageMap[name]
+                    warriorImageMap.get(name) || placeholderImage
                 );
             });
-            if (new Set(this.warriors.map(w => w.name)).size >= 2) {
-                this.achievements.teamSynergy.count++;
-                this.checkAchievements();
-            }
-        } catch (e) {
-            console.error('Error loading warriors:', e);
-            this.warriors = [new Warrior('Iron Man', 100, 20, 50, specialAbilities['Iron Man'], warriorImageMap['Iron Man'])];
-            this.showError('Error loading team. Using default warrior.');
-        }
-    },
-
-    /* JS: Start a new wave with enemies. */
-    startWave() {
-        try {
-            this.enemies = this.generateEnemies();
-            const waveTransition = document.getElementById('waveTransition');
-            if (waveTransition) {
-                waveTransition.textContent = `Wave ${this.wave}`;
-                waveTransition.style.display = 'flex';
-                setTimeout(() => waveTransition.style.display = 'none', 2000);
-            }
-            this.updateUI();
-            this.log(`Wave ${this.wave} begins!`);
-        } catch (e) {
-            console.error('Error starting wave:', e);
-            this.showError('Failed to start wave.');
-        }
-    },
-
-    /* JS: Generate enemies based on game mode.
-     * @returns {Enemy[]} Array of Enemy instances.
-     */
-    generateEnemies() {
-        try {
-            const enemies = [];
-            const waveScaling = Math.min(this.wave * 0.1, 3);
-            if (this.gameMode === 'final') {
-                enemies.push(new Enemy(
-                    'Overlord Zarkon',
-                    500 + this.wave * 50,
-                    40 + this.wave * 5,
-                    enemyImageMap['Overlord Zarkon'],
-                    {
-                        name: 'Cosmic Blast',
-                        manaCost: 0,
-                        cooldown: 2,
-                        effect: (target, enemy) => {
-                            const damage = Math.round(enemy.attack * 2);
-                            target.takeDamage(damage);
-                            return damage;
-                        }
-                    }
-                ));
-            } else if (this.gameMode === 'mirror') {
-                this.warriors.forEach((w, i) => {
-                    enemies.push(new Enemy(
-                        `Mirror ${w.name} #${i + 1}`,
-                        w.maxHealth * 1.2,
-                        w.attack * 1.1,
-                        w.image,
-                        w.specialAbility
-                    ));
-                });
-            } else {
-                const count = Math.min(5, 1 + Math.floor(this.wave / 2));
-                const enemyTypes = ['Void Drone', 'Abyssal Stalker', 'Wave Invader', 'Cosmic Tyrant', 'Nebula Wraith'];
-                for (let i = 0; i < count; i++) {
-                    const name = enemyTypes[i % enemyTypes.length];
-                    const health = Math.round((80 + this.wave * 15) * waveScaling);
-                    const attack = Math.round((15 + this.wave * 4) * waveScaling);
-                    enemies.push(new Enemy(
-                        `${name} #${i + 1}`,
-                        health,
-                        attack,
-                        enemyImageMap[name],
-                        {
-                            name: 'Dark Pulse',
-                            manaCost: 0,
-                            cooldown: 3,
-                            effect: (target, enemy) => {
-                                const damage = Math.round(enemy.attack * (1.2 + this.wave * 0.05));
-                                target.takeDamage(damage);
-                                return damage;
-                            }
-                        }
-                    ));
-                }
-            }
-            return enemies;
-        } catch (e) {
-            console.error('Error generating enemies:', e);
-            this.showError('Failed to generate enemies.');
-            return [new Enemy('Void Drone', 80, 15, enemyImageMap['Void Drone'])];
-        }
-    },
-
-    /* JS: Advance to the next wave. */
-    startNextWave() {
-        try {
-            this.wave++;
-            this.warriors.forEach(w => w.regenerateMana());
-            this.achievements.surviveWaves.count = this.wave;
-            this.achievements.quickWin.count += (this.wave % 2 === 0) ? 1 : 0; // Fast wave clear simulation
-            this.checkAchievements();
-            this.showPowerupSelection();
-        } catch (e) {
-            console.error('Error starting next wave:', e);
-            this.showError('Failed to advance wave.');
-        }
-    },
-
-    /* JS: Show power-up selection modal. */
-    showPowerupSelection() {
-        try {
-            const powerUps = [
-                { name: 'Health Surge', description: 'Restores 50 health', effect: w => w.health = Math.min(w.maxHealth, w.health + 50) },
-                { name: 'Attack Overdrive', description: 'Boosts attack', effect: w => { w.attack += 10; w.buffTurns = 3; } },
-                { name: 'Mana Surge', description: 'Restores mana', effect: w => w.mana = w.maxMana },
-                { name: 'Critical Boost', description: 'Increases crit chance', effect: w => { w.critChance += 0.2; w.buffTurns = 3; } },
-                { name: 'Shield Aura', description: 'Reduces damage', effect: w => { w.shield = 0.8; w.buffTurns = 3; } },
-                { name: 'Revive', description: 'Revives warrior', effect: w => { if (!w.isAlive) { w.isAlive = true; w.health = w.maxHealth * 0.5; } } },
-                { name: 'Team Heal', description: 'Heals all', effect: w => w.health = Math.min(w.maxHealth, w.health + 30) },
-                { name: 'Enemy Debuff', effect: (w, enemies) => enemies.forEach(e => { e.debuffTurns = 3; e.attack *= 0.8; }) },
-                { name: 'Legendary Combo', description: 'Health + Shield', effect: w => { w.health += 50; w.shield = 0.7; w.buffTurns = 5; } }
-            ];
-            const choices = document.getElementById('powerupChoices');
-            if (!choices) throw new Error('Power-up choices element missing.');
-            choices.innerHTML = '';
-            const selectedPowerUps = powerUps.sort(() => Math.random() - 0.5).slice(0, 3);
-            selectedPowerUps.forEach(p => {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-marvel mb-2 w-100';
-                btn.textContent = p.name;
-                btn.title = p.description || '';
-                btn.onclick = () => {
-                    this.applyPowerup(p.effect);
-                    const modal = document.getElementById('powerupModal');
-                    if (modal) bootstrap.Modal.getInstance(modal)?.hide();
-                    this.achievements.powerUpCombo.count++;
-                    this.checkAchievements();
-                    this.startWave();
-                };
-                choices.appendChild(btn);
-            });
-            const modal = document.getElementById('powerupModal');
-            if (modal) new bootstrap.Modal(modal).show();
-        } catch (e) {
-            console.error('Error showing power-up selection:', e);
-            this.showError('Failed to show power-ups.');
-            this.startWave();
-        }
-    },
-
-    /* JS: Apply selected power-up to warriors or enemies.
-     * @param {function} effect - Power-up effect function.
-     */
-    applyPowerup(effect) {
-        try {
-            this.warriors.forEach(w => effect(w, this.enemies));
-            this.log('Power-up applied!');
-        } catch (e) {
-            console.error('Error applying power-up:', e);
-            this.showError('Failed to apply power-up.');
-        }
-    },
-
-    /* JS: Add points to the score.
-     * @param {number} amount - Points to add.
-     */
-    addScore(amount) {
-        try {
-            this.score += amount;
-            this.achievements.highScore1000.count = this.score;
-            this.achievements.highScore5000.count = this.score;
-            this.checkAchievements();
-        } catch (e) {
-            console.error('Error adding score:', e);
-            this.showError('Failed to update score.');
-        }
-    },
-
-    /* JS: Check and unlock achievements. */
-    checkAchievements() {
-        try {
-            for (const [key, stat] of Object.entries(this.achievements)) {
-                if (stat.count >= stat.goal && !stat.unlocked) {
-                    stat.unlocked = true;
-                    this.showAchievement(stat);
-                    this.applyReward(stat);
-                }
-            }
-            const count = document.getElementById('achievementCount');
-            if (count) count.textContent = Object.values(this.achievements).filter(a => a.unlocked).length;
-        } catch (e) {
-            console.error('Error checking achievements:', e);
-            this.showError('Failed to check achievements.');
-        }
-    },
-
-    /* JS: Apply achievement rewards.
-     * @param {object} achievement - Achievement object.
-     */
-    applyReward(achievement) {
-        try {
-            switch (achievement.name) {
-                case 'Enemy Slayer':
-                    this.warriors.forEach(w => w.gainXP(50));
-                    break;
-                case 'Cosmic Conqueror':
-                    this.warriors.forEach(w => w.health = Math.min(w.maxHealth, w.health + 50));
-                    break;
-                case 'High Roller':
-                    this.addScore(100);
-                    break;
-                case 'Legendary Score':
-                    this.warriors.forEach(w => w.mana = w.maxMana);
-                    break;
-                case 'Hero Ascendant':
-                    this.warriors.forEach(w => { w.attack += 5; w.buffTurns = 3; });
-                    break;
-                case 'God of Heroes':
-                    this.warriors.forEach(w => { w.shield = 0.8; w.buffTurns = 3; });
-                    break;
-                case 'Boss Conqueror':
-                    this.warriors.forEach(w => { if (!w.isAlive) { w.isAlive = true; w.health = w.maxHealth * 0.5; } });
-                    break;
-                case 'Mirror Master':
-                    this.warriors.forEach(w => { w.critChance += 0.1; w.buffTurns = 3; });
-                    break;
-                case 'Specialist':
-                    this.warriors.forEach(w => w.specialAbility.manaCost = Math.max(10, w.specialAbility.manaCost - 5));
-                    break;
-                case 'Wave Survivor':
-                    this.warriors.forEach(w => w.gainXP(100));
-                    break;
-                case 'Team Player':
-                    this.warriors.forEach(w => w.health = Math.min(w.maxHealth, w.health + 30));
-                    break;
-                case 'Flawless Victory':
-                    this.warriors.forEach(w => { w.shield = 0.7; w.buffTurns = 2; });
-                    break;
-                case 'Speed Demon':
-                    this.warriors.forEach(w => { w.critChance += 0.05; w.buffTurns = 2; });
-                    break;
-                case 'Ultimate Hero':
-                    this.warriors.forEach(w => { w.attack += 10; w.health += 20; w.buffTurns = 5; });
-                    break;
-                case 'Combo Master':
-                    this.warriors.forEach(w => { w.health += 30; w.attack += 5; w.buffTurns = 3; });
-                    break;
-            }
-            soundEffects.achievement.play().catch(() => { });
-        } catch (e) {
-            console.error('Error applying reward:', e);
-            this.showError('Failed to apply achievement reward.');
-        }
-    },
-
-    /* JS: Show achievement toast notification.
-     * @param {object} achievement - Achievement object.
-     */
-    showAchievement(achievement) {
-        try {
-            const toast = document.createElement('div');
-            toast.className = 'achievement-toast';
-            toast.textContent = `Achievement Unlocked: ${achievement.name}!`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-        } catch (e) {
-            console.error('Error showing achievement:', e);
-        }
-    },
-
-    /* JS: Save game state to localStorage. */
-    saveGame() {
-        try {
-            const saveData = {
-                wave: this.wave,
-                score: this.score,
-                warriors: this.warriors.map(w => ({
-                    name: w.name,
-                    health: w.health,
-                    level: w.level,
-                    xp: w.xp
-                })),
-                gameMode: this.gameMode,
-                achievements: this.achievements
-            };
-            localStorage.setItem('gameSave', JSON.stringify(saveData));
-            this.log('Game saved successfully!');
-        } catch (e) {
-            console.error('Error saving game:', e);
-            this.showError('Failed to save game.');
-        }
-    },
-
-    /* JS: Restart the game, resetting state. */
-    restartGame() {
-        try {
-            this.wave = 1;
-            this.score = 0;
-            this.enemies = [];
-            this.isGameOver = false;
-            this.loadWarriors();
-            this.startWave();
-            localStorage.removeItem('gameMode');
-            window.location.reload();
-        } catch (e) {
-            console.error('Error restarting game:', e);
-            this.showError('Failed to restart game.');
-        }
-    },
-
-    /* JS: Toggle between light and dark themes. */
-    toggleTheme() {
-        try {
-            document.body.classList.toggle('light-theme');
-            const themeBtn = document.getElementById('themeToggle');
-            if (themeBtn) themeBtn.textContent = document.body.classList.contains('light-theme') ? 'Theme: Light' : 'Theme: Dark';
-        } catch (e) {
-            console.error('Error toggling theme:', e);
-            this.showError('Failed to toggle theme.');
-        }
-    },
-
-    /* JS: Show achievements modal with progress. */
-    showAchievements() {
-        try {
-            const list = document.getElementById('achievementList');
-            if (!list) throw new Error('Achievement list element missing.');
-            list.innerHTML = '';
-            for (const stat of Object.values(this.achievements)) {
-                const item = document.createElement('div');
-                item.textContent = `${stat.name}: ${stat.description} (${stat.unlocked ? 'Unlocked' : `${stat.count}/${stat.goal}`})`;
-                list.appendChild(item);
-            }
-            const modal = document.getElementById('achievementsModal');
-            if (modal) new bootstrap.Modal(modal).show();
-        } catch (e) {
-            console.error('Error showing achievements:', e);
-            this.showError('Failed to show achievements.');
-        }
-    },
-
-    /* JS: Update game UI with current state. */
-    updateUI() {
-        try {
-            const playerGrid = document.getElementById('playerHeroesGrid');
-            const enemyGrid = document.getElementById('enemyGrid');
-            if (!playerGrid || !enemyGrid) throw new Error('Grid elements missing.');
-
-            playerGrid.innerHTML = '';
-            this.warriors.forEach((w, i) => {
-                const card = document.createElement('div');
-                card.className = `character-card ${w.level >= 5 ? 'level-5' : ''} ${w.level >= 10 ? 'level-10' : ''} ${w.level >= 20 ? 'level-20' : ''}`;
-                card.innerHTML = `
-                    <img class="character-img" src="${w.image || ''}" alt="${w.name}">
-                    <div class="status-bars">
-                        <div>HP: ${w.health}/${w.maxHealth}</div>
-                        <div class="progress"><div class="progress-bar progress-bar-health" style="width: ${w.health / w.maxHealth * 100}%"></div></div>
-                        <div>Mana: ${w.mana}/${w.maxMana}</div>
-                        <div class="progress"><div class="progress-bar progress-bar-mana" style="width: ${w.mana / w.maxMana * 100}%"></div></div>
-                        <div>XP: ${w.xp}/${w.xpToNextLevel}</div>
-                        <div class="progress"><div class="progress-bar progress-bar-xp" style="width: ${w.xp / w.xpToNextLevel * 100}%"></div></div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn-action" onclick="window.Game.warriors[${i}].attackTarget(window.Game.enemies[window.Game.selectedEnemyIndex] || window.Game.enemies[0])" ${!w.isAlive || this.isGameOver || !this.enemies.some(e => e.isAlive) ? 'disabled' : ''}>Attack</button>
-                        <button class="btn-action" onclick="window.Game.warriors[${i}].useSpecial(window.Game.enemies[window.Game.selectedEnemyIndex] || window.Game.enemies[0], window.Game)" ${!w.isAlive || w.mana < w.specialAbility.manaCost || w.cooldown > 0 || this.isGameOver || !this.enemies.some(e => e.isAlive) ? 'disabled' : ''}>Special</button>
-                    </div>
-                    <div class="stats-modal">
-                        <p>Level: ${w.level}</p>
-                        <p>Attack: ${w.attack}</p>
-                        <p>Crit: ${(w.critChance * 100).toFixed(1)}%</p>
-                        <p>Special: ${w.specialAbility.name}</p>
-                    </div>
-                `;
-                playerGrid.appendChild(card);
-            });
-
-            enemyGrid.innerHTML = '';
-            this.enemies.forEach((e, i) => {
-                const card = document.createElement('div');
-                card.className = `character-card ${this.selectedEnemyIndex === i ? 'selected-enemy' : ''}`;
-                card.onclick = () => { this.selectedEnemyIndex = i; this.updateUI(); };
-                card.innerHTML = `
-                    <img class="character-img" src="${e.image || ''}" alt="${e.name}">
-                    <div class="status-bars">
-                        <div>HP: ${e.health}/${e.maxHealth}</div>
-                        <div class="progress"><div class="progress-bar progress-bar-health" style="width: ${e.health / e.maxHealth * 100}%"></div></div>
-                    </div>
-                `;
-                enemyGrid.appendChild(card);
-            });
-
-            const waveDisplay = document.getElementById('waveDisplay');
-            const scoreDisplay = document.getElementById('scoreDisplay');
-            const warriorsDisplay = document.getElementById('warriorsDisplay');
-            const modeDisplay = document.getElementById('modeDisplay');
-            if (waveDisplay) waveDisplay.textContent = this.wave;
-            if (scoreDisplay) scoreDisplay.textContent = this.score;
-            if (warriorsDisplay) warriorsDisplay.textContent = `${this.warriors.filter(w => w.isAlive).length}/${this.warriors.length}`;
-            if (modeDisplay) modeDisplay.textContent = this.gameMode.charAt(0).toUpperCase() + this.gameMode.slice(1);
-        } catch (e) {
-            console.error('Error updating UI:', e);
-            this.showError('Failed to update game UI.');
-        }
-    },
-
-    /* JS: Process enemy turn after player action. */
-    processEnemyTurn() {
-        if (this.isGameOver) return;
-        try {
-            this.enemies.forEach(e => {
-                if (e.isAlive) {
-                    const target = this.warriors.find(w => w.isAlive) || this.warriors[0];
-                    if (e.specialAbility && Math.random() < 0.3) {
-                        e.useSpecial(target, this);
-                    } else {
-                        e.attackTarget(target);
-                    }
-                    e.updateStatus();
-                }
-            });
-            this.updateUI();
-        } catch (e) {
-            console.error('Error processing enemy turn:', e);
-            this.showError('Failed to process enemy turn.');
-        }
-    },
-
-    /* JS: Check if wave is complete or mode-specific win condition met. */
-    checkWaveStatus() {
-        try {
-            if (this.enemies.every(e => !e.isAlive)) {
-                if (this.gameMode === 'final' && this.enemies.some(e => e.name === 'Overlord Zarkon')) {
-                    this.achievements.finalBoss.count++;
-                    this.showVictory();
-                } else if (this.gameMode === 'mirror') {
-                    this.achievements.mirrorWin.count++;
-                    this.showVictory();
-                } else {
-                    this.achievements.perfectWave.count += this.warriors.every(w => w.health === w.maxHealth) ? 1 : 0;
-                    this.startNextWave();
-                }
-                this.checkAchievements();
-            }
-        } catch (e) {
-            console.error('Error checking wave status:', e);
-            this.showError('Failed to check wave status.');
-        }
-    },
-
-    /* JS: Check if game is over (all warriors defeated). */
-    checkGameOver() {
-        try {
-            if (this.warriors.every(w => !w.isAlive)) {
-                this.isGameOver = true;
-                soundEffects.defeat.play().catch(() => { });
-                const modal = document.getElementById('gameOverModal');
-                if (modal) new bootstrap.Modal(modal).show();
-                this.updateUI();
-            }
-        } catch (e) {
-            console.error('Error checking game over:', e);
-            this.showError('Failed to check game over.');
-        }
-    },
-
-    /* JS: Show victory modal for mode completion. */
-    showVictory() {
-        try {
-            soundEffects.victory.play().catch(() => { });
-            const modal = document.getElementById('victoryModal');
-            if (modal) new bootstrap.Modal(modal).show();
-            this.isGameOver = true;
-            this.updateUI();
-        } catch (e) {
-            console.error('Error showing victory:', e);
-            this.showError('Failed to show victory.');
-        }
-    },
-
-    /* JS: Show error toast notification.
-     * @param {string} message - Error message to display.
-     */
-    showError(message) {
-        try {
-            const toast = document.createElement('div');
-            toast.className = 'error-toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        } catch (e) {
-            console.error('Error showing error:', e);
-        }
-    },
-
-    /* JS: Log message to battle log UI.
-     * @param {string} message - Message to display.
-     */
-    log(message) {
-        try {
-            const log = document.getElementById('gameLog');
-            if (log) {
-                const entry = document.createElement('p');
-                entry.textContent = message;
-                entry.className = 'log-entry';
-                log.appendChild(entry);
-                log.scrollTop = log.scrollHeight;
-            }
-        } catch (e) {
-            console.error('Error logging message:', e);
-        }
-    },
-    loadSavedWarriors() {
-        console.log("loaded saved warriors!")
+        this.renderWarriors();
     }
-};
+
+    saveGame() {
+        const gameState = {
+            warriors: this.warriors.map(w => ({
+                name: w.name,
+                health: w.health,
+                maxHealth: w.maxHealth,
+                attack: w.attack,
+                mana: w.mana,
+                maxMana: w.maxMana,
+                level: w.level,
+                xp: w.xp,
+                xpToNextLevel: w.xpToNextLevel
+            })),
+            wave: this.wave,
+            score: this.score,
+            gameMode: this.gameMode,
+            inventory: this.inventory.map(i => i.name),
+            achievements: Object.fromEntries(Object.entries(this.achievements).map(([k, v]) => [k, { ...v, reward: undefined }])),
+            activeSynergies: Array.from(this.activeSynergies),
+            teamUpsPerformed: Array.from(this.teamUpsPerformed)
+        };
+        localStorage.setItem('gameState', JSON.stringify(gameState));
+        this.log('Game saved!');
+        const saveGameModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('saveGameModal'));
+        saveGameModal.show();
+    }
+
+    loadGame() {
+        const savedState = JSON.parse(localStorage.getItem('gameState'));
+        if (savedState) {
+            this.warriors = savedState.warriors.map(w => {
+                const warrior = new Warrior(
+                    w.name,
+                    w.maxHealth,
+                    w.attack,
+                    w.maxMana,
+                    specialAbilities[w.name],
+                    warriorImageMap.get(w.name) || placeholderImage
+                );
+                warrior.health = w.health;
+                warrior.mana = w.mana;
+                warrior.level = w.level;
+                warrior.xp = w.xp;
+                warrior.xpToNextLevel = w.xpToNextLevel;
+                return warrior;
+            });
+            this.wave = savedState.wave;
+            this.score = savedState.score;
+            this.gameMode = savedState.gameMode;
+            this.inventory = savedState.inventory.map(name =>
+                this.inventory.find(i => i.name === name) || new Item(name, 'Unknown Item', () => {})
+            );
+            Object.entries(savedState.achievements || {}).forEach(([key, value]) => {
+                if (this.achievements[key]) {
+                    this.achievements[key].count = value.count;
+                    this.achievements[key].rewarded = value.rewarded;
+                }
+            });
+            this.activeSynergies = new Set(savedState.activeSynergies || []);
+            this.teamUpsPerformed = new Set(savedState.teamUpsPerformed || []);
+            this.renderWarriors();
+            this.updateHUD();
+            this.updateInventory();
+            this.updateAchievements();
+            this.log('Game loaded!');
+        }
+    }
+
+    startWave() {
+        this.enemies = [];
+        const enemyNames = Array.from(enemyImageMap.keys()).filter(e => e !== 'Thanos');
+        const enemyCount = Math.min(3, Math.floor(this.wave / 2) + 1);
+        for (let i = 0; i < enemyCount; i++) {
+            const name = enemyNames[Math.floor(Math.random() * enemyNames.length)];
+            const baseHealth = 100 + this.wave * 10 * this.difficultyMultipliers[this.difficulty];
+            const baseAttack = 10 + this.wave * 2 * this.difficultyMultipliers[this.difficulty];
+            this.enemies.push(new Enemy(
+                name,
+                baseHealth,
+                baseAttack,
+                enemyImageMap.get(name) || placeholderImage,
+                this.difficultyMultipliers[this.difficulty]
+            ));
+        }
+        if (this.wave % 10 === 0) {
+            this.enemies.push(new Enemy(
+                'Thanos',
+                500 * this.difficultyMultipliers[this.difficulty],
+                30 * this.difficultyMultipliers[this.difficulty],
+                enemyImageMap.get('Thanos') || placeholderImage,
+                this.difficultyMultipliers[this.difficulty]
+            ));
+        }
+        this.renderEnemies();
+        this.log(`Wave ${this.wave} started with ${this.enemies.length} enemies!`);
+        this.applySynergies();
+        this.updateHUD();
+    }
+
+    renderWarriors() {
+        const warriorContainer = document.getElementById('warriorContainer');
+        if (!warriorContainer) return;
+        warriorContainer.innerHTML = '';
+        this.warriors.forEach((warrior, index) => {
+            if (!warrior.isAlive) return;
+            const player = window.players.find(p => p.realName === warrior.name);
+            const card = document.createElement('div');
+            card.className = 'card warrior-card animate__animated animate__fadeIn';
+            card.dataset.warriorId = player?.id || `warrior-${index}`;
+            card.innerHTML = `
+                <img src="${warrior.image}" alt="${warrior.name}" class="card-img-top" onerror="this.src='${placeholderImage}'">
+                <div class="card-body">
+                    <h5 class="card-title">${warrior.name}</h5>
+                    <p>Health: <span class="health">${warrior.health}/${warrior.maxHealth}</span></p>
+                    <p>Mana: <span class="mana">${warrior.mana}/${warrior.maxMana}</span></p>
+                    <p>Attack: <span class="attack">${warrior.attack}</span></p>
+                    <p>Level: <span class="level">${warrior.level}</span></p>
+                    <button class="btn btn-primary btn-sm btn-select-warrior" data-warrior-id="${index}" aria-label="Select ${warrior.name}">Select</button>
+                    <button class="btn btn-success btn-sm btn-special-ability" data-warrior-id="${index}" ${warrior.cooldown > 0 || warrior.mana < warrior.specialAbility.manaCost ? 'disabled' : ''} aria-label="Use ${warrior.specialAbility.name}">Special</button>
+                    <button class="btn btn-info btn-sm btn-team-up" data-warrior-id="${index}" ${warrior.teamUpCooldown > 0 ? 'disabled' : ''} aria-label="Use Team-Up">Team-Up</button>
+                    <button class="btn btn-secondary btn-sm btn-more-info" data-warrior-id="${index}" aria-label="More Info on ${warrior.name}">Info</button>
+                </div>
+            `;
+            warriorContainer.appendChild(card);
+        });
+    }
+
+    renderEnemies() {
+        const enemyContainer = document.getElementById('enemyContainer');
+        if (!enemyContainer) return;
+        enemyContainer.innerHTML = '';
+        this.enemies.forEach((enemy, index) => {
+            if (!enemy.isAlive) return;
+            const card = document.createElement('div');
+            card.className = 'card enemy-card animate__animated animate__fadeIn';
+            card.dataset.enemyId = index;
+            card.innerHTML = `
+                <img src="${enemy.image}" alt="${enemy.name}" class="card-img-top" onerror="this.src='${placeholderImage}'">
+                <div class="card-body">
+                    <h5 class="card-title">${enemy.name}</h5>
+                    <p>Health: <span class="health">${enemy.health}/${enemy.maxHealth}</span></p>
+                    <p>Attack: <span class="attack">${enemy.attack}</span></p>
+                    <button class="btn btn-danger btn-sm btn-select-enemy" data-enemy-id="${index}" aria-label="Target ${enemy.name}">Target</button>
+                </div>
+            `;
+            enemyContainer.appendChild(card);
+        });
+    }
+
+    updateHUD() {
+        const waveDisplay = document.getElementById('waveDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        if (waveDisplay) waveDisplay.textContent = `Wave: ${this.wave}`;
+        if (scoreDisplay) scoreDisplay.textContent = `Score: ${this.score}`;
+    }
+
+    updateInventory() {
+        const inventoryList = document.getElementById('inventoryList');
+        if (!inventoryList) return;
+        inventoryList.innerHTML = '';
+        this.inventory.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.innerHTML = `
+                ${item.name}: ${item.description}
+                <button class="btn btn-sm btn-primary btn-use-item" data-item-id="${index}" aria-label="Use ${item.name}">Use</button>
+            `;
+            inventoryList.appendChild(li);
+        });
+    }
+
+    updateAchievements() {
+        const achievementList = document.getElementById('achievementList');
+        if (!achievementList) return;
+        achievementList.innerHTML = '';
+        Object.entries(this.achievements).forEach(([_, ach]) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = `${ach.name}: ${ach.description} (${ach.count}/${ach.target}) ${ach.rewarded ? '[Rewarded]' : ''}`;
+            achievementList.appendChild(li);
+        });
+    }
+
+    log(message) {
+        const logContainer = document.getElementById('logContainer');
+        if (!logContainer) return;
+        const logEntry = document.createElement('p');
+        logEntry.textContent = message;
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    showErrorToast(message) {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast bg-danger text-white';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="toast-header">
+                <strong>Error</strong>
+                <button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">${message}</div>
+        `;
+        toastContainer.appendChild(toast);
+        const bootstrapToast = new bootstrap.Toast(toast);
+        bootstrapToast.show();
+    }
+
+    checkAchievements() {
+        Object.entries(this.achievements).forEach(([key, ach]) => {
+            if (!ach.rewarded && ach.count >= ach.target) {
+                ach.reward();
+                ach.rewarded = true;
+                this.log(`Achievement Unlocked: ${ach.name}!`);
+                soundEffects.achievement?.play()?.catch(() => {});
+                const achievementModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('achievementModal'));
+                document.getElementById('achievementModalLabel').textContent = ach.name;
+                document.getElementById('achievementModalBody').textContent = ach.description;
+                achievementModal.show();
+            }
+        });
+    }
+
+    setupEventListeners() {
+        let clickTimeout = null;
+        const handleClick = (e) => {
+            if (clickTimeout) return;
+            clickTimeout = setTimeout(() => {
+                if (e.target.classList.contains('btn-select-warrior')) {
+                    const warriorId = parseInt(e.target.dataset.warriorId);
+                    this.selectedWarrior = this.warriors[warriorId];
+                    this.log(`Selected: ${this.selectedWarrior.name}`);
+                    soundEffects.select?.play()?.catch(() => {});
+                } else if (e.target.classList.contains('btn-select-enemy')) {
+                    const enemyId = parseInt(e.target.dataset.enemyId);
+                    this.selectedEnemy = this.enemies[enemyId];
+                    this.log(`Targeted: ${this.selectedEnemy.name}`);
+                    soundEffects.select?.play()?.catch(() => {});
+                    if (this.selectedWarrior && this.selectedAction !== 'none') {
+                        this.executeAction();
+                    }
+                } else if (e.target.classList.contains('btn-special-ability')) {
+                    const warriorId = parseInt(e.target.dataset.warriorId);
+                    this.selectedWarrior = this.warriors[warriorId];
+                    this.selectedAction = 'special';
+                    this.log(`Selected ${this.selectedWarrior.specialAbility.name}`);
+                    soundEffects.special?.play()?.catch(() => {});
+                } else if (e.target.classList.contains('btn-team-up')) {
+                    const warriorId = parseInt(e.target.dataset.warriorId);
+                    this.selectedWarrior = this.warriors[warriorId];
+                    this.selectedAction = 'teamUp';
+                    this.log(`Selected Team-Up for ${this.selectedWarrior.name}`);
+                    soundEffects.select?.play()?.catch(() => {});
+                } else if (e.target.classList.contains('btn-use-item')) {
+                    const itemId = parseInt(e.target.dataset.itemId);
+                    this.selectedAction = 'item';
+                    this.selectedItem = this.inventory[itemId];
+                    this.log(`Selected Item: ${this.selectedItem.name}`);
+                    soundEffects.select?.play()?.catch(() => {});
+                } else if (e.target.classList.contains('btn-more-info')) {
+                    const warriorId = parseInt(e.target.dataset.warriorId);
+                    const warrior = this.warriors[warriorId];
+                    const player = window.players.find(p => p.realName === warrior.name);
+                    this.log(`Viewing info for ${warrior.name}`);
+                    soundEffects.moreinfo?.play()?.catch(() => {});
+                    const infoModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('infoModal'));
+                    document.getElementById('infoModalLabel').textContent = warrior.name;
+                    document.getElementById('infoModalBody').innerHTML = `
+                        <p><strong>Weapon:</strong> ${player?.weapon || 'Unknown'}</p>
+                        <p><strong>Skill:</strong> ${player?.skill || 'Unknown'}</p>
+                        <p><strong>Special:</strong> ${player?.special || 'Unknown'}</p>
+                        <p><strong>Passive:</strong> ${warrior.passive.description}</p>
+                    `;
+                    infoModal.show();
+                }
+                clickTimeout = null;
+            }, 200);
+        };
+
+        document.addEventListener('click', handleClick);
+    }
+
+    executeAction() {
+        if (!this.selectedWarrior || !this.selectedEnemy || this.selectedWarrior.stunTimer > 0) return;
+        let damage = 0;
+        if (this.selectedAction === 'special') {
+            if (this.selectedWarrior.mana >= this.selectedWarrior.specialAbility.manaCost && this.selectedWarrior.cooldown === 0) {
+                damage = this.selectedWarrior.specialAbility.effect(this.selectedEnemy, this.selectedWarrior, this);
+                this.selectedWarrior.mana -= this.selectedWarrior.specialAbility.manaCost;
+                this.selectedWarrior.cooldown = this.selectedWarrior.specialAbility.cooldown;
+                this.achievements.thanosSnap.count = this.selectedWarrior.name === 'Thanos' && this.selectedEnemy.health === 0 ? 1 : this.achievements.thanosSnap.count;
+                soundEffects.special?.play()?.catch(() => {});
+            }
+        } else if (this.selectedAction === 'teamUp') {
+            const teamUp = Object.values(teamUpAbilities).find(t => t.heroes.includes(this.selectedWarrior.name) && this.warriors.filter(w => t.heroes.includes(w.name) && w.isAlive).length === t.heroes.length);
+            if (teamUp && this.selectedWarrior.teamUpCooldown === 0) {
+                damage = teamUp.effect(this.selectedEnemy, this);
+                this.warriors.forEach(w => { if (teamUp.heroes.includes(w.name)) w.teamUpCooldown = teamUp.cooldown; });
+                this.teamUpsPerformed.add(teamUp.name);
+                this.achievements.teamUpMaster.count = this.teamUpsPerformed.size;
+                soundEffects.special?.play()?.catch(() => {});
+            }
+        } else if (this.selectedAction === 'item') {
+            if (this.selectedItem) {
+                this.selectedItem.effect(this.selectedWarrior, this);
+                this.itemsUsed.push(this.selectedItem.name);
+                const itemIndex = this.inventory.findIndex(i => i.name === this.selectedItem.name);
+                if (itemIndex !== -1) this.inventory.splice(itemIndex, 1);
+                this.updateInventory();
+                soundEffects.select?.play()?.catch(() => {});
+            }
+        } else {
+            damage = this.selectedWarrior.attack;
+            if (Math.random() < this.selectedWarrior.critChance) {
+                damage *= 2;
+                this.criticalHits++;
+                this.log('Critical Hit!');
+            }
+            this.selectedEnemy.takeDamage(damage);
+            this.selectedWarrior.comboCount++;
+            if (this.selectedWarrior.comboCount >= 3) {
+                this.achievements.comboKing.count++;
+                this.log('Combo Bonus!');
+                damage *= 1.2;
+            }
+            soundEffects.attack?.play()?.catch(() => {});
+        }
+        this.selectedWarrior.regenerateMana();
+        this.selectedWarrior.updateStatusEffects();
+        this.enemies.forEach(e => e.updateStatusEffects());
+        this.enemies.filter(e => e.isAlive).forEach(e => e.attackTarget(this.warriors));
+        this.warriors.forEach(w => w.updateStatusEffects());
+        this.score += Math.round(damage);
+        this.renderWarriors();
+        this.renderEnemies();
+        this.updateHUD();
+        this.checkAchievements();
+        this.selectedAction = 'none';
+        this.selectedItem = null;
+        setTimeout(() => this.checkWaveStatus(), 100);
+    }
+
+    checkWaveStatus() {
+        if (this.enemies.every(e => !e.isAlive)) {
+            this.wave++;
+            this.score += 100 * this.wave;
+            this.achievements.waveMaster.count = Math.min(this.wave, 5);
+            this.warriors.forEach(w => w.gainXP(50));
+            this.log(`Wave ${this.wave - 1} cleared!`);
+            soundEffects.victory?.play()?.catch(() => {});
+            if (Math.random() < 0.3) {
+                const powerUp = this.powerUps[Math.floor(Math.random() * this.powerUps.length)];
+                powerUp.effect();
+            }
+            this.startWave();
+        } else if (this.warriors.every(w => !w.isAlive)) {
+            this.isGameOver = true;
+            this.log('Game Over!');
+            soundEffects.defeat?.play()?.catch(() => {});
+            const gameOverModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('gameOverModal'));
+            gameOverModal.show();
+        }
+    }
+}
+
+// Initialize game
+const game = new Game();
+game.initialize();
