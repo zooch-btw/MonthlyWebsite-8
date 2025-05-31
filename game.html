@@ -7,19 +7,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Meta: SEO for discoverability -->
-    <meta name="description"
-        content="Galaxy BattleForge: Marvel turn-based game with 37 heroes, achievements, and cosmic battles">
+    <meta name="description" content="Galaxy BattleForge: Marvel turn-based game with 37 heroes, achievements, and cosmic battles">
     <meta name="keywords" content="Marvel, superhero, galaxy battleforge, turn-based, game">
     <meta name="author" content="Salvatore DiPalma">
     <!-- Page title -->
     <title>Galaxy BattleForge | Cosmic Marvel Saga</title>
     <!-- CSS: Bootstrap 5.3.2 for modals and utilities -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- CSS: Google Fonts for cinematic typography -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <!-- CSS: Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
     <!-- CSS: Inline styles for cosmic theme -->
@@ -68,7 +64,6 @@
             from {
                 background: linear-gradient(135deg, var(--nebula-dark), #1d3557);
             }
-
             to {
                 background: linear-gradient(135deg, #1d3557, var(--cosmic-blue));
             }
@@ -163,29 +158,23 @@
             border-color: var(--infinity-gold);
             box-shadow: 0 0 15px var(--infinity-gold);
         }
-
         .character-card.level-10 {
             border-color: var(--achievement-green);
             box-shadow: 0 0 20px var(--achievement-green);
         }
-
         .character-card.level-20 {
             border-color: var(--energy-blue);
             box-shadow: 0 0 25px var(--energy-blue);
         }
-
         .light-theme .character-card {
             background: rgba(0, 0, 0, 0.1);
         }
-
         .light-theme .character-card.level-5 {
             border-color: var(--cosmic-blue);
         }
-
         .light-theme .character-card.level-10 {
             border-color: var(--hero-red);
         }
-
         .light-theme .character-card.level-20 {
             border-color: var(--energy-blue);
         }
@@ -196,7 +185,6 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -253,12 +241,10 @@
             background-color: var(--vibrant-red);
             transition: width 0.5s ease;
         }
-
         .progress-bar-mana {
             background-color: var(--cosmic-blue);
             transition: width 0.5s ease;
         }
-
         .progress-bar-xp {
             background-color: var(--xp-purple);
             transition: width 0.5s ease;
@@ -334,7 +320,6 @@
                 opacity: 0;
                 transform: translate(-50%, -60%);
             }
-
             to {
                 opacity: 1;
                 transform: translate(-50%, -50%);
@@ -424,7 +409,6 @@
             border-color: var(--cosmic-blue);
             color: var(--light-text);
         }
-
         .light-theme .btn-special-achievements {
             background-color: #27ae60;
             border-color: var(--cosmic-blue);
@@ -461,7 +445,6 @@
         .modal-footer {
             border-color: var(--infinity-gold);
         }
-
         .light-theme .modal-header,
         .light-theme .modal-footer {
             border-color: var(--cosmic-blue);
@@ -494,11 +477,9 @@
         #LossTxt {
             animation: glow 1.5s ease-in-out infinite alternate;
         }
-
         #VictoryTxt {
             color: var(--glowing-gold);
         }
-
         #LossTxt {
             color: var(--vibrant-red);
         }
@@ -508,7 +489,6 @@
             from {
                 text-shadow: 0 0 10px currentColor;
             }
-
             to {
                 text-shadow: 0 0 20px currentColor;
             }
@@ -536,18 +516,15 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
         @keyframes slideOut {
             from {
                 opacity: 1;
             }
-
             to {
                 opacity: 0;
             }
@@ -557,16 +534,13 @@
         .level-up {
             animation: pulseGlow 1s ease-in-out;
         }
-
         @keyframes pulseGlow {
             0% {
                 box-shadow: 0 0 0 var(--infinity-gold);
             }
-
             50% {
                 box-shadow: 0 0 20px var(--infinity-gold);
             }
-
             100% {
                 box-shadow: 0 0 0 var(--infinity-gold);
             }
@@ -595,19 +569,17 @@
             0% {
                 opacity: 0;
             }
-
             50% {
                 opacity: 1;
             }
-
             100% {
                 opacity: 0;
             }
         }
 
-        /* CSS: Selected enemy highlight */
-        .selected-enemy {
-            border: 2px solid var(--vibrant-red) !important;
+        /* CSS: Selected warrior/enemy highlight */
+        .selected, .selected-enemy {
+            border: 4px solid var(--vibrant-red) !important;
             box-shadow: 0 0 15px var(--vibrant-red);
         }
 
@@ -630,11 +602,9 @@
             .side-panel {
                 flex: 0 0 clamp(200px, 20vw, 250px);
             }
-
             .center-panel {
                 min-width: clamp(250px, 35vw, 300px);
             }
-
             .character-card {
                 height: clamp(220px, 25vw, 300px);
             }
@@ -646,22 +616,18 @@
                 flex-direction: column;
                 align-items: center;
             }
-
             .side-panel,
             .center-panel {
                 flex: 1;
                 width: 100%;
             }
-
             .character-card {
                 height: clamp(200px, 25vw, 250px);
             }
-
             .btn-action {
                 font-size: clamp(0.6rem, 1.2vw, 0.7rem);
                 padding: 3px 6px;
             }
-
             #gameLog {
                 height: clamp(200px, 30vh, 300px);
             }
@@ -673,21 +639,17 @@
                 flex-direction: column;
                 gap: 10px;
             }
-
             .btn-marvel,
             .btn-special-achievements {
                 font-size: clamp(0.8rem, 2vw, 1rem);
                 padding: 0.4rem 0.8rem;
             }
-
             .section-title {
                 font-size: clamp(1.2rem, 3vw, 1.8rem);
             }
-
             .character-img {
                 height: 55%;
             }
-
             .status-bars {
                 padding: 5px;
             }
@@ -704,12 +666,12 @@
             <button id="restartGameBtn" class="btn btn-marvel" aria-label="Restart Game">Restart</button>
             <button id="themeToggle" class="btn btn-marvel" aria-label="Toggle Theme">Theme: Dark</button>
             <button id="achievementsBtn" class="btn btn-marvel" aria-label="View Achievements">Achievements</button>
-            <button id="specialAchievementsBtn" class="btn btn-special-achievements"
-                aria-label="View Special Achievements">Special Achievements</button>
+            <button id="specialAchievementsBtn" class="btn btn-special-achievements" aria-label="View Special Achievements">Special Achievements</button>
+            <button id="inventoryBtn" class="btn btn-marvel" aria-label="View Inventory">Inventory</button>
+            <button id="settingsBtn" class="btn btn-marvel" aria-label="Settings">Settings</button>
         </nav>
         <!-- HTML: Game title -->
-        <h1 class="section-title animate__animated animate__pulse" aria-label="Galaxy BattleForge Title">Galaxy
-            BattleForge</h1>
+        <h1 class="section-title animate__animated animate__pulse" aria-label="Galaxy BattleForge Title">Galaxy BattleForge</h1>
         <!-- HTML: Game layout container -->
         <div class="game-layout">
             <!-- HTML: Warriors panel (left) -->
@@ -742,7 +704,10 @@
         <p>Created by Salvatore DiPalma © 2025</p>
     </footer>
     <!-- HTML: Cinematic overlay for victory/loss -->
-    <div id="cinematicOverlay" class="cinematic-overlay" aria-hidden="true"></div>
+    <div id="cinematicOverlay" class="cinematic-overlay" aria-hidden="true">
+        <span id="VictoryTxt" style="display:none;">Victory!</span>
+        <span id="LossTxt" style="display:none;">Defeat!</span>
+    </div>
     <!-- HTML: Wave transition overlay -->
     <div id="waveTransition" class="wave-transition" aria-hidden="true"></div>
     <!-- HTML: Power-up selection modal -->
@@ -751,8 +716,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="powerupModalLabel">Choose a Power-Up</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="powerupChoices"></div>
                 <div class="modal-footer">
@@ -767,8 +731,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="gameOverModalLabel">Game Over</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Your heroes have been defeated! Try again?</p>
@@ -776,7 +739,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-marvel" onclick="window.Game.restart()">Restart</button>
-                    <a href="menu.html" class="btn btn-marvel">Select Warriors</a>
+                    <a href="heroSelection.html" class="btn btn-marvel">Select Warriors</a>
                     <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -788,8 +751,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="victoryModalLabel">Victory!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Congratulations! You've won in <span id="victoryMode">Infinite</span> mode!</p>
@@ -797,21 +759,19 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-marvel" onclick="window.Game.restart()">Play Again</button>
-                    <a href="menu.html" class="btn btn-marvel">Select Warriors</a>
+                    <a href="heroSelection.html" class="btn btn-marvel">Select Warriors</a>
                     <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- HTML: Achievements modal -->
-    <div class="modal fade" id="achievementsModal" tabindex="-1" aria-labelledby="achievementsModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="achievementsModal" tabindex="-1" aria-labelledby="achievementsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="achievementsModalLabel">Achievements</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="achievementList"></div>
                 <div class="modal-footer">
@@ -821,14 +781,12 @@
         </div>
     </div>
     <!-- HTML: Special Achievements modal -->
-    <div class="modal fade" id="specialAchievementsModal" tabindex="-1" aria-labelledby="specialAchievementsModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="specialAchievementsModal" tabindex="-1" aria-labelledby="specialAchievementsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="specialAchievementsModalLabel">Special Achievements</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="specialAchievementList"></div>
                 <div class="modal-footer">
@@ -843,14 +801,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="gameModeModalLabel">Select Game Mode</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('infinite')">Infinite
-                        Mode</button>
-                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('final')">Final
-                        Boss</button>
+                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('infinite')">Infinite Mode</button>
+                    <button class="btn btn-marvel mb-2 w-100" onclick="window.Game.switchMode('final')">Final Boss</button>
                     <button class="btn btn-marvel w-100" onclick="window.Game.switchMode('mirror')">Mirror Mode</button>
                 </div>
             </div>
@@ -862,8 +817,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="saveGameModalLabel">Game Saved</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Game saved successfully! Where would you like to go?</p>
@@ -877,11 +831,64 @@
             </div>
         </div>
     </div>
+    <!-- HTML: Inventory modal -->
+    <div class="modal fade" id="inventoryModal" tabindex="-1" aria-labelledby="inventoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inventoryModalLabel">Inventory</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="inventoryList"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HTML: Settings modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="soundVolume" class="form-label">Sound Volume</label>
+                        <input type="range" class="form-range" id="soundVolume" min="0" max="100" value="50">
+                    </div>
+                    <div class="mb-3">
+                        <label for="difficultySelect" class="form-label">Difficulty</label>
+                        <select class="form-select" id="difficultySelect">
+                            <option value="easy">Easy</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-marvel" onclick="window.Game.saveSettings()">Save</button>
+                    <button type="button" class="btn btn-marvel" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- JS: Bootstrap 5.3.2 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <!-- JS: Game logic -->
     <script src="game.js" defer></script>
-    <script src="init.js" defer></script>
+     <script src="init.js" defer></script>
+    <!-- JS: Initialization script -->
+    <script>
+        // JS: Initialize game and show game mode modal on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            window.Game = new Game();
+            window.Game.initialize();
+            const gameModeModal = new bootstrap.Modal(document.getElementById('gameModeModal'), { backdrop: 'static', keyboard: false });
+            gameModeModal.show();
+        });
+    </script>
 </body>
-
 </html>
