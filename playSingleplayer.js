@@ -22,7 +22,7 @@ const realNameToHeroName = {
     'James Howlett': 'Wolverine',
     'Ororo Munroe': 'Storm',
     'Scott Summers': 'Cyclops',
-    'Jean Grey': 'Jean Grey',
+    'Jean Grey': 'Phoenix', // Updated to match abilities&stats.js
     'Henry McCoy': 'Beast',
     'Remy LeBeau': 'Gambit',
     'Anna Marie': 'Rogue',
@@ -39,16 +39,16 @@ const realNameToHeroName = {
     'Felicia Hardy': 'Black Cat',
     'Quentin Beck': 'Mysterio',
     'Aleksei Sytsevich': 'Rhino',
-    'Flint Marko': 'Sandman',
+    'Flint Marko': 'Sand Man', // Updated to match abilities&stats.js
     'Max Dillon': 'Electro',
     'Otto Octavius': 'Doctor Octopus',
-    'Sergei Kravinoff': 'Kraven',
+    'Sergei Kravinoff': 'Kraven the Hunter', // Updated to match abilities&stats.js
     'Herman Schultz': 'Shocker',
     'Mac Gargan': 'Scorpion',
     'Adrian Toomes': 'Vulture',
-    'Bruce Banner': 'Hulk', // Added Hulk
-    'Lester': 'Bullseye', // Added Bullseye
-    'Bucky Barnes': 'Winter Soldier' // Added Winter Soldier
+    'Bruce Banner': 'Hulk',
+    'Lester': 'Bullseye',
+    'Bucky Barnes': 'Winter Soldier'
 };
 
 /* JS: Warrior image mappings with fallback to ensure all heroes have an image path */
@@ -66,7 +66,7 @@ const warriorImageMap = window.warriorImageMap || {
     'Wolverine': 'imgs/bub.png',
     'Storm': 'imgs/storm.png',
     'Cyclops': 'imgs/scott.png',
-    'Jean Grey': 'imgs/jean.png',
+    'Phoenix': 'imgs/jean.png', // Updated to match abilities&stats.js
     'Beast': 'imgs/beast.png',
     'Gambit': 'imgs/gambit.png',
     'Rogue': 'imgs/rogue.png',
@@ -83,16 +83,16 @@ const warriorImageMap = window.warriorImageMap || {
     'Black Cat': 'imgs/cat.png',
     'Mysterio': 'imgs/illusion.png',
     'Rhino': 'imgs/rhino.png',
-    'Sandman': 'imgs/sand.png',
+    'Sand Man': 'imgs/sand.png', // Updated to match abilities&stats.js
     'Electro': 'imgs/dillon.png',
     'Doctor Octopus': 'imgs/ock.png',
-    'Kraven': 'imgs/hunt.png',
+    'Kraven the Hunter': 'imgs/hunt.png', // Updated to match abilities&stats.js
     'Shocker': 'imgs/shock.png',
     'Scorpion': 'imgs/sting.png',
     'Vulture': 'imgs/prey.png',
-    'Hulk': 'imgs/hulk.png', // Added Hulk
-    'Bullseye': 'imgs/bullseye.png', // Added Bullseye
-    'Winter Soldier': 'imgs/winter.png' // Added Winter Soldier
+    'Hulk': 'imgs/hulk.png',
+    'Bullseye': 'imgs/bullseye.png',
+    'Winter Soldier': 'imgs/winter.png'
 };
 
 /* JS: Retrieves selected heroes from localStorage with fallback to Iron Man */
